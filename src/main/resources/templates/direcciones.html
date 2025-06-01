@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<section>
+    <h2>Direcciones</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>País</th>
+                <th>Provincia</th>
+                <th>Ciudad</th>
+                <th>Calle</th>
+                <th>Número</th>
+                <th>Código Postal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="d : ${direcciones}">
+                <td th:text="${d.id}"></td>
+                <td th:text="${d.pais}"></td>
+                <td th:text="${d.provincia}"></td>
+                <td th:text="${d.ciudad}"></td>
+                <td th:text="${d.calle}"></td>
+                <td th:text="${d.numeroCalle}"></td>
+                <td th:text="${d.codigoPostal}"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</html>
