@@ -52,7 +52,7 @@ como aplicación Spring Boot App.
 
 Esperar que el log diga: Tomcat started on port 8080.
 
-🔑 Acceso a la app
+Acceso a la app
 Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 Vista HTML (Thymeleaf): Ingresar directamente a:
