@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<section>
+    <h2>Empleados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Puesto/Cargo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="e : ${empleados}">
+                <td th:text="${e.id}"></td>
+                <td th:text="${e.nombre}"></td>
+                <td th:text="${e.apellido}"></td>
+                <td th:text="${e.puestoCargo}"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</html>

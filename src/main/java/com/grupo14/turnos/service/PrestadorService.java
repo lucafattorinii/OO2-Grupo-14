@@ -30,11 +30,26 @@ public class PrestadorService {
                 .collect(Collectors.toList());
     }
 
+  
+    
     public PrestadorDTO crear(PrestadorDTO dto) {
         Prestador p = new Prestador();
         p.setRazonSocial(dto.razonSocial());
         p.setHabilitado(dto.habilitado());
+
+     // valores por defecto para herencia
+        p.setEmail(dto.razonSocial().toLowerCase().replaceAll(" ", "") + "@sistema.com");
+        p.setContrasena("default123"); // opcional: codificar con BCrypt si usás seguridad
+
         Prestador guardado = repo.save(p);
         return new PrestadorDTO(guardado.getId(), guardado.getRazonSocial(), guardado.getHabilitado());
     }
+
+    
+    
+    
+    
+    
 }
+
+

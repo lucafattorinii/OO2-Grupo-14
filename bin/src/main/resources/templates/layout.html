@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout :: content">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Gestión de Turnos</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+    <header>
+        <h1>Gestión de Turnos</h1>
+        <nav>
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/clientes/view}">Clientes</a>
+            <a th:href="@{/empleados/view}">Empleados</a>
+            <a th:href="@{/servicios/view}">Servicios</a>
+            <a th:href="@{/disponibilidades/view}">Disponibilidades</a>
+            <a th:href="@{/turnos/view}">Turnos</a>
+            <a th:href="@{/direcciones/view}">Direcciones</a>
+            <a th:href="@{/especificaciones/view}">Especificaciones</a>
+        </nav>
+    </header>
+    <main>
+        <div th:insert="~{::content}"></div>
+    </main>
+
+    <script th:src="@{/scripts.js}"></script>
+</body>
+</html>

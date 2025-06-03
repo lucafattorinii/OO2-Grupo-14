@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<section>
+    <h2>Servicios</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Servicio</th>
+                <th>Nombre</th>
+                <th>Duración (min)</th>
+                <th>Precio</th>
+                <th>Prestador ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="s : ${servicios}">
+                <td th:text="${s.idServicio}"></td>
+                <td th:text="${s.nombre}"></td>
+                <td th:text="${s.duracionMin}"></td>
+                <td th:text="${s.precio}"></td>
+                <td th:text="${s.prestadorId}"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</html>

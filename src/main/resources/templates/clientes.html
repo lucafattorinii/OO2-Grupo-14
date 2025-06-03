@@ -1,52 +1,44 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" th:href="@{/styles.css}" />
+  <meta charset="UTF-8">
+  <title>Clientes</title>
 </head>
 <body>
-    <header th:replace="layout :: header"></header>
+<h1>Alta de Cliente</h1>
 
-    <main>
-        <section>
-            <h2>Lista de Clientes</h2>
+<p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
 
-           
-            <p>Total clientes recibidos: <span th:text="${clientes.size()}">0</span></p>
+<form th:action="@{/clientes/guardar}" method="post">
+  <label>Nombre:</label>
+  <input type="text" name="nombre" required><br>
+  <label>Apellido:</label>
+  <input type="text" name="apellido" required><br>
+  <label>DNI:</label>
+  <input type="text" name="dni" required><br>
+  <label>Número Cliente:</label>
+  <input type="text" name="numeroCliente" required><br>
+  <label>Email:</label>
+<input type="email" name="email" required><br>
+  
+  <label>Contraseña:</label>
+<input type="password" name="contrasena" required><br>
+  
+  <button type="submit">Crear Cliente</button>
+</form>
 
-            <div th:if="${#lists.isEmpty(clientes)}" style="color:red;">
-                No hay clientes cargados en el modelo.
-            </div>
-
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Contraseña</th>
-                        <th>N° Cliente</th>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="c : ${clientes}">
-                        <td th:text="${c.id}"></td>
-                        <td th:text="${c.email}"></td>
-                        <td th:text="${c.contrasena}"></td>
-                        <td th:text="${c.numeroCliente}"></td>
-                        <td th:text="${c.dni}"></td>
-                        <td th:text="${c.nombre}"></td>
-                        <td th:text="${c.apellido}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <script th:src="@{/scripts.js}"></script>
+<hr>
+<h2>Clientes Registrados</h2>
+<table border="1">
+  <tr><th>Nombre</th><th>Apellido</th><th>DNI</th><th>Nro Cliente</th></tr>
+  <tr th:each="c : ${clientes}">
+    <td th:text="${c.nombre}"></td>
+    <td th:text="${c.apellido}"></td>
+    <td th:text="${c.dni}"></td>
+    <td th:text="${c.numeroCliente}"></td>
+  </tr>
+</table>
 </body>
 </html>

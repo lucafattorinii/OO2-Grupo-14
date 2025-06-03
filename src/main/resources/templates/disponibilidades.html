@@ -1,28 +1,46 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<section>
-    <h2>Disponibilidades</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Día Semana</th>
-                <th>Hora Inicio</th>
-                <th>Hora Fin</th>
-                <th>Empleado ID</th>
-                <th>Servicio ID</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="d : ${disponibilidades}">
-                <td th:text="${d.id}"></td>
-                <td th:text="${d.diaSemana}"></td>
-                <td th:text="${d.horaInicio}"></td>
-                <td th:text="${d.horaFin}"></td>
-                <td th:text="${d.empleadoId}"></td>
-                <td th:text="${d.servicioId}"></td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Disponibilidades</title>
+</head>
+<body>
+<h1>Alta de Disponibilidad</h1>
+
+<p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:action="@{/disponibilidades/guardar}" method="post">
+  <label>Día de la Semana:</label>
+  <select name="dia" required>
+    <option value="LUNES">Lunes</option>
+    <option value="MARTES">Martes</option>
+    <option value="MIERCOLES">Miércoles</option>
+    <option value="JUEVES">Jueves</option>
+    <option value="VIERNES">Viernes</option>
+    <option value="SABADO">Sábado</option>
+    <option value="DOMINGO">Domingo</option>
+  </select><br>
+
+  <label>Hora de Inicio:</label>
+  <input type="time" name="horaInicio" required><br>
+
+  <label>Hora de Fin:</label>
+  <input type="time" name="horaFin" required><br>
+
+  <button type="submit">Crear Disponibilidad</button>
+</form>
+
+<hr>
+<h2>Disponibilidades Registradas</h2>
+<table border="1">
+  <tr><th>Día</th><th>Hora Inicio</th><th>Hora Fin</th></tr>
+  <tr th:each="d : ${disponibilidades}">
+    <td th:text="${d.dia}"></td>
+    <td th:text="${d.horaInicio}"></td>
+    <td th:text="${d.horaFin}"></td>
+  </tr>
+</table>
+</body>
 </html>

@@ -1,0 +1,37 @@
+<!-- src/main/resources/templates/prestadores.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Prestadores</title>
+</head>
+<body>
+<h1>Alta de Prestador</h1>
+
+<p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:action="@{/prestadores/guardar}" method="post">
+  <label>Razón Social:</label>
+  <input type="text" name="razonSocial" required><br>
+
+  <label>Habilitado:</label>
+  <select name="habilitado">
+    <option value="true">Sí</option>
+    <option value="false">No</option>
+  </select><br>
+
+  <button type="submit">Crear Prestador</button>
+</form>
+
+<hr>
+<h2>Prestadores Registrados</h2>
+<table border="1">
+  <tr><th>Razón Social</th><th>Habilitado</th></tr>
+  <tr th:each="p : ${prestadores}">
+    <td th:text="${p.razonSocial}"></td>
+    <td th:text="${p.habilitado}"></td>
+  </tr>
+</table>
+</body>
+</html>

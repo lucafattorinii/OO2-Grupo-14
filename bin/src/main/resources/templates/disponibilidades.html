@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<section>
+    <h2>Disponibilidades</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Día Semana</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Empleado ID</th>
+                <th>Servicio ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="d : ${disponibilidades}">
+                <td th:text="${d.id}"></td>
+                <td th:text="${d.diaSemana}"></td>
+                <td th:text="${d.horaInicio}"></td>
+                <td th:text="${d.horaFin}"></td>
+                <td th:text="${d.empleadoId}"></td>
+                <td th:text="${d.servicioId}"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</html>

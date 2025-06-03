@@ -1,0 +1,39 @@
+<!-- src/main/resources/templates/index.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Página de Inicio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background-color: #f9f9f9; }
+    h1 { color: #333; }
+    nav ul { list-style-type: none; padding: 0; }
+    nav li { margin: 1em 0; }
+    nav a {
+      display: inline-block;
+      padding: 0.5em 1em;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    nav a:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+<h1>Bienvenido al Sistema de Turnos</h1>
+
+<nav>
+  <ul>
+    <li><a th:href="@{/turnos/form}">&#9997; Agendar Turno</a></li>
+    <li><a th:href="@{/turnos/view}">&#128221; Ver Turnos</a></li>
+    <li><a th:href="@{/clientes}">&#128100; Gestionar Clientes</a></li>
+    <li><a th:href="@{/prestadores}">&#128188; Gestionar Prestadores</a></li>
+    <li><a th:href="@{/servicios}">&#9881;&#65039; Gestionar Servicios</a></li>
+    <li><a th:href="@{/disponibilidades}">&#9200;&#65039; Gestionar Disponibilidades</a></li>
+  </ul>
+</nav>
+
+</body>
+</html>
+

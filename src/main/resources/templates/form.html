@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Turno</title>
+</head>
+<body>
+<h1>Nuevo Turno</h1>
+
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+<p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p>
+
+<form th:action="@{/turnos/nuevo}" method="post">
+    <label>Fecha:</label>
+    <input type="date" name="fecha" required><br>
+
+    <label>Hora:</label>
+    <input type="time" name="hora" required><br>
+
+    <label>Cliente:</label>
+    <select name="clienteId" required>
+        <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre}"></option>
+    </select><br>
+
+    <label>Servicio:</label>
+    <select name="servicioId" required>
+        <option th:each="s : ${servicios}" th:value="${s.id}" th:text="${s.nombre}"></option>
+    </select><br>
+
+    <label>Disponibilidad:</label>
+    <select name="disponibilidadId" required>
+        <option th:each="d : ${disponibilidades}" th:value="${d.id}" th:text="${d.fecha} - ${d.hora}"></option>
+    </select><br>
+
+    <input type="hidden" name="estado" value="PENDIENTE">
+
+    <button type="submit">Crear Turno</button>
+</form>
+</body>
+</html>

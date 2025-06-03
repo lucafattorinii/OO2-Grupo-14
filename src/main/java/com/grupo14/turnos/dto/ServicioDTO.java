@@ -9,4 +9,5 @@ public record ServicioDTO(
 	    @NotNull Integer duracionMin,
 	    @Positive Double precio,
 	    @NotNull Integer prestadorId
+	    
 	) {}

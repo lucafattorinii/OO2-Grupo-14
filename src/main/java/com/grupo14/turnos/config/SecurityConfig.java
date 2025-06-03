@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/login", "/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            //.httpBasic(Customizer.withDefaults());
+        	.formLogin(Customizer.withDefaults());
         return http.build();
     }
 
@@ -34,7 +35,19 @@ public class SecurityConfig {
             .password(passwordEncoder.encode("admin123"))
             .roles("ADMIN")
             .build();
-        return new InMemoryUserDetailsManager(admin);
+        
+        
+        var empleado = User.withUsername("empleado")
+                .password(passwordEncoder.encode("empleado123"))
+                .roles("EMPLEADO")
+                .build();
+
+            var cliente = User.withUsername("cliente")
+                .password(passwordEncoder.encode("cliente123"))
+                .roles("CLIENTE")
+                .build();
+            
+        return new InMemoryUserDetailsManager(admin, empleado, cliente);
     }
 
     @Bean
@@ -46,5 +59,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
+    
+    
 
 }

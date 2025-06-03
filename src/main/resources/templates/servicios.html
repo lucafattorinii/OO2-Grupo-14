@@ -1,26 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<section>
-    <h2>Servicios</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID Servicio</th>
-                <th>Nombre</th>
-                <th>Duración (min)</th>
-                <th>Precio</th>
-                <th>Prestador ID</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="s : ${servicios}">
-                <td th:text="${s.idServicio}"></td>
-                <td th:text="${s.nombre}"></td>
-                <td th:text="${s.duracionMin}"></td>
-                <td th:text="${s.precio}"></td>
-                <td th:text="${s.prestadorId}"></td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Servicios</title>
+</head>
+<body>
+<h1>Alta de Servicio</h1>
+
+<p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:action="@{/servicios/guardar}" method="post">
+  <label>Nombre:</label>
+  <input type="text" name="nombre" required><br>
+
+  <label>Duración (minutos):</label>
+  <input type="number" name="duracionMin" min="1" required><br>
+
+  <label>Rubro:</label>
+  <select name="rubro" required>
+    <option value="MEDICO">Médico</option>
+    <option value="MECANICA">Mecánica</option>
+    <option value="GASTRONOMIA">Gastronomía</option>
+    <option value="SERVICIOTECNICO">Servicio Técnico</option>
+    <option value="LABORATORIO">Laboratorio</option>
+    <option value="BELLEZA">Belleza</option>
+  </select><br>
+
+  <label>Detalles:</label>
+  <input type="text" name="detalles" required><br>
+
+  <label>Prestador:</label>
+  <select name="prestadorId" required>
+    <option th:each="p : ${prestadores}" th:value="${p.id}" th:text="${p.razonSocial}"></option>
+  </select><br>
+
+  <button type="submit">Crear Servicio</button>
+</form>
+
+<hr>
+<h2>Servicios Registrados</h2>
+<table border="1">
+  <tr><th>Nombre</th><th>Duración</th><th>Prestador</th></tr>
+  <tr th:each="s : ${servicios}">
+    <td th:text="${s.nombre}"></td>
+    <td th:text="${s.duracionMin} + ' min'"></td>
+    <td th:text="${s.prestadorId}"></td>
+
+  </tr>
+</table>
+</body>
 </html>

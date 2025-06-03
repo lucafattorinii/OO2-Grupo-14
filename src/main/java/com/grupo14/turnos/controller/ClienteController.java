@@ -4,11 +4,12 @@ import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.modelo.Cliente;
 import com.grupo14.turnos.service.ClienteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/clientes")
 public class ClienteController {
     private final ClienteService clienteService;
@@ -17,10 +18,10 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<ClienteDTO>> listarTodos() {
         return ResponseEntity.ok(clienteService.listarTodos());
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> obtener(@PathVariable Integer id) {
@@ -60,7 +61,23 @@ public class ClienteController {
         return "test";  
     }
 
+    @PostMapping("/guardar")
+    public String guardarCliente(@ModelAttribute ClienteDTO cliente, Model model) {
+        try {
+            clienteService.crear(cliente);
+            model.addAttribute("mensaje", "Cliente creado correctamente");
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        model.addAttribute("clientes", clienteService.listarTodos());
+        return "clientes";
+    }
 
+    @GetMapping
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("clientes", clienteService.listarTodos());
+        return "clientes"; // ← debe existir clientes.html
+    }
 
 
 }

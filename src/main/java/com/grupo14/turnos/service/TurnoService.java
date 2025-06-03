@@ -67,6 +67,11 @@ public class TurnoService {
     }
 
     public TurnoDTO crear(TurnoDTO dto) {
+    	
+    	
+    	
+    	
+    	
         Cliente cliente = cliRepo.findById(dto.clienteId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + dto.clienteId()));
 
@@ -76,6 +81,17 @@ public class TurnoService {
         Disponibilidad disponibilidad = disRepo.findById(dto.disponibilidadId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + dto.disponibilidadId()));
 
+        
+        boolean existe = repo.existsByFechaAndHoraAndClienteAndServicio(
+        	    dto.fecha(), dto.hora(), cliente, servicio
+        	);
+        	if (existe) {
+        	    throw new IllegalArgumentException("Ya existe un turno para ese cliente, fecha y servicio.");
+        	}
+
+        
+        
+        
         Turno turno = new Turno();
         turno.setCliente(cliente);
         turno.setServicio(servicio);
