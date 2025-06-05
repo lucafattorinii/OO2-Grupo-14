@@ -1,30 +1,238 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<section>
-    <h2>Turnos</h2>
-    <table>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Turnos</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body id="body">
+
+  <!-- HEADER + HAMBURGUESA -->
+  <header class="main-header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <h1>Gestión de Turnos</h1>
+  </header>
+
+  <!-- SIDE-MENU -->
+  <nav class="side-menu" id="sideMenu">
+    <span class="close-btn" onclick="toggleMenu()">×</span>
+    <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
+    <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
+    <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
+    <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
+    <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
+    <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
+    <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
+    <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+    <a class="menu-button" th:href="@{/disponibilidades/calendario}">Calendario</a>
+    <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
+  </nav>
+
+  <main>
+    <section class="client-section">
+      <h2>Lista de Turnos</h2>
+      <p>Total turnos recibidos: <span th:text="${turnos.size()}">0</span></p>
+      <div th:if="${#lists.isEmpty(turnos)}" class="empty-msg">
+        No hay turnos cargados.
+      </div>
+
+      <!-- 1) TABLA CON Thymeleaf -->
+      <table class="client-table">
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Estado</th>
-                <th>Cliente ID</th>
-                <th>Disponibilidad ID</th>
-                <th>Servicio ID</th>
-            </tr>
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Acciones</th>
+          </tr>
         </thead>
         <tbody>
-            <tr th:each="t : ${turnos}">
-                <td th:text="${t.id}"></td>
-                <td th:text="${t.fecha}"></td>
-                <td th:text="${t.hora}"></td>
-                <td th:text="${t.estado}"></td>
-                <td th:text="${t.clienteId}"></td>
-                <td th:text="${t.disponibilidadId}"></td>
-                <td th:text="${t.servicioId}"></td>
-            </tr>
+          <!-- stat.count renderiza 1,2,3... sin huecos -->
+          <tr th:each="t, stat : ${turnos}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${t.id()}"></td>
+            <td th:text="${t.fecha()}"></td>
+            <td th:text="${t.hora()}"></td>
+            <td>
+              <span th:text="${t.estado()}" th:class="${t.estado() == 'CONFIRMADO' ? 'estado-confirmado' : (t.estado() == 'CANCELADO' ? 'estado-cancelado' : 'estado-pendiente')}"></span>
+            </td>
+            <td>
+              <span th:each="c : ${clientes}" th:if="${c.id() == t.clienteId()}" 
+                    th:text="${c.nombre() + ' ' + c.apellido()}"></span>
+            </td>
+            <td>
+              <span th:each="s : ${servicios}" th:if="${s.idServicio() == t.servicioId()}" 
+                    th:text="${s.nombre()}"></span>
+            </td>
+            <td>
+              <form th:action="@{/turnos/cambiar-estado}" method="post" style="display: inline;">
+                <input type="hidden" name="id" th:value="${t.id()}" />
+                <select name="estado" class="estado-select">
+                  <option value="">Cambiar estado</option>
+                  <option th:each="e : ${estados}" th:value="${e.name()}" th:text="${e.name()}"></option>
+                </select>
+                <button type="submit" class="small-button">Actualizar</button>
+              </form>
+            </td>
+          </tr>
         </tbody>
-    </table>
-</section>
+      </table>
+
+      <!-- 2) VOLVER AL MENÚ ABAJO DE LA TABLA -->
+      <div style="margin:20px 0">
+        <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
+        <a class="menu-button" th:href="@{/disponibilidades/calendario}">Reservar Nuevo Turno</a>
+      </div>
+
+
+      <!-- 3) CREAR TURNO -->
+      <div class="form-wrapper">
+        <button id="show-create-btn" class="menu-button">Crear Turno</button>
+        <div id="create-container" class="create-form">
+          <h3>Nuevo Turno</h3>
+          <form th:action="@{/turnos/create}" method="post">
+            <div class="form-group">
+              <label>Fecha:</label>
+              <input type="date" name="fecha" required />
+            </div>
+            <div class="form-group">
+              <label>Hora:</label>
+              <input type="time" name="hora" required />
+            </div>
+            <div class="form-group">
+              <label>Estado:</label>
+              <select name="estado" required>
+                <option value="">Seleccione un estado</option>
+                <option th:each="e : ${estados}" th:value="${e.name()}" th:text="${e.name()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cliente:</label>
+              <select name="clienteId" required>
+                <option value="">Seleccione un cliente</option>
+                <option th:each="c : ${clientes}" th:value="${c.id()}" 
+                        th:text="${c.nombre() + ' ' + c.apellido()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disponibilidad:</label>
+              <select name="disponibilidadId" required>
+                <option value="">Seleccione una disponibilidad</option>
+                <option th:each="d : ${disponibilidades}" th:value="${d.id()}" 
+                        th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Servicio:</label>
+              <select name="servicioId" required>
+                <option value="">Seleccione un servicio</option>
+                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Crear</button>
+              <button type="button" id="cancel-create-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- 4) ELIMINAR TURNO -->
+      <div class="form-wrapper">
+        <button id="show-delete-btn" class="menu-button">Eliminar Turno</button>
+        <div id="delete-container" class="delete-form">
+          <h3>Eliminar Turno</h3>
+          <form th:action="@{/turnos/delete}" method="post">
+            <div class="form-group">
+              <label>Turno a eliminar:</label>
+              <select name="id" required>
+                <option value="">Seleccione un turno</option>
+                <option th:each="t : ${turnos}" th:value="${t.id()}">
+                  <span th:text="${t.fecha() + ' ' + t.hora() + ' - ' + t.estado()}"></span>
+                </option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Eliminar</button>
+              <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- 5) MODIFICAR TURNO -->
+      <div class="form-wrapper">
+        <button id="show-update-btn" class="menu-button">Modificar Turno</button>
+        <div id="update-container" class="update-form">
+          <h3>Modificar Turno</h3>
+          <form th:action="@{/turnos/update}" method="post">
+            <div class="form-group">
+              <label>Turno a modificar:</label>
+              <select name="id" required>
+                <option value="">Seleccione un turno</option>
+                <option th:each="t : ${turnos}" th:value="${t.id()}">
+                  <span th:text="${t.fecha() + ' ' + t.hora() + ' - ' + t.estado()}"></span>
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Fecha:</label>
+              <input type="date" name="fecha" required />
+            </div>
+            <div class="form-group">
+              <label>Hora:</label>
+              <input type="time" name="hora" required />
+            </div>
+            <div class="form-group">
+              <label>Estado:</label>
+              <select name="estado" required>
+                <option value="">Seleccione un estado</option>
+                <option th:each="e : ${estados}" th:value="${e.name()}" th:text="${e.name()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cliente:</label>
+              <select name="clienteId" required>
+                <option value="">Seleccione un cliente</option>
+                <option th:each="c : ${clientes}" th:value="${c.id()}" 
+                        th:text="${c.nombre() + ' ' + c.apellido()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disponibilidad:</label>
+              <select name="disponibilidadId" required>
+                <option value="">Seleccione una disponibilidad</option>
+                <option th:each="d : ${disponibilidades}" th:value="${d.id()}" 
+                        th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Servicio:</label>
+              <select name="servicioId" required>
+                <option value="">Seleccione un servicio</option>
+                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Guardar Cambios</button>
+              <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+  </footer>
+
+  <script th:src="@{/scripts.js}"></script>
+</body>
 </html>
+

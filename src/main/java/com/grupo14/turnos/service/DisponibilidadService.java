@@ -36,26 +36,12 @@ public class DisponibilidadService {
         Disponibilidad d = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
 
-        return new DisponibilidadDTO(
-                d.getId(),
-                d.getDiaSemana().name(),
-                d.getHoraInicio().toString(),
-                d.getHoraFin().toString(),
-                d.getServicio().getIdServicio(),
-                d.getEmpleado().getId()
-        );
+        return convertirADTO(d);
     }
 
     public List<DisponibilidadDTO> listarTodos() {
         return repo.findAll().stream()
-                .map(d -> new DisponibilidadDTO(
-                        d.getId(),
-                        d.getDiaSemana().name(),
-                        d.getHoraInicio().toString(),
-                        d.getHoraFin().toString(),
-                        d.getServicio().getIdServicio(),
-                        d.getEmpleado().getId()
-                ))
+                .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
 
@@ -69,19 +55,76 @@ public class DisponibilidadService {
         Disponibilidad d = new Disponibilidad();
         d.setEmpleado(emp);
         d.setServicio(serv);
-        d.setDiaSemana(DiaSemana.valueOf(dto.diaSemana().toUpperCase()));
+        d.setDiaSemana(DiaSemana.valueOf(dto.diaSemana()));
         d.setHoraInicio(LocalTime.parse(dto.horaInicio()));
         d.setHoraFin(LocalTime.parse(dto.horaFin()));
 
         Disponibilidad guardada = repo.save(d);
 
+        return convertirADTO(guardada);
+    }
+    
+    public DisponibilidadDTO actualizar(Integer id, DisponibilidadDTO dto) {
+        Disponibilidad d = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
+        
+        Empleado emp = empRepo.findById(dto.empleadoId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + dto.empleadoId()));
+
+        Servicio serv = servRepo.findById(dto.servicioId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + dto.servicioId()));
+        
+        d.setEmpleado(emp);
+        d.setServicio(serv);
+        d.setDiaSemana(DiaSemana.valueOf(dto.diaSemana()));
+        d.setHoraInicio(LocalTime.parse(dto.horaInicio()));
+        d.setHoraFin(LocalTime.parse(dto.horaFin()));
+        
+        Disponibilidad guardada = repo.save(d);
+        
+        return convertirADTO(guardada);
+    }
+    
+    public void eliminar(Integer id) {
+        if (!repo.existsById(id)) {
+            throw new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id);
+        }
+        repo.deleteById(id);
+    }
+    
+    public void actualizarDisponibilidad(Integer id, String diaSemana, String horaInicio, 
+                                        String horaFin, Long servicioId, Integer empleadoId) {
+        Disponibilidad d = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
+        
+        Empleado emp = empRepo.findById(empleadoId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + empleadoId));
+
+        Servicio serv = servRepo.findById(servicioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + servicioId));
+        
+        d.setEmpleado(emp);
+        d.setServicio(serv);
+        d.setDiaSemana(DiaSemana.valueOf(diaSemana));
+        d.setHoraInicio(LocalTime.parse(horaInicio));
+        d.setHoraFin(LocalTime.parse(horaFin));
+        
+        repo.save(d);
+    }
+    
+    private DisponibilidadDTO convertirADTO(Disponibilidad d) {
         return new DisponibilidadDTO(
-                guardada.getId(),
-                guardada.getDiaSemana().name(),
-                guardada.getHoraInicio().toString(),
-                guardada.getHoraFin().toString(),
-                guardada.getServicio().getIdServicio(),
-                guardada.getEmpleado().getId()
+                d.getId(),
+                d.getDiaSemana().name(),
+                d.getHoraInicio().toString(),
+                d.getHoraFin().toString(),
+                d.getServicio().getIdServicio(),
+                d.getEmpleado().getId()
         );
     }
+    
+    public List<DiaSemana> listarDiasSemana() {
+        return List.of(DiaSemana.values());
+    }
 }
+

@@ -1,14 +1,14 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.ClienteDTO;
-import com.grupo14.turnos.modelo.Cliente;
 import com.grupo14.turnos.service.ClienteService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/clientes")
 public class ClienteController {
     private final ClienteService clienteService;
@@ -17,50 +17,69 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<ClienteDTO>> listarTodos() {
-        return ResponseEntity.ok(clienteService.listarTodos());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> obtener(@PathVariable Integer id) {
-        return ResponseEntity.ok(clienteService.obtenerPorId(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<ClienteDTO> crear(@RequestBody ClienteDTO nuevo) {
-        ClienteDTO creado = clienteService.crear(nuevo);
-        return ResponseEntity.ok(creado);
-    }
-    
+    // 1) VISTA HTML: Listado + Formulario
     @GetMapping("/view")
     public String verClientes(Model model) {
         List<ClienteDTO> clientes = clienteService.listarTodos();
-
-        for (ClienteDTO cliente : clientes) {
-            System.out.println("ClienteDTO - ID: " + cliente.id() +
-                               ", Nombre: " + cliente.nombre() +
-                               ", Apellido: " + cliente.apellido() +
-                               ", DNI: " + cliente.dni() +
-                               ", Email: " + cliente.email());
-        }
-
         model.addAttribute("clientes", clientes);
-        return "clientes";
+        return "clientes";        // templates/clientes.html
+    }
+
+    // 2) FORM-SUBMIT: Crea un cliente y vuelve al listado
+    @PostMapping("/create")
+    public String crearCliente(
+            @RequestParam String email,
+            @RequestParam String contrasena,
+            @RequestParam Long numeroCliente,
+            @RequestParam Long dni,
+            @RequestParam String nombre,
+            @RequestParam String apellido
+    ) {
+        ClienteDTO nuevo = new ClienteDTO(
+            null, email, contrasena, numeroCliente, dni, nombre, apellido
+        );
+        clienteService.crear(nuevo);
+        return "redirect:/clientes/view";
     }
     
-    @GetMapping("/test")
-    public String testThymeleaf(Model model) {
-        List<ClienteDTO> clientes = List.of(
-            new ClienteDTO(3, "correo1@example.com", "pass1", 1001L, 30123456L, "Juan", "Perez"),
-            new ClienteDTO(4, "correo2@example.com", "pass2", 1002L, 40123456L, "Ana", "Garcia")
-        );
-
-        model.addAttribute("clientes", clientes);
-        return "test";  
+    @PostMapping("/delete")
+    public String eliminarCliente(@RequestParam Integer id) {
+        clienteService.eliminarPorId(id);
+        return "redirect:/clientes/view";
     }
 
 
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ClienteDTO> listarTodosJson() {
+        return clienteService.listarTodos();
+    }
 
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ClienteDTO obtenerJson(@PathVariable Integer id) {
+        return clienteService.obtenerPorId(id);
+    }
 
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
+                          produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ClienteDTO crearJson(@RequestBody ClienteDTO nuevo) {
+        return clienteService.crear(nuevo);
+    }
+    
+    @PostMapping("/update")
+    public String modificarCliente(
+        @RequestParam Integer id,
+        @RequestParam String email,
+        @RequestParam String contrasena,
+        @RequestParam Long numeroCliente,
+        @RequestParam Long dni,
+        @RequestParam String nombre,
+        @RequestParam String apellido
+    ) {
+        clienteService.actualizarCliente(id, email, contrasena,
+                                         numeroCliente, dni, nombre, apellido);
+        return "redirect:/clientes/view";
+    }
 }

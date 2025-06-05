@@ -21,7 +21,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/login", "/auth/**").permitAll()
+                // Permitir acceso a Swagger, autenticación y vistas
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/login", "/auth/**", "/view/**").permitAll()
+                // Permitir acceso a recursos estáticos
+                .requestMatchers("/styles.css", "/scripts.js", "/images/**").permitAll()
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
@@ -48,3 +51,4 @@ public class SecurityConfig {
     }
 
 }
+

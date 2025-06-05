@@ -25,24 +25,12 @@ public class ServicioService {
     public ServicioDTO obtenerPorId(Long id) {
         Servicio s = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id));
-        return new ServicioDTO(
-                s.getIdServicio(),
-                s.getNombre(),
-                s.getDuracionMin(),
-                s.getPrecio(),
-                s.getPrestador().getId()
-        );
+        return convertirADTO(s);
     }
 
     public List<ServicioDTO> listarTodos() {
         return repo.findAll().stream()
-                .map(s -> new ServicioDTO(
-                        s.getIdServicio(),
-                        s.getNombre(),
-                        s.getDuracionMin(),
-                        s.getPrecio(),
-                        s.getPrestador().getId()
-                ))
+                .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
 
@@ -57,12 +45,55 @@ public class ServicioService {
         s.setPrestador(p);
 
         Servicio guardado = repo.save(s);
+        return convertirADTO(guardado);
+    }
+    
+    public ServicioDTO actualizar(Long id, ServicioDTO dto) {
+        Servicio s = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id));
+        
+        Prestador p = prestadorRepo.findById(dto.prestadorId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + dto.prestadorId()));
+        
+        s.setNombre(dto.nombre());
+        s.setDuracionMin(dto.duracionMin());
+        s.setPrecio(dto.precio());
+        s.setPrestador(p);
+        
+        Servicio guardado = repo.save(s);
+        return convertirADTO(guardado);
+    }
+    
+    public void eliminar(Long id) {
+        if (!repo.existsById(id)) {
+            throw new RecursoNoEncontradoException("Servicio no encontrado: " + id);
+        }
+        repo.deleteById(id);
+    }
+    
+    public void actualizarServicio(Long id, String nombre, Integer duracionMin, Double precio, Integer prestadorId) {
+        Servicio s = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id));
+        
+        Prestador p = prestadorRepo.findById(prestadorId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + prestadorId));
+        
+        s.setNombre(nombre);
+        s.setDuracionMin(duracionMin);
+        s.setPrecio(precio);
+        s.setPrestador(p);
+        
+        repo.save(s);
+    }
+    
+    private ServicioDTO convertirADTO(Servicio s) {
         return new ServicioDTO(
-                guardado.getIdServicio(),
-                guardado.getNombre(),
-                guardado.getDuracionMin(),
-                guardado.getPrecio(),
-                p.getId()
+                s.getIdServicio(),
+                s.getNombre(),
+                s.getDuracionMin(),
+                s.getPrecio(),
+                s.getPrestador().getId()
         );
     }
 }
+

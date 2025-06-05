@@ -1,52 +1,175 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" th:href="@{/styles.css}" />
+  <meta charset="UTF-8">
+  <title>Lista de Clientes</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
 </head>
-<body>
-    <header th:replace="layout :: header"></header>
+<body id="body">
 
-    <main>
-        <section>
-            <h2>Lista de Clientes</h2>
+  <!-- HEADER + HAMBURGUESA -->
+  <header class="main-header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <h1>Gestión de Turnos</h1>
+  </header>
 
-           
-            <p>Total clientes recibidos: <span th:text="${clientes.size()}">0</span></p>
+  <!-- SIDE-MENU -->
+  <nav class="side-menu" id="sideMenu">
+    <span class="close-btn" onclick="toggleMenu()">×</span>
+    <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
+    <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
+    <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
+    <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
+    <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+    <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
+  </nav>
 
-            <div th:if="${#lists.isEmpty(clientes)}" style="color:red;">
-                No hay clientes cargados en el modelo.
+  <main>
+    <section class="client-section">
+      <h2>Lista de Clientes</h2>
+      <p>Total clientes recibidos: <span th:text="${clientes.size()}">0</span></p>
+      <div th:if="${#lists.isEmpty(clientes)}" class="empty-msg">
+        No hay clientes cargados.
+      </div>
+
+      <!-- 1) TABLA CON Thymeleaf -->
+      <table class="client-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Email</th>
+            <th>Contraseña</th>
+            <th>N° Cliente</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- stat.count renderiza 1,2,3... sin huecos -->
+          <tr th:each="c, stat : ${clientes}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${c.email}"></td>
+            <td th:text="${c.contrasena}"></td>
+            <td th:text="${c.numeroCliente}"></td>
+            <td th:text="${c.dni}"></td>
+            <td th:text="${c.nombre}"></td>
+            <td th:text="${c.apellido}"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 2) VOLVER AL MENÚ ABAJO DE LA TABLA -->
+      <div style="margin:20px 0">
+        <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
+      </div>
+
+
+      <!-- 3) CREAR CLIENTE -->
+      <div class="form-wrapper">
+        <button id="show-create-btn" class="menu-button">Crear Cliente</button>
+        <div id="create-container" class="create-form">
+          <h3>Nuevo Cliente</h3>
+          <form th:action="@{/clientes/create}" method="post">
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="email" name="email" required />
             </div>
+            <div class="form-group">
+              <label>Contraseña:</label>
+              <input type="password" name="contrasena" required />
+            </div>
+            <div class="form-group">
+              <label>N° Cliente:</label>
+              <input type="number" name="numeroCliente" required />
+            </div>
+            <div class="form-group">
+              <label>DNI:</label>
+              <input type="number" name="dni" required />
+            </div>
+            <div class="form-group">
+              <label>Nombre:</label>
+              <input type="text" name="nombre" required />
+            </div>
+            <div class="form-group">
+              <label>Apellido:</label>
+              <input type="text" name="apellido" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Crear</button>
+              <button type="button" id="cancel-create-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Contraseña</th>
-                        <th>N° Cliente</th>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="c : ${clientes}">
-                        <td th:text="${c.id}"></td>
-                        <td th:text="${c.email}"></td>
-                        <td th:text="${c.contrasena}"></td>
-                        <td th:text="${c.numeroCliente}"></td>
-                        <td th:text="${c.dni}"></td>
-                        <td th:text="${c.nombre}"></td>
-                        <td th:text="${c.apellido}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+      <!-- 4) ELIMINAR CLIENTE -->
+      <div class="form-wrapper">
+        <button id="show-delete-btn" class="menu-button">Eliminar Cliente</button>
+        <div id="delete-container" class="delete-form">
+          <h3>Eliminar Cliente</h3>
+          <form th:action="@{/clientes/delete}" method="post">
+            <div class="form-group">
+              <label>ID a eliminar:</label>
+              <input type="number" name="id" min="1" th:attr="max=${clientes.size()}" required/>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Eliminar</button>
+              <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-    <script th:src="@{/scripts.js}"></script>
+      <!-- 5) MODIFICAR CLIENTE -->
+      <div class="form-wrapper">
+        <button id="show-update-btn" class="menu-button">Modificar Cliente</button>
+        <div id="update-container" class="update-form">
+          <h3>Modificar Cliente</h3>
+          <form th:action="@{/clientes/update}" method="post">
+            <div class="form-group">
+              <label>ID a modificar:</label>
+              <input type="number" name="id" min="1" th:attr="max=${clientes.size()}" required/>
+            </div>
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="email" name="email" required/>
+            </div>
+            <div class="form-group">
+              <label>Contraseña:</label>
+              <input type="password" name="contrasena" required/>
+            </div>
+            <div class="form-group">
+              <label>N° Cliente:</label>
+              <input type="number" name="numeroCliente" required/>
+            </div>
+            <div class="form-group">
+              <label>DNI:</label>
+              <input type="number" name="dni" required/>
+            </div>
+            <div class="form-group">
+              <label>Nombre:</label>
+              <input type="text" name="nombre" required/>
+            </div>
+            <div class="form-group">
+              <label>Apellido:</label>
+              <input type="text" name="apellido" required/>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Guardar Cambios</button>
+              <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+  </footer>
+
+  <script th:src="@{/scripts.js}"></script>
 </body>
 </html>

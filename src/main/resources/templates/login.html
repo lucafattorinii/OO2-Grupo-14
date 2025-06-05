@@ -1,13 +1,118 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<section>
-    <h2>Login</h2>
-    <form id="loginForm" th:action="@{/auth/login}" method="post">
-        <label>Usuario:</label><br/>
-        <input type="text" name="username"/><br/>
-        <label>Contraseña:</label><br/>
-        <input type="password" name="password"/><br/>
-        <button type="submit">Ingresar</button>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    
+    .login-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    .login-form .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .login-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .login-form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .login-form button:hover {
+      background-color: #1abc9c;
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #7f8c8d;
+    }
+    
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>Sistema de Gestión de Turnos</h1>
+      <p>Ingrese sus credenciales para acceder</p>
+    </div>
+    
+    <div th:if="${param.error}" class="error-message">
+      Email o contraseña incorrectos. Por favor, intente nuevamente.
+    </div>
+    
+    <form class="login-form" th:action="@{/login}" method="post">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required autofocus />
+      </div>
+      
+      <div class="form-group">
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" required />
+      </div>
+      
+      <button type="submit">Iniciar Sesión</button>
     </form>
-</section>
+    
+    <div class="login-footer">
+      &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+    </div>
+  </div>
+</body>
 </html>
+

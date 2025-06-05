@@ -35,24 +35,12 @@ public class EspecificacionService {
     public EspecificacionDTO obtenerPorId(Integer id) {
         Especificacion e = repo.findById(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Especificación no encontrada: " + id));
-        return new EspecificacionDTO(
-            e.getId(),
-            e.getServicio().getIdServicio(),
-            e.getRubro().name(),
-            e.getDetalles(),
-            e.getDireccion().getIdDireccion()
-        );
+        return convertirADTO(e);
     }
 
     public List<EspecificacionDTO> listarTodos() {
         return repo.findAll().stream()
-            .map(e -> new EspecificacionDTO(
-                e.getId(),
-                e.getServicio().getIdServicio(),
-                e.getRubro().name(),
-                e.getDetalles(),
-                e.getDireccion().getIdDireccion()
-            ))
+            .map(this::convertirADTO)
             .collect(Collectors.toList());
     }
 
@@ -64,17 +52,69 @@ public class EspecificacionService {
 
         Especificacion e = new Especificacion();
         e.setServicio(servicio);
-        e.setRubro(Rubro.valueOf(dto.rubro().toUpperCase()));
+        e.setRubro(Rubro.valueOf(dto.rubro()));
         e.setDetalles(dto.detalles());
         e.setDireccion(direccion);
 
         Especificacion guardada = repo.save(e);
+        return convertirADTO(guardada);
+    }
+    
+    public EspecificacionDTO actualizar(Integer id, EspecificacionDTO dto) {
+        Especificacion e = repo.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Especificación no encontrada: " + id));
+        
+        Servicio servicio = servicioRepo.findById(dto.servicioId())
+            .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + dto.servicioId()));
+        Direccion direccion = direccionRepo.findById(dto.direccionId())
+            .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + dto.direccionId()));
+        
+        e.setServicio(servicio);
+        e.setRubro(Rubro.valueOf(dto.rubro()));
+        e.setDetalles(dto.detalles());
+        e.setDireccion(direccion);
+        
+        Especificacion guardada = repo.save(e);
+        return convertirADTO(guardada);
+    }
+    
+    public void eliminar(Integer id) {
+        if (!repo.existsById(id)) {
+            throw new RecursoNoEncontradoException("Especificación no encontrada: " + id);
+        }
+        repo.deleteById(id);
+    }
+    
+    public void actualizarEspecificacion(Integer id, Long servicioId, String rubro, 
+                                        String detalles, Integer direccionId) {
+        Especificacion e = repo.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Especificación no encontrada: " + id));
+        
+        Servicio servicio = servicioRepo.findById(servicioId)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + servicioId));
+        Direccion direccion = direccionRepo.findById(direccionId)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + direccionId));
+        
+        e.setServicio(servicio);
+        e.setRubro(Rubro.valueOf(rubro));
+        e.setDetalles(detalles);
+        e.setDireccion(direccion);
+        
+        repo.save(e);
+    }
+    
+    private EspecificacionDTO convertirADTO(Especificacion e) {
         return new EspecificacionDTO(
-            guardada.getId(),
-            servicio.getIdServicio(),
-            guardada.getRubro().name(),
-            guardada.getDetalles(),
-            direccion.getIdDireccion()
+            e.getId(),
+            e.getServicio().getIdServicio(),
+            e.getRubro().name(),
+            e.getDetalles(),
+            e.getDireccion().getIdDireccion()
         );
     }
+    
+    public List<Rubro> listarRubros() {
+        return List.of(Rubro.values());
+    }
 }
+

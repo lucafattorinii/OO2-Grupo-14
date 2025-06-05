@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Nuevo Turno</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    .wizard-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .wizard-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .wizard-step {
+      margin-bottom: 30px;
+    }
+    
+    .wizard-step h3 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .wizard-summary {
+      background-color: #e6f7ff;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .wizard-summary p {
+      margin: 5px 0;
+    }
+    
+    .wizard-summary strong {
+      font-weight: bold;
+    }
+    
+    .estado-confirmado {
+      color: green;
+      font-weight: bold;
+    }
+    
+    .estado-pendiente {
+      color: orange;
+      font-weight: bold;
+    }
+    
+    .estado-cancelado {
+      color: red;
+      font-weight: bold;
+    }
+    
+    .small-button {
+      background-color: #2980b9;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color .3s ease;
+    }
+    
+    .small-button:hover {
+      background-color: #1abc9c;
+    }
+    
+    .estado-select {
+      padding: 5px;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body id="body">
+
+  <!-- HEADER + HAMBURGUESA -->
+  <header class="main-header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <h1>Gestión de Turnos</h1>
+  </header>
+
+  <!-- SIDE-MENU -->
+  <nav class="side-menu" id="sideMenu">
+    <span class="close-btn" onclick="toggleMenu()">×</span>
+    <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
+    <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
+    <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
+    <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
+    <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
+    <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
+    <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
+    <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+    <a class="menu-button" th:href="@{/disponibilidades/calendario}">Calendario</a>
+    <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
+  </nav>
+
+  <main>
+    <section class="client-section">
+      <h2>Crear Nuevo Turno</h2>
+      
+      <div class="wizard-container">
+        <div class="wizard-header">
+          <h3>Reserva de Turno</h3>
+          <p>Complete los datos para confirmar su turno</p>
+        </div>
+        
+        <div class="wizard-summary">
+          <h4>Detalles de la Reserva</h4>
+          <p><strong>Fecha:</strong> <span th:text="${fecha}"></span></p>
+          <p><strong>Hora:</strong> <span th:text="${hora}"></span></p>
+          <p><strong>Servicio:</strong> <span th:text="${servicio.nombre()}"></span></p>
+          <p><strong>Duración:</strong> <span th:text="${servicio.duracionMin() + ' minutos'}"></span></p>
+          <p><strong>Precio:</strong> <span th:text="${'$' + servicio.precio()}"></span></p>
+        </div>
+        
+        <div class="wizard-step">
+          <h3>Paso 1: Seleccione un Cliente</h3>
+          <form th:action="@{/turnos/create}" method="post">
+            <!-- Campos ocultos con la información de la disponibilidad -->
+            <input type="hidden" name="fecha" th:value="${fecha}" />
+            <input type="hidden" name="hora" th:value="${hora}" />
+            <input type="hidden" name="servicioId" th:value="${servicioId}" />
+            <input type="hidden" name="disponibilidadId" value="1" /> <!-- Valor temporal, debe ser reemplazado por el real -->
+            <input type="hidden" name="estado" value="PENDIENTE" />
+            
+            <div class="form-group">
+              <label>Cliente:</label>
+              <select name="clienteId" required>
+                <option value="">Seleccione un cliente</option>
+                <option th:each="c : ${clientes}" th:value="${c.id()}" 
+                        th:text="${c.nombre() + ' ' + c.apellido()}"></option>
+              </select>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="menu-button">Confirmar Turno</button>
+              <a class="menu-button" th:href="@{/disponibilidades/calendario}">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div style="margin:20px 0; text-align: center;">
+        <a class="menu-button" th:href="@{/disponibilidades/calendario}">← Volver al Calendario</a>
+        <a class="menu-button" th:href="@{/turnos/view}">Ver Todos los Turnos</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+  </footer>
+
+  <script th:src="@{/scripts.js}"></script>
+</body>
+</html>
+

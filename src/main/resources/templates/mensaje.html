@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensaje</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <style>
+        .mensaje-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .mensaje {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header th:replace="layout :: header"></header>
+
+    <main>
+        <div class="mensaje-container">
+            <div class="mensaje" th:text="${mensaje}">Mensaje</div>
+            <a class="back-link" href="/view/">Volver al inicio</a>
+        </div>
+    </main>
+
+    <script th:src="@{/scripts.js}"></script>
+</body>
+</html>
+

@@ -42,6 +42,44 @@ public class DireccionService {
         Direccion guardada = repo.save(dir);
         return convertirADTO(guardada);
     }
+    
+    public DireccionDTO actualizar(Integer id, DireccionDTO dto) {
+        Direccion dir = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + id));
+        
+        dir.setPais(dto.pais());
+        dir.setProvincia(dto.provincia());
+        dir.setCiudad(dto.ciudad());
+        dir.setCalle(dto.calle());
+        dir.setNumeroCalle(dto.numeroCalle());
+        dir.setCodigoPostal(dto.codigoPostal());
+        
+        Direccion guardada = repo.save(dir);
+        return convertirADTO(guardada);
+    }
+    
+    public void eliminar(Integer id) {
+        if (!repo.existsById(id)) {
+            throw new RecursoNoEncontradoException("Dirección no encontrada: " + id);
+        }
+        repo.deleteById(id);
+    }
+    
+    public void actualizarDireccion(Integer id, String pais, String provincia, 
+                                  String ciudad, String calle, 
+                                  String numeroCalle, String codigoPostal) {
+        Direccion dir = repo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + id));
+        
+        dir.setPais(pais);
+        dir.setProvincia(provincia);
+        dir.setCiudad(ciudad);
+        dir.setCalle(calle);
+        dir.setNumeroCalle(numeroCalle);
+        dir.setCodigoPostal(codigoPostal);
+        
+        repo.save(dir);
+    }
 
     private DireccionDTO convertirADTO(Direccion dir) {
         return new DireccionDTO(
@@ -55,3 +93,4 @@ public class DireccionService {
         );
     }
 }
+

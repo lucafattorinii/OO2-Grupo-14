@@ -1,45 +1,207 @@
+/* ─── Párrafo y estilos globales ───────────────────────────── */
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
 }
 
-header {
-  background: #007bff;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-nav a {
-  margin-right: 15px;
-  color: white;
-  text-decoration: none;
-}
-
-section {
-  margin-top: 20px;
-}
-
-table {
+/* ─── TABLA ────────────────────────────────────────────────── */
+.client-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
-
-th, td {
+.client-table th,
+.client-table td {
+  padding: 10px;
   border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+}
+.client-table th {
+  background-color: #2980b9;
+  color: white;
+}
+.client-table tr:nth-child(even) {
+  background-color: #ecf0f1;
 }
 
-button {
-  padding: 6px 12px;
-  margin-top: 10px;
+/* ─── MENSAJES ──────────────────────────────────────────────── */
+.empty-msg {
+  color: #e74c3c;
+  margin-bottom: 15px;
+}
+
+/* ─── FORMULARIOS ──────────────────────────────────────────── */
+.form-wrapper {
+  margin-top: 20px;
+}
+.create-form,
+.delete-form,
+.update-form {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  max-width: 500px;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.form-actions {
+  margin-top: 20px;
+  text-align: right;
+}
+
+/* ─── BOTONES ──────────────────────────────────────────────── */
+.menu-button {
+  background-color: #2980b9;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color .3s ease;
+}
+.menu-button:hover {
+  background-color: #1abc9c;
+}
+
+/* ─── HEADER + MENÚ LATERAL ───────────────────────────────── */
+.main-header {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+.menu-icon {
+  cursor: pointer;
+  font-size: 30px;
+  margin-right: 20px;
+}
+
+/* Menú lateral oculto por defecto */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #2c3e50;
+  padding-top: 20px;
+  transition: left 0.3s ease-in-out;
+  box-shadow: 2px 0px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+
+  /* Apilamos los enlaces en columna */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Botón de cierre */
+.side-menu .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 25px;
+  color: #fff;
   cursor: pointer;
 }
 
-input, select {
-  padding: 6px;
-  margin: 4px 0;
-  width: 200px;
+/* Enlaces del menú lateral, uno debajo del otro */
+.side-menu a {
+  display: block;
+  margin: 10px 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
 }
+.side-menu a:hover {
+  background-color: #1abc9c;
+  border-radius: 5px;
+}
+
+/* ─── DESPLAZAR EL CONTENIDO CUANDO EL MENÚ SE ABRE ───────── */
+body.shift {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* ─── FOOTER ───────────────────────────────────────────────── */
+.main-footer {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  color: #7f8c8d;
+}
+
+
+
+/* ─── ESTADOS DE TURNOS ───────────────────────────────────── */
+.estado-confirmado {
+  color: green;
+  font-weight: bold;
+  background-color: rgba(0, 128, 0, 0.1);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.estado-pendiente {
+  color: orange;
+  font-weight: bold;
+  background-color: rgba(255, 165, 0, 0.1);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.estado-cancelado {
+  color: red;
+  font-weight: bold;
+  background-color: rgba(255, 0, 0, 0.1);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.small-button {
+  background-color: #2980b9;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color .3s ease;
+}
+
+.small-button:hover {
+  background-color: #1abc9c;
+}
+
+.estado-select {
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  margin-right: 5px;
+}
+

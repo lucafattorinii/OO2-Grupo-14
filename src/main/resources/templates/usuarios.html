@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Lista de Servicios</title>
+  <title>Lista de Usuarios</title>
   <link rel="stylesheet" th:href="@{/styles.css}" />
 </head>
 <body id="body">
@@ -24,15 +24,17 @@
     <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
     <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
     <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+    <a class="menu-button" th:href="@{/disponibilidades/calendario}">Calendario</a>
+    <a class="menu-button" th:href="@{/usuarios/view}">Usuarios</a>
     <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
   </nav>
 
   <main>
     <section class="client-section">
-      <h2>Lista de Servicios</h2>
-      <p>Total servicios recibidos: <span th:text="${servicios.size()}">0</span></p>
-      <div th:if="${#lists.isEmpty(servicios)}" class="empty-msg">
-        No hay servicios cargados.
+      <h2>Lista de Usuarios</h2>
+      <p>Total usuarios recibidos: <span th:text="${usuarios.size()}">0</span></p>
+      <div th:if="${#lists.isEmpty(usuarios)}" class="empty-msg">
+        No hay usuarios cargados.
       </div>
 
       <!-- 1) TABLA CON Thymeleaf -->
@@ -40,22 +42,18 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>ID Servicio</th>
-            <th>Nombre</th>
-            <th>Duración (min)</th>
-            <th>Precio</th>
-            <th>Prestador ID</th>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Rol</th>
           </tr>
         </thead>
         <tbody>
           <!-- stat.count renderiza 1,2,3... sin huecos -->
-          <tr th:each="s, stat : ${servicios}">
+          <tr th:each="u, stat : ${usuarios}">
             <td th:text="${stat.count}"></td>
-            <td th:text="${s.idServicio()}"></td>
-            <td th:text="${s.nombre()}"></td>
-            <td th:text="${s.duracionMin()}"></td>
-            <td th:text="${s.precio()}"></td>
-            <td th:text="${s.prestadorId()}"></td>
+            <td th:text="${u.id()}"></td>
+            <td th:text="${u.email()}"></td>
+            <td th:text="${u.rol()}"></td>
           </tr>
         </tbody>
       </table>
@@ -66,29 +64,28 @@
       </div>
 
 
-      <!-- 3) CREAR SERVICIO -->
+      <!-- 3) CREAR USUARIO -->
       <div class="form-wrapper">
-        <button id="show-create-btn" class="menu-button">Crear Servicio</button>
+        <button id="show-create-btn" class="menu-button">Crear Usuario</button>
         <div id="create-container" class="create-form">
-          <h3>Nuevo Servicio</h3>
-          <form th:action="@{/servicios/create}" method="post">
+          <h3>Nuevo Usuario</h3>
+          <form th:action="@{/usuarios/create}" method="post">
             <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required />
+              <label>Email:</label>
+              <input type="email" name="email" required />
             </div>
             <div class="form-group">
-              <label>Duración (min):</label>
-              <input type="number" name="duracionMin" required />
+              <label>Contraseña:</label>
+              <input type="password" name="contrasena" required />
+              <small>La contraseña debe tener al menos 6 caracteres</small>
             </div>
             <div class="form-group">
-              <label>Precio:</label>
-              <input type="number" name="precio" step="0.01" required />
-            </div>
-            <div class="form-group">
-              <label>Prestador:</label>
-              <select name="prestadorId" required>
-                <option value="">Seleccione un prestador</option>
-                <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
+              <label>Rol:</label>
+              <select name="rol" required>
+                <option value="">Seleccione un rol</option>
+                <option value="CLIENTE">Cliente</option>
+                <option value="EMPLEADO">Empleado</option>
+                <option value="ADMIN">Administrador</option>
               </select>
             </div>
             <div class="form-actions">
@@ -99,17 +96,17 @@
         </div>
       </div>
 
-      <!-- 4) ELIMINAR SERVICIO -->
+      <!-- 4) ELIMINAR USUARIO -->
       <div class="form-wrapper">
-        <button id="show-delete-btn" class="menu-button">Eliminar Servicio</button>
+        <button id="show-delete-btn" class="menu-button">Eliminar Usuario</button>
         <div id="delete-container" class="delete-form">
-          <h3>Eliminar Servicio</h3>
-          <form th:action="@{/servicios/delete}" method="post">
+          <h3>Eliminar Usuario</h3>
+          <form th:action="@{/usuarios/delete}" method="post">
             <div class="form-group">
-              <label>ID a eliminar:</label>
+              <label>Usuario a eliminar:</label>
               <select name="id" required>
-                <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option value="">Seleccione un usuario</option>
+                <option th:each="u : ${usuarios}" th:value="${u.id()}" th:text="${u.email() + ' (' + u.rol() + ')'}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -120,37 +117,27 @@
         </div>
       </div>
 
-      <!-- 5) MODIFICAR SERVICIO -->
+      <!-- 5) MODIFICAR USUARIO -->
       <div class="form-wrapper">
-        <button id="show-update-btn" class="menu-button">Modificar Servicio</button>
+        <button id="show-update-btn" class="menu-button">Modificar Usuario</button>
         <div id="update-container" class="update-form">
-          <h3>Modificar Servicio</h3>
-          <form th:action="@{/servicios/update}" method="post">
+          <h3>Modificar Usuario</h3>
+          <form th:action="@{/usuarios/update}" method="post">
             <div class="form-group">
-              <label>Servicio a modificar:</label>
+              <label>Usuario a modificar:</label>
               <select name="id" required>
-                <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option value="">Seleccione un usuario</option>
+                <option th:each="u : ${usuarios}" th:value="${u.id()}" th:text="${u.email() + ' (' + u.rol() + ')'}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required/>
+              <label>Email:</label>
+              <input type="email" name="email" required />
             </div>
             <div class="form-group">
-              <label>Duración (min):</label>
-              <input type="number" name="duracionMin" required/>
-            </div>
-            <div class="form-group">
-              <label>Precio:</label>
-              <input type="number" name="precio" step="0.01" required/>
-            </div>
-            <div class="form-group">
-              <label>Prestador:</label>
-              <select name="prestadorId" required>
-                <option value="">Seleccione un prestador</option>
-                <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
-              </select>
+              <label>Nueva Contraseña (dejar en blanco para mantener la actual):</label>
+              <input type="password" name="contrasena" />
+              <small>La contraseña debe tener al menos 6 caracteres</small>
             </div>
             <div class="form-actions">
               <button type="submit" class="menu-button">Guardar Cambios</button>

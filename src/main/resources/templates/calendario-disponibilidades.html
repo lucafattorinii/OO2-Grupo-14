@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendario de Disponibilidades</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    /* Estilos específicos para el calendario */
+    .calendario {
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    
+    .mes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .mes h3 {
+      margin: 0;
+    }
+    
+    .mes-nav {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .dias-semana {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .dias {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    
+    .dia {
+      height: 80px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .dia.disponible {
+      background-color: #e6ffe6;
+      border-color: #99cc99;
+    }
+    
+    .dia.no-disponible {
+      background-color: #f2f2f2;
+      color: #999;
+      cursor: not-allowed;
+    }
+    
+    .dia.otro-mes {
+      background-color: #f9f9f9;
+      color: #ccc;
+    }
+    
+    .dia-numero {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .horarios {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 200px;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 100;
+      padding: 10px;
+    }
+    
+    .dia:hover .horarios {
+      display: block;
+    }
+    
+    .horario-item {
+      padding: 5px;
+      margin-bottom: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .horario-item.disponible {
+      background-color: #e6ffe6;
+    }
+    
+    .horario-item.ocupado {
+      background-color: #ffe6e6;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+    }
+    
+    .modal-close {
+      cursor: pointer;
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+<body id="body">
+
+  <!-- HEADER + HAMBURGUESA -->
+  <header class="main-header">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <h1>Gestión de Turnos</h1>
+  </header>
+
+  <!-- SIDE-MENU -->
+  <nav class="side-menu" id="sideMenu">
+    <span class="close-btn" onclick="toggleMenu()">×</span>
+    <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
+    <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
+    <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
+    <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
+    <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
+    <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
+    <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
+    <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+    <a class="menu-button" th:href="@{/disponibilidades/calendario}">Calendario</a>
+    <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
+  </nav>
+
+  <main>
+    <section class="client-section">
+      <h2>Calendario de Disponibilidades</h2>
+      
+      <div class="calendario">
+        <div class="mes">
+          <div class="mes-nav">
+            <button class="menu-button" id="prev-month">← Anterior</button>
+          </div>
+          <h3 id="current-month">Junio 2025</h3>
+          <div class="mes-nav">
+            <button class="menu-button" id="next-month">Siguiente →</button>
+          </div>
+        </div>
+        
+        <div class="dias-semana">
+          <div>Dom</div>
+          <div>Lun</div>
+          <div>Mar</div>
+          <div>Mié</div>
+          <div>Jue</div>
+          <div>Vie</div>
+          <div>Sáb</div>
+        </div>
+        
+        <div class="dias" id="calendar-days">
+          <!-- Los días se generarán dinámicamente con JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Modal para seleccionar horario -->
+      <div class="modal" id="horario-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Seleccionar Horario</h3>
+            <span class="modal-close" id="close-modal">&times;</span>
+          </div>
+          <div id="modal-horarios">
+            <!-- Los horarios se generarán dinámicamente -->
+          </div>
+          <div class="form-actions">
+            <button class="menu-button" id="reservar-btn">Reservar Turno</button>
+            <button class="menu-button" id="cancel-modal-btn">Cancelar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin:20px 0">
+        <a class="menu-button" th:href="@{/disponibilidades/view}">← Volver a Disponibilidades</a>
+        <a class="menu-button" th:href="@{/turnos/view}">Ir a Turnos</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+  </footer>
+
+  <script th:src="@{/scripts.js}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Datos de disponibilidades (en un caso real, estos vendrían del backend)
+      const disponibilidades = [
+        // Ejemplo de datos
+        { diaSemana: 'LUNES', horaInicio: '09:00', horaFin: '12:00', empleadoId: 1, servicioId: 1 },
+        { diaSemana: 'MARTES', horaInicio: '14:00', horaFin: '18:00', empleadoId: 2, servicioId: 2 },
+        { diaSemana: 'MIERCOLES', horaInicio: '10:00', horaFin: '15:00', empleadoId: 1, servicioId: 3 },
+        { diaSemana: 'JUEVES', horaInicio: '09:00', horaFin: '17:00', empleadoId: 3, servicioId: 1 },
+        { diaSemana: 'VIERNES', horaInicio: '08:00', horaFin: '13:00', empleadoId: 2, servicioId: 2 }
+      ];
+      
+      // Mapeo de días de la semana
+      const diasSemanaMap = {
+        0: 'DOMINGO',
+        1: 'LUNES',
+        2: 'MARTES',
+        3: 'MIERCOLES',
+        4: 'JUEVES',
+        5: 'VIERNES',
+        6: 'SABADO'
+      };
+      
+      // Fecha actual
+      let currentDate = new Date();
+      
+      // Función para generar el calendario
+      function generarCalendario(year, month) {
+        const calendarDays = document.getElementById('calendar-days');
+        calendarDays.innerHTML = '';
+        
+        // Actualizar título del mes
+        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+        
+        // Primer día del mes
+        const firstDay = new Date(year, month, 1);
+        // Último día del mes
+        const lastDay = new Date(year, month + 1, 0);
+        
+        // Día de la semana del primer día (0 = Domingo, 6 = Sábado)
+        const firstDayOfWeek = firstDay.getDay();
+        
+        // Días del mes anterior para completar la primera semana
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+          const day = document.createElement('div');
+          day.className = 'dia otro-mes';
+          day.innerHTML = `<div class="dia-numero">${prevMonthLastDay - i}</div>`;
+          calendarDays.appendChild(day);
+        }
+        
+        // Días del mes actual
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+          const currentDayDate = new Date(year, month, i);
+          const diaSemana = diasSemanaMap[currentDayDate.getDay()];
+          
+          // Verificar si hay disponibilidad para este día de la semana
+          const hayDisponibilidad = disponibilidades.some(d => d.diaSemana === diaSemana);
+          
+          const day = document.createElement('div');
+          day.className = hayDisponibilidad ? 'dia disponible' : 'dia no-disponible';
+          
+          let dayContent = `<div class="dia-numero">${i}</div>`;
+          
+          if (hayDisponibilidad) {
+            // Filtrar disponibilidades para este día
+            const disponibilidadesDia = disponibilidades.filter(d => d.diaSemana === diaSemana);
+            
+            // Agregar horarios disponibles
+            dayContent += `<div class="horarios">`;
+            disponibilidadesDia.forEach(d => {
+              // Generar horarios cada 30 minutos entre horaInicio y horaFin
+              const inicio = new Date(`2025-01-01T${d.horaInicio}`);
+              const fin = new Date(`2025-01-01T${d.horaFin}`);
+              
+              let horarioActual = new Date(inicio);
+              while (horarioActual < fin) {
+                const horaFormateada = horarioActual.toTimeString().substring(0, 5);
+                dayContent += `<div class="horario-item disponible" 
+                                   data-fecha="${year}-${month+1}-${i}" 
+                                   data-hora="${horaFormateada}"
+                                   data-empleado="${d.empleadoId}"
+                                   data-servicio="${d.servicioId}">
+                                ${horaFormateada}
+                              </div>`;
+                horarioActual.setMinutes(horarioActual.getMinutes() + 30);
+              }
+            });
+            dayContent += `</div>`;
+            
+            // Agregar evento click para mostrar modal
+            day.addEventListener('click', function() {
+              mostrarModalHorarios(i, month, year, diaSemana);
+            });
+          }
+          
+          day.innerHTML = dayContent;
+          calendarDays.appendChild(day);
+        }
+        
+        // Completar con días del mes siguiente si es necesario
+        const totalDaysRendered = firstDayOfWeek + lastDay.getDate();
+        const remainingCells = 7 - (totalDaysRendered % 7);
+        if (remainingCells < 7) {
+          for (let i = 1; i <= remainingCells; i++) {
+            const day = document.createElement('div');
+            day.className = 'dia otro-mes';
+            day.innerHTML = `<div class="dia-numero">${i}</div>`;
+            calendarDays.appendChild(day);
+          }
+        }
+      }
+      
+      // Función para mostrar el modal de horarios
+      function mostrarModalHorarios(dia, mes, anio, diaSemana) {
+        const modal = document.getElementById('horario-modal');
+        const modalHorarios = document.getElementById('modal-horarios');
+        modalHorarios.innerHTML = '';
+        
+        // Título con la fecha
+        const fechaSeleccionada = new Date(anio, mes, dia);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaFormateada = fechaSeleccionada.toLocaleDateString('es-ES', options);
+        
+        modalHorarios.innerHTML = `<h4>Fecha: ${fechaFormateada}</h4>`;
+        
+        // Filtrar disponibilidades para este día
+        const disponibilidadesDia = disponibilidades.filter(d => d.diaSemana === diaSemana);
+        
+        // Mostrar horarios disponibles
+        disponibilidadesDia.forEach(d => {
+          // Generar horarios cada 30 minutos entre horaInicio y horaFin
+          const inicio = new Date(`2025-01-01T${d.horaInicio}`);
+          const fin = new Date(`2025-01-01T${d.horaFin}`);
+          
+          let horarioActual = new Date(inicio);
+          while (horarioActual < fin) {
+            const horaFormateada = horarioActual.toTimeString().substring(0, 5);
+            
+            const horarioItem = document.createElement('div');
+            horarioItem.className = 'horario-item disponible';
+            horarioItem.textContent = horaFormateada;
+            horarioItem.dataset.fecha = `${anio}-${mes+1}-${dia}`;
+            horarioItem.dataset.hora = horaFormateada;
+            horarioItem.dataset.empleado = d.empleadoId;
+            horarioItem.dataset.servicio = d.servicioId;
+            
+            horarioItem.addEventListener('click', function() {
+              // Seleccionar este horario
+              document.querySelectorAll('.horario-item.selected').forEach(el => {
+                el.classList.remove('selected');
+              });
+              horarioItem.classList.add('selected');
+            });
+            
+            modalHorarios.appendChild(horarioItem);
+            horarioActual.setMinutes(horarioActual.getMinutes() + 30);
+          }
+        });
+        
+        modal.style.display = 'flex';
+      }
+      
+      // Inicializar calendario
+      generarCalendario(currentDate.getFullYear(), currentDate.getMonth());
+      
+      // Eventos para navegación del calendario
+      document.getElementById('prev-month').addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        generarCalendario(currentDate.getFullYear(), currentDate.getMonth());
+      });
+      
+      document.getElementById('next-month').addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        generarCalendario(currentDate.getFullYear(), currentDate.getMonth());
+      });
+      
+      // Eventos para el modal
+      document.getElementById('close-modal').addEventListener('click', function() {
+        document.getElementById('horario-modal').style.display = 'none';
+      });
+      
+      document.getElementById('cancel-modal-btn').addEventListener('click', function() {
+        document.getElementById('horario-modal').style.display = 'none';
+      });
+      
+      document.getElementById('reservar-btn').addEventListener('click', function() {
+        const selectedHorario = document.querySelector('.horario-item.selected');
+        if (selectedHorario) {
+          const fecha = selectedHorario.dataset.fecha;
+          const hora = selectedHorario.dataset.hora;
+          const empleadoId = selectedHorario.dataset.empleado;
+          const servicioId = selectedHorario.dataset.servicio;
+          
+          // Redirigir a la página de creación de turno con los parámetros
+          window.location.href = `/turnos/crear?fecha=${fecha}&hora=${hora}&empleadoId=${empleadoId}&servicioId=${servicioId}`;
+        } else {
+          alert('Por favor, seleccione un horario');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

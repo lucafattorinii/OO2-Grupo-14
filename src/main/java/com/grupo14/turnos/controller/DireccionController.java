@@ -2,13 +2,14 @@ package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.DireccionDTO;
 import com.grupo14.turnos.service.DireccionService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/direcciones")
 public class DireccionController {
 
@@ -18,25 +19,69 @@ public class DireccionController {
         this.direccionService = direccionService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<DireccionDTO>> listarTodos() {
-        return ResponseEntity.ok(direccionService.listarTodos());
+    // 1) VISTA HTML: Listado + Formulario
+    @GetMapping("/view")
+    public String verDirecciones(Model model) {
+        List<DireccionDTO> direcciones = direccionService.listarTodos();
+        model.addAttribute("direcciones", direcciones);
+        return "direcciones";        // templates/direcciones.html
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DireccionDTO> obtener(@PathVariable Integer id) {
-        return ResponseEntity.ok(direccionService.obtenerPorId(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<DireccionDTO> crear(@RequestBody DireccionDTO nuevo) {
-        return ResponseEntity.ok(direccionService.crear(nuevo));
+    // 2) FORM-SUBMIT: Crea una dirección y vuelve al listado
+    @PostMapping("/create")
+    public String crearDireccion(
+            @RequestParam String pais,
+            @RequestParam String provincia,
+            @RequestParam String ciudad,
+            @RequestParam String calle,
+            @RequestParam String numeroCalle,
+            @RequestParam String codigoPostal
+    ) {
+        DireccionDTO nueva = new DireccionDTO(
+            null, pais, provincia, ciudad, calle, numeroCalle, codigoPostal
+        );
+        direccionService.crear(nueva);
+        return "redirect:/direcciones/view";
     }
     
-    @GetMapping("/view")
-    public String view(Model model) {
-        model.addAttribute("direcciones", direccionService.listarTodos());
-        return "direcciones";
+    @PostMapping("/delete")
+    public String eliminarDireccion(@RequestParam Integer id) {
+        direccionService.eliminar(id);
+        return "redirect:/direcciones/view";
     }
 
+    @PostMapping("/update")
+    public String modificarDireccion(
+        @RequestParam Integer id,
+        @RequestParam String pais,
+        @RequestParam String provincia,
+        @RequestParam String ciudad,
+        @RequestParam String calle,
+        @RequestParam String numeroCalle,
+        @RequestParam String codigoPostal
+    ) {
+        direccionService.actualizarDireccion(id, pais, provincia, ciudad, calle, numeroCalle, codigoPostal);
+        return "redirect:/direcciones/view";
+    }
+
+    // API REST endpoints
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<DireccionDTO> listarTodosJson() {
+        return direccionService.listarTodos();
+    }
+
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public DireccionDTO obtenerJson(@PathVariable Integer id) {
+        return direccionService.obtenerPorId(id);
+    }
+
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
+                          produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public DireccionDTO crearJson(@RequestBody DireccionDTO nueva) {
+        return direccionService.crear(nueva);
+    }
 }
+

@@ -1,102 +1,113 @@
-# Sistema de Gestión de Turnos – Grupo 14
+# Sistema de Gestión de Turnos - OO2 Grupo 14
 
-Este proyecto fue desarrollado por el Grupo 14 como trabajo integrador para la materia Orientación a Objetos II de la Licenciatura en Sistemas. El sistema permite gestionar turnos entre clientes, empleados y prestadores, incluyendo funcionalidades como autenticación, visualización web con Thymeleaf, servicios REST con Swagger, y persistencia con base de datos MySQL.
+## Descripción del Proyecto
 
----
+Este sistema permite la gestión completa de turnos para diferentes servicios, incluyendo la administración de clientes, empleados, prestadores, servicios, disponibilidades y turnos.
 
-## Estructura del proyecto
+## Funcionalidades Implementadas
 
-- `modelo/`: Entidades JPA mapeadas segun el diagrama.
-- `repository/`: Interfaces que extienden `JpaRepository` para acceso a datos.
-- `service/`: Lógica de negocio y conversión de DTOs.
-- `controller/`: Endpoints REST para gestión de recursos.
-- `dto/`: Clases `record` usadas para entrada/salida en la API.
-- `config/`: Configuraciones de seguridad, Swagger, email y manejo de excepciones.
-- `templates/` y `static/`: Vistas Thymeleaf y recursos CSS/JS.
-- `resources/application.properties`: Configuracion de conexión y propiedades del proyecto.
+### Gestión de Entidades
+- **Clientes**: Crear, modificar, eliminar y listar clientes.
+- **Empleados**: Crear, modificar, eliminar y listar empleados.
+- **Prestadores**: Crear, modificar, eliminar y listar prestadores de servicios.
+- **Servicios**: Crear, modificar, eliminar y listar servicios disponibles.
+- **Especificaciones**: Crear, modificar, eliminar y listar especificaciones de servicios.
+- **Disponibilidades**: Crear, modificar, eliminar y listar disponibilidades de prestadores.
+- **Turnos**: Crear, modificar, eliminar y listar turnos. Cambiar el estado de los turnos.
+- **Direcciones**: Crear, modificar, eliminar y listar direcciones.
+- **Usuarios**: Crear, modificar, eliminar y listar usuarios del sistema.
 
----
+### Funcionalidades Especiales
+- **Calendario de Disponibilidades**: Visualización de disponibilidades en formato calendario.
+- **Reserva de Turnos**: Proceso guiado para la reserva de turnos desde el calendario.
+- **Sistema de Login**: Autenticación de usuarios para acceder al sistema.
 
-## Requisitos previos
+## Tecnologías Utilizadas
 
-- **Java 17**
-- **Spring Tool Suite (STS)** o cualquier IDE compatible con Spring Boot
-- **MySQL**
-- **Postman** o navegador con Swagger para testear la API
+- **Backend**: Spring Boot, JPA/Hibernate
+- **Frontend**: Thymeleaf, HTML, CSS, JavaScript
+- **Base de Datos**: H2 (desarrollo), MySQL (producción)
 
----
+## Requisitos
 
-## Configuración inicial
+- Java 17 o superior
+- Maven 3.6 o superior
+- MySQL (opcional para producción)
 
-1. Crear la base de datos:
+## Instrucciones de Ejecución
 
-   Antes de iniciar la app, abrir el archivo SQL llamado:
+### Opción 1: Ejecutar con Maven
 
-sistema_turnos.sql
+1. Clonar el repositorio:
+   ```
+   git clone https://github.com/tu-usuario/OO2-Grupo-14.git
+   cd OO2-Grupo-14
+   ```
 
-Ejecutarlo en MySQL Workbench o el gestor que utilicen.
+2. Compilar el proyecto:
+   ```
+   mvn clean package
+   ```
 
-> Esto creará toda la estructura de tablas respetando el diagrama.
+3. Ejecutar la aplicación:
+   ```
+   java -jar target/turnos-0.0.1-SNAPSHOT.jar
+   ```
 
-2. Configurar `application.properties`:
+4. Acceder a la aplicación:
+   Abrir un navegador web y visitar `http://localhost:8080`
 
-Asegurarse de que las credenciales y URL estén bien configuradas.
+### Opción 2: Importar en IDE
 
+1. Importar como proyecto Maven en Eclipse, IntelliJ IDEA o Spring Tool Suite.
+2. Ejecutar la clase `TurnosApplication.java` como aplicación Java.
 
-Abrir el proyecto en STS o IDE.
+## Credenciales de Acceso (Desarrollo)
 
-Ejecutar la clase:
+- **Usuario**: admin@example.com
+- **Contraseña**: admin123
 
-com.grupo14.turnos.TurnosApplication
-como aplicación Spring Boot App.
+## Estructura del Proyecto
 
-Esperar que el log diga: Tomcat started on port 8080.
+```
+src/main/java/com/grupo14/turnos/
+├── controller/       # Controladores REST y MVC
+├── dto/              # Objetos de transferencia de datos
+├── exception/        # Excepciones personalizadas
+├── modelo/           # Entidades JPA
+├── repository/       # Repositorios JPA
+└── service/          # Servicios de negocio
 
-Acceso a la app
-Swagger UI: http://localhost:8080/swagger-ui/index.html
+src/main/resources/
+├── static/           # Recursos estáticos (CSS, JS)
+├── templates/        # Plantillas Thymeleaf
+└── application.properties  # Configuración de la aplicación
+```
 
-Vista HTML (Thymeleaf): Ingresar directamente a:
+## Diagrama de Clases
 
-http://localhost:8080/clientes/view
+El sistema sigue el siguiente diagrama de clases:
 
-http://localhost:8080/empleados/view
+- **Usuario**: Clase base para usuarios del sistema.
+  - **Persona**: Extiende Usuario con datos personales.
+    - **Cliente**: Extiende Persona para clientes que solicitan turnos.
+    - **Empleado**: Extiende Persona para empleados del sistema.
+      - **Prestador**: Extiende Empleado para prestadores de servicios.
 
-http://localhost:8080/servicios/view
+- **Servicio**: Representa un servicio ofrecido.
+  - **Especificacion**: Detalles específicos de un servicio.
 
-http://localhost:8080/turnos/view
+- **Disponibilidad**: Horarios disponibles para un servicio.
+- **Turno**: Reserva de un servicio en una fecha y hora específica.
+- **Direccion**: Ubicación física.
+- **Contacto**: Información de contacto.
+- **Fecha**: Representación de fechas en el sistema.
 
-http://localhost:8080/disponibilidades/view
+## Contribuidores
 
-http://localhost:8080/especificaciones/view
+- Grupo 14 - OO2 - 2025
 
-http://localhost:8080/direcciones/view
+## Licencia
 
-Cómo testear el sistema
-1. Probar con Swagger
-Ir a http://localhost:8080/swagger-ui/index.html
+Este proyecto es de uso educativo para la materia OO2.
 
-Buscar el controlador que deseen (cliente-controller, turno-controller, etc).
-
-Hacer clic en Try it out, completar los campos con datos válidos y hacer clic en Execute.
-
-2. Verificar en vistas
-Después de crear datos, acceder a las vistas /view para ver si se muestran correctamente.
-
-Seguridad
-Se utiliza Spring Security con autenticación en memoria:
-
-Usuario: admin
-
-Contraseña: grupo14
-
-Esto es necesario para acceder a los endpoints protegidos. Swagger también solicitará estas credenciales.
-
-Envío de correos
-Está configurado el MailSender, aunque en este proyecto no está integrado el envío real. Puede ser ampliado fácilmente desde MailConfig.
-
-Notas finales
-El proyecto está alineado 100% con el diagrama y el modelo relacional creado en conjunto.
-
-Se respetan las convenciones de la materia: DTOs, validaciones, herencia con @PrimaryKeyJoinColumn, relaciones bidireccionales, etc.
-
-Todos los controladores tienen vistas Thymeleaf y endpoints REST funcionando.
