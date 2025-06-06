@@ -52,7 +52,8 @@ public class EspecificacionService {
 
         Especificacion e = new Especificacion();
         e.setServicio(servicio);
-        e.setRubro(Rubro.valueOf(dto.rubro()));
+        e.setRubro(dto.rubro());
+
         e.setDetalles(dto.detalles());
         e.setDireccion(direccion);
 
@@ -70,7 +71,8 @@ public class EspecificacionService {
             .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + dto.direccionId()));
         
         e.setServicio(servicio);
-        e.setRubro(Rubro.valueOf(dto.rubro()));
+        e.setRubro(dto.rubro());
+
         e.setDetalles(dto.detalles());
         e.setDireccion(direccion);
         
@@ -85,7 +87,7 @@ public class EspecificacionService {
         repo.deleteById(id);
     }
     
-    public void actualizarEspecificacion(Integer id, Long servicioId, String rubro, 
+    public void actualizarEspecificacion(Integer id, Long servicioId, Rubro rubro, 
                                         String detalles, Integer direccionId) {
         Especificacion e = repo.findById(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Especificación no encontrada: " + id));
@@ -96,7 +98,8 @@ public class EspecificacionService {
             .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + direccionId));
         
         e.setServicio(servicio);
-        e.setRubro(Rubro.valueOf(rubro));
+        e.setRubro(rubro);
+
         e.setDetalles(detalles);
         e.setDireccion(direccion);
         
@@ -107,7 +110,7 @@ public class EspecificacionService {
         return new EspecificacionDTO(
             e.getId(),
             e.getServicio().getIdServicio(),
-            e.getRubro().name(),
+            e.getRubro(),
             e.getDetalles(),
             e.getDireccion().getIdDireccion()
         );

@@ -51,7 +51,7 @@ public class EspecificacionController {
     @PostMapping("/create")
     public String crearEspecificacion(
             @RequestParam Long servicioId,
-            @RequestParam String rubro,
+            @RequestParam Rubro rubro,
             @RequestParam String detalles,
             @RequestParam Integer direccionId
     ) {
@@ -72,7 +72,7 @@ public class EspecificacionController {
     public String modificarEspecificacion(
         @RequestParam Integer id,
         @RequestParam Long servicioId,
-        @RequestParam String rubro,
+        @RequestParam Rubro rubro,
         @RequestParam String detalles,
         @RequestParam Integer direccionId
     ) {

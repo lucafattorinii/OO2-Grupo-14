@@ -111,7 +111,10 @@
           <form th:action="@{/clientes/delete}" method="post">
             <div class="form-group">
               <label>ID a eliminar:</label>
-              <input type="number" name="id" min="1" th:attr="max=${clientes.size()}" required/>
+             <select name="id" required>
+  				<option th:each="c : ${clientes}" th:value="${c.id}" th:text="'ID ' + ${c.id} + ' - ' + ${c.nombre} + ' ' + ${c.apellido}">ID</option>
+			</select>
+
             </div>
             <div class="form-actions">
               <button type="submit" class="menu-button">Eliminar</button>
@@ -122,46 +125,48 @@
       </div>
 
       <!-- 5) MODIFICAR CLIENTE -->
-      <div class="form-wrapper">
-        <button id="show-update-btn" class="menu-button">Modificar Cliente</button>
-        <div id="update-container" class="update-form">
-          <h3>Modificar Cliente</h3>
-          <form th:action="@{/clientes/update}" method="post">
-            <div class="form-group">
-              <label>ID a modificar:</label>
-              <input type="number" name="id" min="1" th:attr="max=${clientes.size()}" required/>
-            </div>
-            <div class="form-group">
-              <label>Email:</label>
-              <input type="email" name="email" required/>
-            </div>
-            <div class="form-group">
-              <label>Contraseña:</label>
-              <input type="password" name="contrasena" required/>
-            </div>
-            <div class="form-group">
-              <label>N° Cliente:</label>
-              <input type="number" name="numeroCliente" required/>
-            </div>
-            <div class="form-group">
-              <label>DNI:</label>
-              <input type="number" name="dni" required/>
-            </div>
-            <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required/>
-            </div>
-            <div class="form-group">
-              <label>Apellido:</label>
-              <input type="text" name="apellido" required/>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Guardar Cambios</button>
-              <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
-        </div>
+<div class="form-wrapper">
+  <button id="show-update-btn" class="menu-button">Modificar Cliente</button>
+  <div id="update-container" class="update-form">
+    <h3>Modificar Cliente</h3>
+    <form th:action="@{/clientes/update}" method="post">
+      <div class="form-group">
+        <label>ID a modificar:</label>
+        <select name="id" required>
+          <option th:each="c : ${clientes}" th:value="${c.id}" th:text="'ID ' + ${c.id} + ' - ' + ${c.nombre} + ' ' + ${c.apellido}">ID</option>
+        </select>
       </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" required/>
+      </div>
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input type="password" name="contrasena" required/>
+      </div>
+      <div class="form-group">
+        <label>N° Cliente:</label>
+        <input type="number" name="numeroCliente" required/>
+      </div>
+      <div class="form-group">
+        <label>DNI:</label>
+        <input type="number" name="dni" required/>
+      </div>
+      <div class="form-group">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required/>
+      </div>
+      <div class="form-group">
+        <label>Apellido:</label>
+        <input type="text" name="apellido" required/>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="menu-button">Guardar Cambios</button>
+        <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
     </section>
   </main>

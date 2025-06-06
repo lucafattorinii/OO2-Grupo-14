@@ -120,71 +120,75 @@
 
       <!-- 4) ELIMINAR EMPLEADO -->
       <div class="form-wrapper">
-        <button id="show-delete-btn" class="menu-button">Eliminar Empleado</button>
-        <div id="delete-container" class="delete-form">
-          <h3>Eliminar Empleado</h3>
-          <form th:action="@{/empleados/delete}" method="post">
-            <div class="form-group">
-              <label>ID a eliminar:</label>
-              <input type="number" name="id" min="1" th:attr="max=${empleados.size()}" required/>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Eliminar</button>
-              <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
-        </div>
+  <button id="show-delete-btn" class="menu-button">Eliminar Empleado</button>
+  <div id="delete-container" class="delete-form">
+    <h3>Eliminar Empleado</h3>
+    <form th:action="@{/empleados/delete}" method="post">
+      <div class="form-group">
+        <label>ID a eliminar:</label>
+        <select name="id" required>
+          <option th:each="e : ${empleados}" th:value="${e.id}" th:text="'ID ' + ${e.id} + ' - ' + ${e.nombre} + ' ' + ${e.apellido}">ID</option>
+        </select>
       </div>
+      <div class="form-actions">
+        <button type="submit" class="menu-button">Eliminar</button>
+        <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
       <!-- 5) MODIFICAR EMPLEADO -->
       <div class="form-wrapper">
-        <button id="show-update-btn" class="menu-button">Modificar Empleado</button>
-        <div id="update-container" class="update-form">
-          <h3>Modificar Empleado</h3>
-          <form th:action="@{/empleados/update}" method="post">
-            <div class="form-group">
-              <label>ID a modificar:</label>
-              <input type="number" name="id" min="1" th:attr="max=${empleados.size()}" required/>
-            </div>
-            <div class="form-group">
-              <label>Email:</label>
-              <input type="email" name="email" required/>
-            </div>
-            <div class="form-group">
-              <label>Contraseña:</label>
-              <input type="password" name="contrasena" required/>
-            </div>
-            <div class="form-group">
-              <label>DNI:</label>
-              <input type="number" name="dni" required/>
-            </div>
-            <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required/>
-            </div>
-            <div class="form-group">
-              <label>Apellido:</label>
-              <input type="text" name="apellido" required/>
-            </div>
-            <div class="form-group">
-              <label>CUIT:</label>
-              <input type="number" name="cuit" required/>
-            </div>
-            <div class="form-group">
-              <label>Legajo:</label>
-              <input type="number" name="legajo" required/>
-            </div>
-            <div class="form-group">
-              <label>Puesto/Cargo:</label>
-              <input type="text" name="puestoCargo" required/>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Guardar Cambios</button>
-              <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
-        </div>
+  <button id="show-update-btn" class="menu-button">Modificar Empleado</button>
+  <div id="update-container" class="update-form">
+    <h3>Modificar Empleado</h3>
+    <form th:action="@{/empleados/update}" method="post">
+      <div class="form-group">
+        <label>ID a modificar:</label>
+        <select name="id" required>
+          <option th:each="e : ${empleados}" th:value="${e.id}" th:text="'ID ' + ${e.id} + ' - ' + ${e.nombre} + ' ' + ${e.apellido}">ID</option>
+        </select>
       </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" required/>
+      </div>
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input type="password" name="contrasena" required/>
+      </div>
+      <div class="form-group">
+        <label>DNI:</label>
+        <input type="number" name="dni" required/>
+      </div>
+      <div class="form-group">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required/>
+      </div>
+      <div class="form-group">
+        <label>Apellido:</label>
+        <input type="text" name="apellido" required/>
+      </div>
+      <div class="form-group">
+        <label>CUIT:</label>
+        <input type="number" name="cuit" required/>
+      </div>
+      <div class="form-group">
+        <label>Legajo:</label>
+        <input type="number" name="legajo" required/>
+      </div>
+      <div class="form-group">
+        <label>Puesto/Cargo:</label>
+        <input type="text" name="puestoCargo" required/>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="menu-button">Guardar Cambios</button>
+        <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
     </section>
   </main>

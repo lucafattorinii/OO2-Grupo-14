@@ -2,26 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Lista de Especificaciones</title>
+  <title>Especificaciones</title>
   <link rel="stylesheet" th:href="@{/styles.css}" />
 </head>
 <body id="body">
 
-  <!-- HEADER + HAMBURGUESA -->
   <header class="main-header">
     <div class="menu-icon" onclick="toggleMenu()">☰</div>
     <h1>Gestión de Turnos</h1>
   </header>
 
-  <!-- SIDE-MENU -->
   <nav class="side-menu" id="sideMenu">
     <span class="close-btn" onclick="toggleMenu()">×</span>
     <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
     <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
-    <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
     <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
-    <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
-    <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
     <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
     <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
     <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
@@ -29,18 +24,16 @@
 
   <main>
     <section class="client-section">
-      <h2>Lista de Especificaciones</h2>
-      <p>Total especificaciones recibidas: <span th:text="${especificaciones.size()}">0</span></p>
+      <h2>Especificaciones</h2>
+      <p>Total especificaciones: <span th:text="${especificaciones.size()}">0</span></p>
       <div th:if="${#lists.isEmpty(especificaciones)}" class="empty-msg">
         No hay especificaciones cargadas.
       </div>
 
-      <!-- 1) TABLA CON Thymeleaf -->
       <table class="client-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>ID</th>
             <th>Servicio</th>
             <th>Rubro</th>
             <th>Detalles</th>
@@ -48,30 +41,21 @@
           </tr>
         </thead>
         <tbody>
-          <!-- stat.count renderiza 1,2,3... sin huecos -->
           <tr th:each="e, stat : ${especificaciones}">
             <td th:text="${stat.count}"></td>
-            <td th:text="${e.id()}"></td>
-            <td>
-              <span th:each="s : ${servicios}" th:if="${s.idServicio() == e.servicioId()}" th:text="${s.nombre()}"></span>
-            </td>
+            <td th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre()}"></td>
             <td th:text="${e.rubro()}"></td>
             <td th:text="${e.detalles()}"></td>
-            <td>
-              <span th:each="d : ${direcciones}" th:if="${d.idDireccion() == e.direccionId()}" 
-                    th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad()}"></span>
-            </td>
+            <td th:text="${#lists.findFirst(direcciones, d -> d.id() == e.direccionId())?.calle() + ' ' + #lists.findFirst(direcciones, d -> d.id() == e.direccionId())?.numeroCalle()}"></td>
           </tr>
         </tbody>
       </table>
 
-      <!-- 2) VOLVER AL MENÚ ABAJO DE LA TABLA -->
       <div style="margin:20px 0">
         <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
       </div>
 
-
-      <!-- 3) CREAR ESPECIFICACIÓN -->
+      <!-- Crear -->
       <div class="form-wrapper">
         <button id="show-create-btn" class="menu-button">Crear Especificación</button>
         <div id="create-container" class="create-form">
@@ -88,19 +72,18 @@
               <label>Rubro:</label>
               <select name="rubro" required>
                 <option value="">Seleccione un rubro</option>
-                <option th:each="r : ${rubros}" th:value="${r.name()}" th:text="${r.name()}"></option>
+                <option th:each="r : ${rubros}" th:value="${r}" th:text="${r}"></option>
               </select>
             </div>
             <div class="form-group">
               <label>Detalles:</label>
-              <textarea name="detalles" rows="4" required></textarea>
+              <input type="text" name="detalles" required>
             </div>
             <div class="form-group">
               <label>Dirección:</label>
               <select name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.idDireccion()}" 
-                        th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad()}"></option>
+                <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -111,7 +94,7 @@
         </div>
       </div>
 
-      <!-- 4) ELIMINAR ESPECIFICACIÓN -->
+      <!-- Eliminar -->
       <div class="form-wrapper">
         <button id="show-delete-btn" class="menu-button">Eliminar Especificación</button>
         <div id="delete-container" class="delete-form">
@@ -121,10 +104,7 @@
               <label>Especificación a eliminar:</label>
               <select name="id" required>
                 <option value="">Seleccione una especificación</option>
-                <option th:each="e : ${especificaciones}" th:value="${e.id()}">
-                  <span th:each="s : ${servicios}" th:if="${s.idServicio() == e.servicioId()}" 
-                        th:text="${s.nombre() + ' - ' + e.rubro()}"></span>
-                </option>
+                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre() + ' - ' + e.rubro()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -135,7 +115,7 @@
         </div>
       </div>
 
-      <!-- 5) MODIFICAR ESPECIFICACIÓN -->
+      <!-- Modificar -->
       <div class="form-wrapper">
         <button id="show-update-btn" class="menu-button">Modificar Especificación</button>
         <div id="update-container" class="update-form">
@@ -145,10 +125,7 @@
               <label>Especificación a modificar:</label>
               <select name="id" required>
                 <option value="">Seleccione una especificación</option>
-                <option th:each="e : ${especificaciones}" th:value="${e.id()}">
-                  <span th:each="s : ${servicios}" th:if="${s.idServicio() == e.servicioId()}" 
-                        th:text="${s.nombre() + ' - ' + e.rubro()}"></span>
-                </option>
+                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre() + ' - ' + e.rubro()}"></option>
               </select>
             </div>
             <div class="form-group">
@@ -162,19 +139,18 @@
               <label>Rubro:</label>
               <select name="rubro" required>
                 <option value="">Seleccione un rubro</option>
-                <option th:each="r : ${rubros}" th:value="${r.name()}" th:text="${r.name()}"></option>
+                <option th:each="r : ${rubros}" th:value="${r}" th:text="${r}"></option>
               </select>
             </div>
             <div class="form-group">
               <label>Detalles:</label>
-              <textarea name="detalles" rows="4" required></textarea>
+              <input type="text" name="detalles" required>
             </div>
             <div class="form-group">
               <label>Dirección:</label>
               <select name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.idDireccion()}" 
-                        th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad()}"></option>
+                <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -195,4 +171,3 @@
   <script th:src="@{/scripts.js}"></script>
 </body>
 </html>
-
