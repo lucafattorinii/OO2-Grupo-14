@@ -11,5 +11,8 @@ public record ClienteDTO(
 	    @NotNull Long dni,
 	    @NotNull @Size(min = 2) String nombre,
 	    @NotNull @Size(min = 2) String apellido
-	) {}
-
+	) {
+	    public String rol() {
+	        return "CLIENTE";
+	    }
+	}

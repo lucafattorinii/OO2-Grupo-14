@@ -97,5 +97,16 @@ public class UsuarioService {
             return "USUARIO";
         }
     }
+    
+    public UsuarioDTO login(String email, String contrasena) {
+        Usuario usuario = repo.findByEmail(email)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Credenciales inválidas"));
+
+        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            throw new RecursoNoEncontradoException("Credenciales inválidas");
+        }
+
+        return convertirADTO(usuario);
+    }
 }
 

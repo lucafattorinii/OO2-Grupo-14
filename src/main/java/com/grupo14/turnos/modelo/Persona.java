@@ -20,9 +20,9 @@ public class Persona extends Usuario {
   
     public Persona() { }
 
-    public Persona(String email, String contrasena,
+    public Persona(String email, String contrasena, String rol,
                    String nombre, String apellido, Long dni) {
-        super(email, contrasena);
+        super(email, contrasena, rol);
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;

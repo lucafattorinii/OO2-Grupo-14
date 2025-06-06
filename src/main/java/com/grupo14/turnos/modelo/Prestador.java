@@ -27,9 +27,9 @@ public class Prestador extends Usuario {
    
     public Prestador() { }
 
-    public Prestador(String email, String contrasena,
+    public Prestador(String email, String contrasena, String rol,
                      String razonSocial, Boolean habilitado) {
-        super(email, contrasena);
+        super(email, contrasena, rol);
         this.razonSocial = razonSocial;
         this.habilitado = habilitado;
     }
