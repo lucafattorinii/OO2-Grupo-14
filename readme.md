@@ -51,7 +51,7 @@ Este sistema permite la gestión completa de turnos para diferentes servicios, i
 
 3. Ejecutar la aplicación:
    ```
-   java -jar target/turnos-0.0.1-SNAPSHOT.jar
+   TurnosApplication.java
    ```
 
 4. Acceder a la aplicación:
@@ -64,7 +64,7 @@ Este sistema permite la gestión completa de turnos para diferentes servicios, i
 
 ## Credenciales de Acceso (Desarrollo)
 
-- **Usuario**: admin@example.com
+- **Usuario**: admin
 - **Contraseña**: admin123
 
 ## Estructura del Proyecto
