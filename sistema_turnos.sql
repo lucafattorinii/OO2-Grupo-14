@@ -1,8 +1,11 @@
--- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+CREATE DATABASE  IF NOT EXISTS `sistema_turnos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `sistema_turnos`;
+
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sistema_turnos
 -- ------------------------------------------------------
--- Server version	8.0.39
+-- Server version	8.0.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,78 +26,14 @@ DROP TABLE IF EXISTS `cliente`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cliente` (
+  `dni` BIGINT NOT NULL,
   `id` int NOT NULL,
-  `numero_cliente` bigint DEFAULT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_cliente_persona` FOREIGN KEY (`id`) REFERENCES `persona` (`id`)
+  CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`id`) REFERENCES `usuario` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cliente`
---
-
-LOCK TABLES `cliente` WRITE;
-/*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `contacto`
---
-
-DROP TABLE IF EXISTS `contacto`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `contacto` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `telefono` varchar(20) DEFAULT NULL,
-  `direccion_id` int DEFAULT NULL,
-  `usuario_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `usuario_id` (`usuario_id`),
-  KEY `direccion_id` (`direccion_id`),
-  CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id_direccion`),
-  CONSTRAINT `contacto_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `contacto`
---
-
-LOCK TABLES `contacto` WRITE;
-/*!40000 ALTER TABLE `contacto` DISABLE KEYS */;
-/*!40000 ALTER TABLE `contacto` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `direccion`
---
-
-DROP TABLE IF EXISTS `direccion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `direccion` (
-  `id_direccion` int NOT NULL AUTO_INCREMENT,
-  `pais` varchar(50) DEFAULT NULL,
-  `provincia` varchar(50) DEFAULT NULL,
-  `ciudad` varchar(50) DEFAULT NULL,
-  `calle` varchar(100) DEFAULT NULL,
-  `numero_calle` varchar(10) DEFAULT NULL,
-  `codigo_postal` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id_direccion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `direccion`
---
-
-LOCK TABLES `direccion` WRITE;
-/*!40000 ALTER TABLE `direccion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `direccion` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `disponibilidad`
@@ -104,54 +43,13 @@ DROP TABLE IF EXISTS `disponibilidad`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `disponibilidad` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `dia_semana` enum('LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO') DEFAULT NULL,
-  `hora_inicio` time DEFAULT NULL,
-  `hora_fin` time DEFAULT NULL,
-  `servicio_id` bigint DEFAULT NULL,
-  `empleado_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `servicio_id` (`servicio_id`),
-  KEY `empleado_id` (`empleado_id`),
-  CONSTRAINT `disponibilidad_ibfk_1` FOREIGN KEY (`servicio_id`) REFERENCES `servicio` (`id_servicio`),
-  CONSTRAINT `disponibilidad_ibfk_2` FOREIGN KEY (`empleado_id`) REFERENCES `empleado` (`id`)
+  `idDisponibilidad` int NOT NULL AUTO_INCREMENT,
+  `diaSemana` enum('LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO') NOT NULL,
+  `horaInicio` time NOT NULL,
+  `horaFin` time NOT NULL,
+  PRIMARY KEY (`idDisponibilidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `disponibilidad`
---
-
-LOCK TABLES `disponibilidad` WRITE;
-/*!40000 ALTER TABLE `disponibilidad` DISABLE KEYS */;
-/*!40000 ALTER TABLE `disponibilidad` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `empleado`
---
-
-DROP TABLE IF EXISTS `empleado`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `empleado` (
-  `id` int NOT NULL,
-  `cuit` bigint DEFAULT NULL,
-  `legajo` int DEFAULT NULL,
-  `puesto_cargo` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_empleado_persona` FOREIGN KEY (`id`) REFERENCES `persona` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `empleado`
---
-
-LOCK TABLES `empleado` WRITE;
-/*!40000 ALTER TABLE `empleado` DISABLE KEYS */;
-/*!40000 ALTER TABLE `empleado` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `especificacion`
@@ -161,81 +59,45 @@ DROP TABLE IF EXISTS `especificacion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `especificacion` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `direccion_id` int DEFAULT NULL,
-  `rubro` enum('MEDICO','MECANICA','GASTRONOMIA','SERVICIOTECNICO','LABORATORIO','BELLEZA') DEFAULT NULL,
-  `detalles` text,
-  `servicio_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `servicio_id` (`servicio_id`),
-  KEY `direccion_id` (`direccion_id`),
-  CONSTRAINT `especificacion_ibfk_1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id_direccion`),
-  CONSTRAINT `especificacion_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicio` (`id_servicio`)
+  `idEspecificacion` int NOT NULL AUTO_INCREMENT,
+  `rubro` ENUM('MEDICO', 'MECANICA', 'GASTRONOMIA', 'SERVICIOTECNICO', 'LABORATORIO', 'BELLEZA') NOT NULL,
+  `detalles` varchar(200) NOT NULL,
+  `personalInvolucrado` varchar(200) NOT NULL,
+  `idServicio` int NOT NULL,  -- Nueva columna para la relación con `servicio`
+  PRIMARY KEY (`idEspecificacion`),
+  CONSTRAINT `especificacion_ibfk_1` FOREIGN KEY (`idServicio`) REFERENCES `servicio` (`idServicio`)  -- Clave foránea hacia `servicio`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 --
--- Dumping data for table `especificacion`
+-- Table structure for table `contacto`
 --
-
-LOCK TABLES `especificacion` WRITE;
-/*!40000 ALTER TABLE `especificacion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `especificacion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fecha`
---
-
-DROP TABLE IF EXISTS `fecha`;
+DROP TABLE IF EXISTS `contacto`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `fecha` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `fecha` date DEFAULT NULL,
-  `dia_semana` enum('LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO') DEFAULT NULL,
-  `direccion_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `direccion_id` (`direccion_id`),
-  CONSTRAINT `fecha_ibfk_1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id_direccion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `contacto` (
+  `idContacto` INT NOT NULL,
+  `telefono` INT DEFAULT NULL,
+  PRIMARY KEY (`idContacto`),
+  CONSTRAINT `fk_contacto_usuario` FOREIGN KEY (`idContacto`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 --
--- Dumping data for table `fecha`
+-- Table structure for table `direccion`
 --
-
-LOCK TABLES `fecha` WRITE;
-/*!40000 ALTER TABLE `fecha` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fecha` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `persona`
---
-
-DROP TABLE IF EXISTS `persona`;
+DROP TABLE IF EXISTS `direccion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `persona` (
-  `id` int NOT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `apellido` varchar(100) DEFAULT NULL,
-  `dni` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_persona_usuario` FOREIGN KEY (`id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `direccion` (
+  `idDireccion` INT NOT NULL,
+  `calle` VARCHAR(100) DEFAULT NULL,
+  `ciudad` VARCHAR(100) DEFAULT NULL,
+  `provincia` VARCHAR(100) DEFAULT NULL,
+  `pais` VARCHAR(100) DEFAULT NULL,
+  `codigoPostal` VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (`idDireccion`),
+  CONSTRAINT `fk_direccion_contacto` FOREIGN KEY (`idDireccion`) REFERENCES `contacto` (`idContacto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `persona`
---
-
-LOCK TABLES `persona` WRITE;
-/*!40000 ALTER TABLE `persona` DISABLE KEYS */;
-/*!40000 ALTER TABLE `persona` ENABLE KEYS */;
-UNLOCK TABLES;
-
 --
 -- Table structure for table `prestador`
 --
@@ -245,21 +107,13 @@ DROP TABLE IF EXISTS `prestador`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `prestador` (
   `id` int NOT NULL,
-  `razon_social` varchar(100) DEFAULT NULL,
-  `habilitado` tinyint(1) DEFAULT NULL,
+  `razonSocial` varchar(100) NOT NULL,
+  `direccionCentral` varchar(200) NOT NULL,
+  `habilitado` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_prestador_usuario` FOREIGN KEY (`id`) REFERENCES `usuario` (`id`)
+  CONSTRAINT `prestador_ibfk_1` FOREIGN KEY (`id`) REFERENCES `usuario` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prestador`
---
-
-LOCK TABLES `prestador` WRITE;
-/*!40000 ALTER TABLE `prestador` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prestador` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `servicio`
@@ -269,51 +123,34 @@ DROP TABLE IF EXISTS `servicio`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `servicio` (
-  `id_servicio` bigint NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) DEFAULT NULL,
-  `duracion_min` int DEFAULT NULL,
-  `precio` float DEFAULT NULL,
-  `prestador_id` int DEFAULT NULL,
-  PRIMARY KEY (`id_servicio`),
-  KEY `prestador_id` (`prestador_id`),
-  CONSTRAINT `servicio_ibfk_1` FOREIGN KEY (`prestador_id`) REFERENCES `prestador` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `idServicio` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` text,
+  `duracionMin` int NOT NULL,
+  `idUsuario` int NOT NULL, /* hace relación al prestador */
+  `precio` float NOT NULL,
+  PRIMARY KEY (`idServicio`),
+  KEY `prestador_id` (`idUsuario`),
+  CONSTRAINT `servicio_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `prestador` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `servicio`
+-- Table structure for table `servicio_disponibilidad`
 --
 
-LOCK TABLES `servicio` WRITE;
-/*!40000 ALTER TABLE `servicio` DISABLE KEYS */;
-/*!40000 ALTER TABLE `servicio` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `servicio_empleado`
---
-
-DROP TABLE IF EXISTS `servicio_empleado`;
+DROP TABLE IF EXISTS `servicio_disponibilidad`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `servicio_empleado` (
-  `servicio_id` bigint NOT NULL,
-  `empleado_id` int NOT NULL,
-  PRIMARY KEY (`servicio_id`,`empleado_id`),
-  KEY `empleado_id` (`empleado_id`),
-  CONSTRAINT `servicio_empleado_ibfk_1` FOREIGN KEY (`servicio_id`) REFERENCES `servicio` (`id_servicio`),
-  CONSTRAINT `servicio_empleado_ibfk_2` FOREIGN KEY (`empleado_id`) REFERENCES `empleado` (`id`)
+CREATE TABLE `servicio_disponibilidad` (
+  `idServicio` int NOT NULL,
+  `idDisponibilidad` int NOT NULL,
+  PRIMARY KEY (`idServicio`,`idDisponibilidad`),
+  KEY `disponibilidad_id` (`idDisponibilidad`),
+  CONSTRAINT `servicio_disponibilidad_ibfk_1` FOREIGN KEY (`idServicio`) REFERENCES `servicio` (`idServicio`),
+  CONSTRAINT `servicio_disponibilidad_ibfk_2` FOREIGN KEY (`idDisponibilidad`) REFERENCES `disponibilidad` (`idDisponibilidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `servicio_empleado`
---
-
-LOCK TABLES `servicio_empleado` WRITE;
-/*!40000 ALTER TABLE `servicio_empleado` DISABLE KEYS */;
-/*!40000 ALTER TABLE `servicio_empleado` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `turno`
@@ -324,30 +161,21 @@ DROP TABLE IF EXISTS `turno`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `turno` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `fecha` date DEFAULT NULL,
-  `hora` time DEFAULT NULL,
-  `estado` enum('PENDIENTE','CONFIRMADO','CANCELADO') DEFAULT NULL,
-  `cliente_id` int DEFAULT NULL,
-  `disponibilidad_id` int DEFAULT NULL,
-  `servicio_id` bigint DEFAULT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `estado` enum('PENDIENTE','CONFIRMADO','CANCELADO') NOT NULL,
+  `cliente_id` int NOT NULL,
+  `disponibilidad_id` int NOT NULL,
+  `servicio_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   KEY `cliente_id` (`cliente_id`),
   KEY `disponibilidad_id` (`disponibilidad_id`),
-  KEY `servicio_id` (`servicio_id`),
+  KEY `servicio_id` (servicio_id),
   CONSTRAINT `turno_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`),
-  CONSTRAINT `turno_ibfk_2` FOREIGN KEY (`disponibilidad_id`) REFERENCES `disponibilidad` (`id`),
-  CONSTRAINT `turno_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicio` (`id_servicio`)
+  CONSTRAINT `turno_ibfk_2` FOREIGN KEY (`disponibilidad_id`) REFERENCES `disponibilidad` (`idDisponibilidad`),
+  CONSTRAINT `turno_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicio` (`idServicio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `turno`
---
-
-LOCK TABLES `turno` WRITE;
-/*!40000 ALTER TABLE `turno` DISABLE KEYS */;
-/*!40000 ALTER TABLE `turno` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `usuario`
@@ -359,20 +187,11 @@ DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE `usuario` (
   `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
-  `contrasena` varchar(255) NOT NULL,
+  `contrasenia` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `usuario`
---
-
-LOCK TABLES `usuario` WRITE;
-/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -383,4 +202,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-06  2:22:12
+-- Dump completed on 2025-05-07 16:11:20
