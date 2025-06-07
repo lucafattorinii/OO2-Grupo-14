@@ -60,6 +60,7 @@ public class ClienteService {
 			c.setDni(dni);
 			c.setNombre(nombre);
 			c.setApellido(apellido);
+			c.setRol("CLIENTE");
 			
 			Cliente actualizado = repo.save(c);
 			return mapToDTO(actualizado);
@@ -73,6 +74,7 @@ public class ClienteService {
 		c.setDni(dto.dni());
 		c.setNombre(dto.nombre());
 		c.setApellido(dto.apellido());
+		c.setRol("CLIENTE");
 		Cliente guardado = repo.save(c);
 		return mapToDTO(guardado);
 	}
