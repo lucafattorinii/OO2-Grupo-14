@@ -18,6 +18,6 @@ public class EmpleadoMenuController {
             return "redirect:/login"; // si no hay sesión, redirige a login
         }
         model.addAttribute("usuario", usuario);
-        return "empleado/menu"; // nombre del HTML que muestra el menú del empleado
+        return "empleado/menu"; // nombre del HTML que muestra el menu del empleado
     }
 }
