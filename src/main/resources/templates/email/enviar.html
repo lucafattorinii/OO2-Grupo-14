@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar Email de Prueba</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2>Enviar Email de Prueba</h2>
+    <form th:action="@{/email/enviar}" method="post">
+      <div class="form-group">
+        <label for="destinatario">Destinatario:</label>
+        <input type="email" id="to" name="to" required>
+      </div>
+      <div class="form-group">
+        <label for="asunto">Asunto:</label>
+        <input type="text" id="subject" name="subject" required>
+      </div>
+      <div class="form-group">
+        <label for="cuerpo">Cuerpo:</label>
+        <textarea id="body" name="body" rows="5" required></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="menu-button">Enviar</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

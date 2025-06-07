@@ -15,6 +15,9 @@ public interface EmailService {
      * @param contenido Contenido del email en texto plano
      */
     void enviarEmailSimple(String destinatario, String asunto, String contenido);
+    void enviarEmail(String to, String subject, String text);
+    
+    
     
     /**
      * Envía un email con contenido HTML utilizando una plantilla Thymeleaf.

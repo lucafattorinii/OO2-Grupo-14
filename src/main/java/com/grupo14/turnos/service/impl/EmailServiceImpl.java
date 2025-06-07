@@ -33,6 +33,15 @@ public class EmailServiceImpl implements EmailService {
         mensaje.setText(contenido);
         mailSender.send(mensaje);
     }
+    
+    @Override
+    public void enviarEmail(String to, String subject, String text) {
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(to);
+        mensaje.setSubject(subject);
+        mensaje.setText(text);
+        mailSender.send(mensaje);
+    }
 
     @Override
     public void enviarEmailHtml(String destinatario, String asunto, String plantillaHtml, Map<String, Object> variables) {
