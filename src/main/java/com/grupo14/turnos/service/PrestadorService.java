@@ -73,6 +73,7 @@ public class PrestadorService {
         }
         p.setRazonSocial(dto.razonSocial());
         p.setHabilitado(dto.habilitado());
+        p.setRol("PRESTADOR");
     }
     
     
@@ -87,6 +88,7 @@ public class PrestadorService {
 			
 			p.setRazonSocial(razonSocial);
 			p.setHabilitado(habilitado);
+			p.setRol("PRESTADOR");
 			repo.save(p);
 }
 }
