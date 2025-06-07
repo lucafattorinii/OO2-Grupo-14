@@ -18,6 +18,6 @@ public class ClienteMenuController {
             return "redirect:/login"; // si no está logueado, lo mando a login
         }
         model.addAttribute("usuario", usuario);
-        return "cliente/menu"; // este sería el nombre del template HTML para el menú del cliente
+        return "cliente/menu"; 
     }
 }
