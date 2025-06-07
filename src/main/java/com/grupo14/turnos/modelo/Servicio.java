@@ -1,7 +1,12 @@
 package com.grupo14.turnos.modelo;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -32,13 +37,7 @@ public class Servicio {
     )
     private Prestador prestador;
 
-    @OneToOne(
-        mappedBy = "servicio",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    private Especificacion especificacion;
+    
 
  
     @OneToMany(
@@ -66,12 +65,16 @@ public class Servicio {
     private Set<Empleado> empleados = new HashSet<>();
 
  
-    @OneToMany(
-        mappedBy = "servicio",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
+    @OneToOne(mappedBy = "servicio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Especificacion especificacion;
+
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    
+    
+    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Turno> turnos = new HashSet<>();
 
 
@@ -132,21 +135,9 @@ public class Servicio {
         }
     }
 
-    public Especificacion getEspecificacion() {
-        return especificacion;
-    }
-
     
-    public void setEspecificacion(Especificacion especificacion) {
-        if (especificacion == null) {
-            if (this.especificacion != null) {
-                this.especificacion.setServicio(null);
-            }
-        } else {
-            especificacion.setServicio(this);
-        }
-        this.especificacion = especificacion;
-    }
+    
+   
 
     public Set<Disponibilidad> getDisponibilidades() {
         return disponibilidades;
@@ -195,11 +186,17 @@ public class Servicio {
 
     public void addTurno(Turno turno) {
         turnos.add(turno);
-        turno.setServicio(this);
+        if (turno.getServicio() != this) {
+            turno.setServicio(this);
+        }
     }
+
 
     public void removeTurno(Turno turno) {
         turnos.remove(turno);
-        turno.setServicio(null);
+        if (turno.getServicio() == this) {
+            turno.setServicio(null);
+        }
     }
+
 }

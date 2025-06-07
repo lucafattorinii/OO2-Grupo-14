@@ -11,11 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 @Controller
 @RequestMapping("/especificaciones")
 public class EspecificacionController {
+	
 
     private final EspecificacionService especificacionService;
     private final ServicioService servicioService;
@@ -34,33 +37,26 @@ public class EspecificacionController {
     // 1) VISTA HTML: Listado + Formulario
     @GetMapping("/view")
     public String verEspecificaciones(Model model) {
-        List<EspecificacionDTO> especificaciones = especificacionService.listarTodos();
-        List<ServicioDTO> servicios = servicioService.listarTodos();
-        List<DireccionDTO> direcciones = direccionService.listarTodos();
-        List<Rubro> rubros = especificacionService.listarRubros();
-        
-        model.addAttribute("especificaciones", especificaciones);
-        model.addAttribute("servicios", servicios);
-        model.addAttribute("direcciones", direcciones);
-        model.addAttribute("rubros", rubros);
-        
-        return "especificaciones";        // templates/especificaciones.html
+        model.addAttribute("especificaciones", especificacionService.listarTodos());
+        model.addAttribute("servicios", servicioService.listarTodos());
+        model.addAttribute("rubros", Rubro.values());
+        model.addAttribute("direcciones", direccionService.listarTodos());
+        return "especificaciones";
     }
+
 
     // 2) FORM-SUBMIT: Crea una especificación y vuelve al listado
     @PostMapping("/create")
-    public String crearEspecificacion(
-            @RequestParam Long servicioId,
-            @RequestParam Rubro rubro,
-            @RequestParam String detalles,
-            @RequestParam Integer direccionId
-    ) {
-        EspecificacionDTO nueva = new EspecificacionDTO(
-            null, servicioId, rubro, detalles, direccionId
-        );
-        especificacionService.crear(nueva);
+    public String crear(@ModelAttribute EspecificacionDTO especificacionDTO, RedirectAttributes redirectAttributes) {
+        try {
+        	especificacionService.crear(especificacionDTO);
+            redirectAttributes.addFlashAttribute("mensaje", "Especificación creada exitosamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al crear especificación: " + e.getMessage());
+        }
         return "redirect:/especificaciones/view";
     }
+
     
     @PostMapping("/delete")
     public String eliminarEspecificacion(@RequestParam Integer id) {
@@ -100,4 +96,3 @@ public class EspecificacionController {
         return especificacionService.crear(nueva);
     }
 }
-

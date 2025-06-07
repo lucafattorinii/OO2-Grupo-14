@@ -87,8 +87,9 @@ public class Especificacion {
 
     public void setServicio(Servicio servicio) {
         this.servicio = servicio;
-        if (servicio != null && servicio.getEspecificacion() != this) {
+        /*if (servicio != null && servicio.getEspecificacion() == null) {
             servicio.setEspecificacion(this);
-        }
+        }*/
     }
+
 }

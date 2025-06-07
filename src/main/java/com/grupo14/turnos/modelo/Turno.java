@@ -45,14 +45,10 @@ public class Turno {
     private Disponibilidad disponibilidad;
 
   
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-        name = "servicio_id",
-        referencedColumnName = "id_servicio",
-        nullable = false,
-        foreignKey = @ForeignKey(name = "turno_servicio_fk")
-    )
+    @ManyToOne
+    @JoinColumn(name = "servicio_id")
     private Servicio servicio;
+
 
     
     public Turno() { }
@@ -138,10 +134,10 @@ public class Turno {
     /**
      * Sincroniza relación bidireccional con Servicio.
      */
+ 
     public void setServicio(Servicio servicio) {
         this.servicio = servicio;
-        if (servicio != null && !servicio.getTurnos().contains(this)) {
-            servicio.getTurnos().add(this);
-        }
     }
+
+
 }
