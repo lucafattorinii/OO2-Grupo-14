@@ -4,6 +4,8 @@ import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Prestador;
 import com.grupo14.turnos.repository.PrestadorRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,11 @@ import java.util.stream.Collectors;
 public class PrestadorService {
 
     private final PrestadorRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
-    public PrestadorService(PrestadorRepository repo) {
+    public PrestadorService(PrestadorRepository repo, PasswordEncoder passwordEncoder) {
         this.repo = repo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PrestadorDTO obtenerPorId(Integer id) {
@@ -64,20 +68,26 @@ public class PrestadorService {
     
     private void actualizarPrestadorDesdeDTO(Prestador p, PrestadorDTO dto) {
         p.setEmail(dto.email());
-        p.setContrasena(dto.contrasena());
+        if (dto.contrasena() != null && !dto.contrasena().isEmpty()) {
+            p.setContrasena(passwordEncoder.encode(dto.contrasena())); // ENCRIPTA la contraseña
+        }
         p.setRazonSocial(dto.razonSocial());
         p.setHabilitado(dto.habilitado());
     }
     
-    public void actualizarPrestador(Integer id, String email, String contrasena, 
-                                   String razonSocial, Boolean habilitado) {
-        Prestador p = repo.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
-        p.setEmail(email);
-        p.setContrasena(contrasena);
-        p.setRazonSocial(razonSocial);
-        p.setHabilitado(habilitado);
-        repo.save(p);
-    }
+    
+    public void actualizarPrestador(Integer id, String email, String contrasena, String razonSocial, Boolean habilitado) {
+			Prestador p = repo.findById(id)
+			.orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
+			p.setEmail(email);
+			
+			if (contrasena != null && !contrasena.isEmpty()) {
+				p.setContrasena(passwordEncoder.encode(contrasena));
+			}
+			
+			p.setRazonSocial(razonSocial);
+			p.setHabilitado(habilitado);
+			repo.save(p);
+}
 }
 
