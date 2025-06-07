@@ -88,14 +88,19 @@ public class UsuarioService {
     }
     
     private String determinarRol(Usuario usuario) {
-        // Lógica para determinar el rol basado en el tipo de usuario
+        String rol;
+
         if (usuario instanceof com.grupo14.turnos.modelo.Cliente) {
-            return "CLIENTE";
+            rol = "CLIENTE";
         } else if (usuario instanceof com.grupo14.turnos.modelo.Empleado) {
-            return "EMPLEADO";
+            rol = "EMPLEADO";
+        } else if (usuario instanceof com.grupo14.turnos.modelo.Prestador) {
+            rol = "PRESTADOR";
         } else {
-            return "USUARIO";
+            rol = "USUARIO";
         }
+
+        return rol;
     }
     
     public UsuarioDTO login(String email, String contrasena) {
