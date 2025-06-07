@@ -8,5 +8,9 @@ public record PrestadorDTO(
         @NotNull String contrasena,
         @NotNull String razonSocial,
         @NotNull Boolean habilitado
-) {}
+) {
+    public String rol() {
+        return "PRESTADOR";
+    }
+}
 
