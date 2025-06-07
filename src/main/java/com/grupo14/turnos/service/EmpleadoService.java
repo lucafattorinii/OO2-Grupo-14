@@ -82,6 +82,7 @@ public class EmpleadoService {
         e.setCuit(dto.cuit());
         e.setLegajo(dto.legajo());
         e.setPuestoCargo(dto.puestoCargo());
+        e.setRol("EMPLEADO");
     }
     
     public void actualizarEmpleado(Integer id, String email, String contrasena, Long dni, String nombre,
@@ -101,6 +102,7 @@ public class EmpleadoService {
 			e.setCuit(cuit);
 			e.setLegajo(legajo);
 			e.setPuestoCargo(puestoCargo);
+			e.setRol("EMPLEADO");
 			repo.save(e);
 }
 }
