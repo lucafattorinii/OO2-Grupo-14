@@ -1,47 +1,195 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Editar Datos</title>
+  <meta charset="UTF-8" />
+  <title>Editar Datos Personales</title>
+  <style>
+    
+    :root {
+      --dark:        #2c3e50;
+      --medium:      #555555;
+      --light:       #ffffff;
+      --accent:      #1abc9c;
+      --bg-start:    #e0eafc;
+      --bg-end:      #cfdef3;
+      --input-bg:    #f5f5f5;
+      --input-border:#ccc;
+    }
+
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, var(--bg-start), var(--bg-end));
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+   
+    header {
+      background-color: var(--dark);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      color: var(--light);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.75rem;
+    }
+
+   
+    .container {
+      max-width: 480px;
+      margin: 2.5rem auto;
+      background-color: var(--light);
+      padding: 2rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+   
+    form .form-group {
+      margin-bottom: 1rem;
+    }
+    form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    form input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--input-border);
+      border-radius: 0.375rem;
+      background-color: var(--input-bg);
+      font-size: 1rem;
+      color: var(--dark);
+    }
+    form button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--accent);
+      color: var(--light);
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      margin-top: 1.5rem;
+    }
+    form button:hover {
+      background-color: #16a085;
+    }
+
+  
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.25rem;
+      color: var(--medium);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+   
+    @media (max-width: 500px) {
+      .container {
+        margin: 1.5rem 1rem;
+        padding: 1.5rem 1rem;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+      form input,
+      form button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
 </head>
 <body>
+
+  <header>
     <h1>Editar Datos Personales</h1>
+  </header>
 
-    <form action="/cliente/editar-datos" method="post">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" th:value="${cliente.email}" required />
+  <div class="container">
+    <form th:action="@{/cliente/editar-datos}" method="post" th:object="${cliente}">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          th:field="*{email}"
+          required
+        />
+      </div>
 
-        <br/>
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <input
+          type="password"
+          id="contrasena"
+          th:field="*{contrasena}"
+          required
+        />
+      </div>
 
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" name="contrasena" th:value="${cliente.contrasena}" required />
+      <div class="form-group">
+        <label for="numeroCliente">Número de Cliente</label>
+        <input
+          type="number"
+          id="numeroCliente"
+          th:field="*{numeroCliente}"
+          required
+        />
+      </div>
 
-        <br/>
+      <div class="form-group">
+        <label for="dni">DNI</label>
+        <input
+          type="number"
+          id="dni"
+          th:field="*{dni}"
+          required
+        />
+      </div>
 
-        <label for="numeroCliente">Número de Cliente:</label>
-        <input type="number" id="numeroCliente" name="numeroCliente" th:value="${cliente.numeroCliente}" required />
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          th:field="*{nombre}"
+          required
+        />
+      </div>
 
-        <br/>
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          th:field="*{apellido}"
+          required
+        />
+      </div>
 
-        <label for="dni">DNI:</label>
-        <input type="number" id="dni" name="dni" th:value="${cliente.dni}" required />
-
-        <br/>
-
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" th:value="${cliente.nombre}" required />
-
-        <br/>
-
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" th:value="${cliente.apellido}" required />
-
-        <br/><br/>
-
-        <button type="submit">Guardar Cambios</button>
+      <button type="submit">Guardar Cambios</button>
     </form>
 
-    <br/>
-    <a href="/cliente/menu">Volver al menú</a>
+    <a th:href="@{/cliente/menu}" class="back-link">← Volver al Menú</a>
+  </div>
+
 </body>
 </html>
