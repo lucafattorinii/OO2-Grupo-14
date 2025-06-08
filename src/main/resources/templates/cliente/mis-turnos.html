@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Turnos</title>
+</head>
+<body>
+    <h1>Mis Turnos</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Servicio</th>
+                <th>Acciones</th> <!-- Nueva columna -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="turno : ${turnos}">
+                <td th:text="${turno.fecha}"></td>
+                <td th:text="${turno.hora}"></td>
+                <td th:text="${turno.estado}"></td>
+                <td th:text="${turno.servicio}"></td>
+                <td>
+                    <form th:action="@{/turnos/{id}/eliminar(id=${turno.id})}" method="post">
+                        <button type="submit">Cancelar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <form th:action="@{/cliente/menu}" method="get">
+        <button type="submit">Volver al menú</button>
+    </form>
+</body>
+</html>

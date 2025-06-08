@@ -13,5 +13,8 @@ public record EmpleadoDTO(
         @NotNull Long cuit,
         @NotNull Integer legajo,
         @NotNull String puestoCargo
-) {}
-
+) {
+    public String rol() {
+        return "EMPLEADO";
+    }
+}

@@ -1,6 +1,7 @@
 package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.TurnoDTO;
+import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Cliente;
 import com.grupo14.turnos.modelo.Disponibilidad;
@@ -161,6 +162,26 @@ public class TurnoService {
     
     public List<EstadoTurno> listarEstados() {
         return List.of(EstadoTurno.values());
+    }
+    
+    private TurnoVistaDTO convertirATurnoVistaDTO(Turno t) {
+        return new TurnoVistaDTO(
+            t.getFecha(),
+            t.getHora(),
+            t.getEstado().name(),
+            t.getCliente().getNombre(),    
+            t.getServicio().getNombre()      
+        );
+    }
+    
+    public List<TurnoVistaDTO> listarPorClienteId(Integer clienteId) {
+        if (!cliRepo.existsById(clienteId)) {
+            throw new RecursoNoEncontradoException("Cliente no encontrado: " + clienteId);
+        }
+
+        return repo.findByClienteId(clienteId).stream()
+            .map(this::convertirATurnoVistaDTO)
+            .collect(Collectors.toList());
     }
 }
 

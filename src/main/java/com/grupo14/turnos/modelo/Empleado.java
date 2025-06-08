@@ -48,10 +48,10 @@ public class Empleado extends Persona {
    
     public Empleado() { }
 
-    public Empleado(String email, String contrasena,
+    public Empleado(String email, String contrasena, String rol,
                     String nombre, String apellido, Long dni,
                     Long cuit, Integer legajo, String puestoCargo) {
-        super(email, contrasena, nombre, apellido, dni);
+        super(email, contrasena, rol, nombre, apellido, dni);
         this.cuit = cuit;
         this.legajo = legajo;
         this.puestoCargo = puestoCargo;

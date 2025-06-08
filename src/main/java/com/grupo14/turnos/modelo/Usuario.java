@@ -18,13 +18,17 @@ public class Usuario {
 
     @Column(name = "contrasena", length = 255, nullable = false)
     private String contrasena;
+    
+    @Column(name = "rol", length = 20, nullable = false)
+    private String rol;
 
     
     public Usuario() { }
 
-    public Usuario(String email, String contrasena) {
+    public Usuario(String email, String contrasena, String rol) {
         this.email = email;
         this.contrasena = contrasena;
+        this.rol=rol;
     }
 
     
@@ -53,4 +57,12 @@ public class Usuario {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Menú Prestador</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenido, Prestador</h1>
+    <p>Este es tu menú principal.</p>
+
+    <nav>
+      <ul>
+        <li><a th:href="@{/logout}">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </div>
+</body>
+</html>

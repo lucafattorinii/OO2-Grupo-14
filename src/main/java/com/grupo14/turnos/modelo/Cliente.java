@@ -27,10 +27,10 @@ public class Cliente extends Persona {
   
     public Cliente() { }
 
-    public Cliente(String email, String contrasena,
+    public Cliente(String email, String contrasena, String rol,
                    String nombre, String apellido, Long dni,
                    Long numeroCliente) {
-        super(email, contrasena, nombre, apellido, dni);
+        super(email, contrasena, rol, nombre, apellido, dni);
         this.numeroCliente = numeroCliente;
     }
 

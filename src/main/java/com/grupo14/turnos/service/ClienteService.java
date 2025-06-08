@@ -4,6 +4,8 @@ import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Cliente;
 import com.grupo14.turnos.repository.ClienteRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,11 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
 	private final ClienteRepository repo;
+	private final PasswordEncoder passwordEncoder;
 
-	public ClienteService(ClienteRepository repo) {
+	public ClienteService(ClienteRepository repo, PasswordEncoder passwordEncoder) {
 		this.repo = repo;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public ClienteDTO obtenerPorId(Integer id) {
@@ -40,30 +44,37 @@ public class ClienteService {
 	}
 
 	public ClienteDTO actualizarCliente(Integer id, String email, String contrasena, Long numeroCliente, Long dni,
-			String nombre, String apellido) {
-		Cliente c = repo.findById(id)
-				.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + id));
-
-// reasigna todos los campos
-		c.setEmail(email);
-		c.setContrasena(contrasena);
-		c.setNumeroCliente(numeroCliente);
-		c.setDni(dni);
-		c.setNombre(nombre);
-		c.setApellido(apellido);
-
-		Cliente actualizado = repo.save(c);
-		return mapToDTO(actualizado);
-	}
+            String nombre, String apellido) {
+			Cliente c = repo.findById(id)
+			.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + id));
+			
+			// reasigna todos los campos
+			c.setEmail(email);
+			
+			// Encriptar la contraseña solo si viene no nula
+			if (contrasena != null && !contrasena.isEmpty()) {
+				c.setContrasena(passwordEncoder.encode(contrasena));
+			}
+			
+			c.setNumeroCliente(numeroCliente);
+			c.setDni(dni);
+			c.setNombre(nombre);
+			c.setApellido(apellido);
+			c.setRol("CLIENTE");
+			
+			Cliente actualizado = repo.save(c);
+			return mapToDTO(actualizado);
+		}
 
 	public ClienteDTO crear(ClienteDTO dto) {
 		Cliente c = new Cliente();
 		c.setEmail(dto.email());
-		c.setContrasena(dto.contrasena());
+		c.setContrasena(passwordEncoder.encode(dto.contrasena())); //Encriptacion 
 		c.setNumeroCliente(dto.numeroCliente());
 		c.setDni(dto.dni());
 		c.setNombre(dto.nombre());
 		c.setApellido(dto.apellido());
+		c.setRol("CLIENTE");
 		Cliente guardado = repo.save(c);
 		return mapToDTO(guardado);
 	}

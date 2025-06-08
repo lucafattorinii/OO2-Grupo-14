@@ -8,4 +8,5 @@ import java.util.List;
 public interface TurnoRepository extends JpaRepository<Turno, Integer> {
     List<Turno> findByEstado(String estado);
     List<Turno> findByEstado(EstadoTurno estado);
+    List<Turno> findByClienteId(Integer clienteId);
 }

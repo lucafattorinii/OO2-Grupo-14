@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Crear Nuevo Turno</title>
+</head>
+<body>
+    <h1>Crear Nuevo Turno</h1>
+
+    <form action="/cliente/crear-turno" method="post">
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required />
+
+        <br/>
+
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" name="hora" required />
+
+        <br/>
+
+        <label for="servicioId">Servicio:</label>
+        <select id="servicioId" name="servicioId" required>
+            <option value="" disabled selected>-- Seleccione un servicio --</option>
+            <!-- Se iteran los servicios disponibles -->
+            <th:block th:each="servicio : ${servicios}">
+                <option th:value="${servicio.id}" th:text="${servicio.tipoDeServicio}"></option>
+            </th:block>
+        </select>
+
+        <br/>
+
+        <label for="disponibilidadId">Disponibilidad:</label>
+        <select id="disponibilidadId" name="disponibilidadId" required>
+            <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
+            <!-- Se iteran las disponibilidades -->
+            <th:block th:each="disp : ${disponibilidades}">
+                <option th:value="${disp.id}" th:text="${disp.dia} + ' - ' + ${disp.horaInicio} + ' a ' + ${disp.horaFin}"></option>
+            </th:block>
+        </select>
+
+        <br/><br/>
+
+        <button type="submit">Crear Turno</button>
+    </form>
+
+    <br/>
+    <a href="/cliente/menu">Volver al menú</a>
+</body>
+</html>
