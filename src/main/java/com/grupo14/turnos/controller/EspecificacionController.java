@@ -64,7 +64,7 @@ public class EspecificacionController {
     	String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
 
 
-        EspecificacionDTO dto = new EspecificacionDTO(null, servicioId, rubro, detalles, direccionId, servicioNombre);
+        EspecificacionDTO dto = new EspecificacionDTO(null, servicioId, rubro, detalles, direccionId, servicioNombre, null);
         especificacionService.crear(dto);
         return "redirect:/especificaciones/view";
     }
@@ -87,7 +87,7 @@ public class EspecificacionController {
         ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
         String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
 
-        EspecificacionDTO dto = new EspecificacionDTO(id, servicioId, rubro, detalles, direccionId, servicioNombre);
+        EspecificacionDTO dto = new EspecificacionDTO(id, servicioId, rubro, detalles, direccionId, servicioNombre, null);
         especificacionService.actualizar(dto);
         return "redirect:/especificaciones/view";
     }

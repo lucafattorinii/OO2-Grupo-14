@@ -34,6 +34,10 @@ public class EspecificacionServiceImpl implements EspecificacionService {
             String nombreServicio = Optional.ofNullable(e.getServicio())
                     .map(Servicio::getNombre)
                     .orElse("Servicio no disponible");
+            
+            String direccionTexto = Optional.ofNullable(e.getDireccion())
+            	    .map(d -> d.getCalle() + " " + d.getNumeroCalle())
+            	    .orElse("Dirección no disponible");
 
             Integer direccionId = Optional.ofNullable(e.getDireccion())
                     .map(Direccion::getIdDireccion)
@@ -45,7 +49,8 @@ public class EspecificacionServiceImpl implements EspecificacionService {
                     e.getRubro(),
                     e.getDetalles(),
                     direccionId,
-                    nombreServicio
+                    nombreServicio,
+                    direccionTexto
             );
         }).collect(Collectors.toList());
     }
