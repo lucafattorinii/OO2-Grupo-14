@@ -34,21 +34,33 @@ public class LoginController {
         HttpSession session,
         Model model
     ) {
+        String destino;
+
         try {
             UsuarioDTO usuario = usuarioService.login(email, contrasena);
             session.setAttribute("usuario", usuario);
 
-            if ("CLIENTE".equalsIgnoreCase(usuario.rol())) {
-                return "redirect:/cliente/menu";
-            } else if ("EMPLEADO".equalsIgnoreCase(usuario.rol())) {
-                return "redirect:/empleado/menu";
-            } else {
-                model.addAttribute("error", "Rol desconocido.");
-                return "login";
+            String rol = usuario.rol().toUpperCase();
+
+            switch (rol) {
+                case "CLIENTE":
+                    destino = "redirect:/cliente/menu";
+                    break;
+                case "EMPLEADO":
+                    destino = "redirect:/empleado/menu";
+                    break;
+                case "PRESTADOR":
+                    destino = "redirect:/prestador/menu";
+                    break;
+                default:
+                    model.addAttribute("error", "Rol desconocido.");
+                    destino = "login";
             }
         } catch (Exception e) {
             model.addAttribute("error", "Credenciales inválidas.");
-            return "login";
+            destino = "login";
         }
+
+        return destino;
     }
 }
