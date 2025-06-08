@@ -10,5 +10,6 @@ public record EspecificacionDTO(
 	    @NotNull Rubro rubro,
 	    @NotNull String detalles,
 	    @NotNull Integer direccionId,
-	    String servicioNombre
+	    String servicioNombre,
+	    String direccionTexto
 	) {}
