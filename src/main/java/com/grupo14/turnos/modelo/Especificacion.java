@@ -1,6 +1,7 @@
 package com.grupo14.turnos.modelo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "especificacion")
@@ -91,5 +92,10 @@ public class Especificacion {
             servicio.setEspecificacion(this);
         }*/
     }
+
+	public void setIdDireccion(@NotNull Integer direccionId) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

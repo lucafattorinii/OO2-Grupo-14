@@ -42,12 +42,13 @@
         </thead>
         <tbody>
           <tr th:each="e, stat : ${especificaciones}">
-            <td th:text="${stat.count}"></td>
-            <td th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre()}"></td>
-            <td th:text="${e.rubro()}"></td>
-            <td th:text="${e.detalles()}"></td>
-            <td th:text="${#lists.findFirst(direcciones, d -> d.id() == e.direccionId())?.calle() + ' ' + #lists.findFirst(direcciones, d -> d.id() == e.direccionId())?.numeroCalle()}"></td>
-          </tr>
+  <td th:text="${stat.count}"></td>
+  <td th:text="${e.servicioNombre()}"></td>  <!-- corregido -->
+  <td th:text="${e.rubro()}"></td>
+  <td th:text="${e.detalles()}"></td>
+  <td th:text="${e.servicioNombre()}"></td>  <!-- este es el que estaba mal -->
+</tr>
+
         </tbody>
       </table>
 
@@ -104,7 +105,8 @@
               <label>Especificación a eliminar:</label>
               <select name="id" required>
                 <option value="">Seleccione una especificación</option>
-                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre() + ' - ' + e.rubro()}"></option>
+                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${e.servicioNombre() + ' - ' + e.rubro()}"
+                ></option>
               </select>
             </div>
             <div class="form-actions">
@@ -125,7 +127,7 @@
               <label>Especificación a modificar:</label>
               <select name="id" required>
                 <option value="">Seleccione una especificación</option>
-                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${#lists.findFirst(servicios, s -> s.idServicio() == e.servicioId())?.nombre() + ' - ' + e.rubro()}"></option>
+                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${e.servicioNombre() + ' - ' + e.rubro()}"></option>
               </select>
             </div>
             <div class="form-group">
