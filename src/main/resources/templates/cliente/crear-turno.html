@@ -1,49 +1,170 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Crear Nuevo Turno</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear Nuevo Turno</title>
+  <style>
+
+    :root {
+      --dark:         #2c3e50;
+      --medium:       #555555;
+      --light:        #ffffff;
+      --accent:       #1abc9c;
+      --bg-start:     #e0eafc;
+      --bg-end:       #cfdef3;
+      --input-bg:     #f5f5f5;
+      --input-border: #ccc;
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, var(--bg-start), var(--bg-end));
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+
+    header {
+      background-color: var(--dark);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      color: var(--light);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.75rem;
+    }
+
+ 
+    .container {
+      max-width: 480px;
+      margin: 2.5rem auto;
+      background-color: var(--light);
+      padding: 2rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+ 
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--input-border);
+      border-radius: 0.375rem;
+      background-color: var(--input-bg);
+      font-size: 1rem;
+      color: var(--dark);
+    }
+    form button {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      background-color: var(--accent);
+      color: var(--light);
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+    }
+    form button:hover {
+      background-color: #16a085;
+    }
+
+    
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.25rem;
+      color: var(--medium);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+
+    @media (max-width: 500px) {
+      .container {
+        margin: 1.5rem 1rem;
+        padding: 1.5rem 1rem;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+      .form-group input,
+      .form-group select,
+      form button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
 </head>
 <body>
+
+  <header>
     <h1>Crear Nuevo Turno</h1>
+  </header>
 
-    <form action="/cliente/crear-turno" method="post">
-        <label for="fecha">Fecha:</label>
+  <div class="container">
+    <form th:action="@{/cliente/crear-turno}" method="post">
+      <div class="form-group">
+        <label for="fecha">Fecha</label>
         <input type="date" id="fecha" name="fecha" required />
+      </div>
 
-        <br/>
-
-        <label for="hora">Hora:</label>
+      <div class="form-group">
+        <label for="hora">Hora</label>
         <input type="time" id="hora" name="hora" required />
+      </div>
 
-        <br/>
-
-        <label for="servicioId">Servicio:</label>
+      <div class="form-group">
+        <label for="servicioId">Servicio</label>
         <select id="servicioId" name="servicioId" required>
-            <option value="" disabled selected>-- Seleccione un servicio --</option>
-            <!-- Se iteran los servicios disponibles -->
-            <th:block th:each="servicio : ${servicios}">
-                <option th:value="${servicio.id}" th:text="${servicio.tipoDeServicio}"></option>
-            </th:block>
+          <option value="" disabled selected>-- Seleccione un servicio --</option>
+          <th:block th:each="servicio : ${servicios}">
+            <option th:value="${servicio.id}"
+                    th:text="${servicio.tipoDeServicio}"></option>
+          </th:block>
         </select>
+      </div>
 
-        <br/>
-
-        <label for="disponibilidadId">Disponibilidad:</label>
+      <div class="form-group">
+        <label for="disponibilidadId">Disponibilidad</label>
         <select id="disponibilidadId" name="disponibilidadId" required>
-            <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
-            <!-- Se iteran las disponibilidades -->
-            <th:block th:each="disp : ${disponibilidades}">
-                <option th:value="${disp.id}" th:text="${disp.dia} + ' - ' + ${disp.horaInicio} + ' a ' + ${disp.horaFin}"></option>
-            </th:block>
+          <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
+          <th:block th:each="disp : ${disponibilidades}">
+            <option th:value="${disp.id}"
+                    th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
+          </th:block>
         </select>
+      </div>
 
-        <br/><br/>
-
-        <button type="submit">Crear Turno</button>
+      <button type="submit">Crear Turno</button>
     </form>
 
-    <br/>
-    <a href="/cliente/menu">Volver al menú</a>
+    <a th:href="@{/cliente/menu}" class="back-link">← Volver al Menú</a>
+  </div>
+
 </body>
 </html>
