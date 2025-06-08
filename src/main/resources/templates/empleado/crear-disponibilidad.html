@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registrar Disponibilidad</title>
+</head>
+<body>
+<h1>Registrar Disponibilidad</h1>
+
+<!-- Mensaje de éxito -->
+<div th:if="${exito}" style="color: green;">
+    <p th:text="${exito}"></p>
+</div>
+
+<!-- Mensaje de error -->
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/empleado/disponibilidad}" th:object="${disponibilidad}" method="post">
+
+    <label>Día de la semana:</label>
+    <select th:field="*{diaSemana}">
+        <option th:each="dia : ${diasSemana}" th:value="${dia}" th:text="${dia}"></option>
+    </select>
+    <br><br>
+
+    <label>Servicio:</label>
+    <select th:field="*{servicioId}">
+        <option th:each="s : ${servicios}" th:value="${s.id}" th:text="${s.nombre}"></option>
+    </select>
+    <br><br>
+
+    <label>Hora de inicio:</label>
+    <input type="time" th:field="*{horaInicio}"/>
+    <br><br>
+
+    <label>Hora de fin:</label>
+    <input type="time" th:field="*{horaFin}"/>
+    <br><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+</body>
+</html>
