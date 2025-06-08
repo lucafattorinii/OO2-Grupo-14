@@ -1,15 +1,28 @@
 package com.grupo14.turnos.controller;
 
+import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.service.TurnoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/cliente")
 public class ClienteMenuController {
+
+    private final TurnoService turnoService;
+
+    // Inyección por constructor
+    public ClienteMenuController(TurnoService turnoService) {
+        this.turnoService = turnoService;
+    }
 
     @GetMapping("/menu")
     public String menuCliente(HttpSession session, Model model) {
@@ -18,6 +31,36 @@ public class ClienteMenuController {
             return "redirect:/login"; // si no está logueado, lo mando a login
         }
         model.addAttribute("usuario", usuario);
-        return "cliente/menu"; 
+        return "cliente/menu";
+    }
+
+    @GetMapping("/mis-turnos")
+    public String verMisTurnos(HttpSession session, Model model) {
+        String vista;
+
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuario == null) {
+            vista = "redirect:/login";
+        } else {
+        	List<TurnoVistaDTO> misTurnos = turnoService.listarPorClienteId(usuario.id());
+        	model.addAttribute("turnos", misTurnos);
+            vista = "cliente/mis-turnos";
+        }
+
+        return vista;
+    }
+    
+    @PostMapping("/turnos/{id}/eliminar")
+    public String eliminarTurno(@PathVariable Integer id, HttpSession session) {
+        String vista = "redirect:/mis-turnos"; 
+        
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuario == null) {
+            vista = "redirect:/login";
+        } else {
+            turnoService.eliminar(id);
+        }
+        
+        return vista;
     }
 }
