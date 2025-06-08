@@ -9,6 +9,9 @@ import com.grupo14.turnos.service.ServicioService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -92,7 +95,7 @@ public class EmpleadoMenuController {
             ));
             model.addAttribute("diasSemana", disponibilidadService.listarDiasSemana());
             model.addAttribute("servicios", servicioService.listarTodos());
-            vista = "empleado/disponibilidad";
+            vista = "empleado/crear-disponibilidad";
         }
 
         return vista;
@@ -121,7 +124,7 @@ public class EmpleadoMenuController {
                 model.addAttribute("disponibilidad", dto);
             }
 
-            vista = "empleado/disponibilidad";
+            vista = "empleado/crear-disponibilidad";
         }
 
         return vista;
@@ -147,4 +150,25 @@ public class EmpleadoMenuController {
 
         return exito;
     }
+    /*
+    @GetMapping("/ver-disponibilidades")
+    public String verDisponibilidadesDelServicioDelEmpleado(HttpSession session, Model model) {
+        String vista = "redirect:/login";
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+
+        if (usuario != null) {
+            EmpleadoDTO empleado = empleadoService.obtenerPorId(usuario.id());
+
+            if (empleado != null && empleado. != null) {
+                List<DisponibilidadDTO> disponibilidades = disponibilidadService.obtenerPorServicio(empleado.servicioId());
+                model.addAttribute("disponibilidades", disponibilidades);
+                vista = "empleado/ver-disponibilidades"; // Nombre del HTML
+            } else {
+                model.addAttribute("error", "No se encontró el servicio del empleado.");
+                vista = "empleado/menu"; // o alguna otra vista apropiada
+            }
+        }
+
+        return vista;
+    }*/
 }
