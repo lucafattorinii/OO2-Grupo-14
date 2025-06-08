@@ -2,22 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crear Nuevo Turno</title>
+  <title>Editar Datos Personales</title>
   <style>
-
+    
     :root {
-      --dark:         #2c3e50;
-      --medium:       #555555;
-      --light:        #ffffff;
-      --accent:       #1abc9c;
-      --bg-start:     #e0eafc;
-      --bg-end:       #cfdef3;
-      --input-bg:     #f5f5f5;
-      --input-border: #ccc;
+      --dark:        #2c3e50;
+      --medium:      #555555;
+      --light:       #ffffff;
+      --accent:      #1abc9c;
+      --bg-start:    #e0eafc;
+      --bg-end:      #cfdef3;
+      --input-bg:    #f5f5f5;
+      --input-border:#ccc;
     }
 
-
+    
     * {
       box-sizing: border-box;
       margin: 0;
@@ -30,7 +29,7 @@
       line-height: 1.5;
     }
 
-
+   
     header {
       background-color: var(--dark);
       padding: 1.25rem 1rem;
@@ -42,28 +41,27 @@
       font-size: 1.75rem;
     }
 
- 
+   
     .container {
       max-width: 480px;
       margin: 2.5rem auto;
       background-color: var(--light);
       padding: 2rem 1.5rem;
       border-radius: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
- 
-    .form-group {
+   
+    form .form-group {
       margin-bottom: 1rem;
     }
-    .form-group label {
+    form label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
       color: var(--dark);
     }
-    .form-group input,
-    .form-group select {
+    form input {
       width: 100%;
       padding: 0.6rem 0.8rem;
       border: 1px solid var(--input-border);
@@ -75,7 +73,6 @@
     form button {
       display: block;
       width: 100%;
-      margin-top: 1.5rem;
       padding: 0.75rem;
       background-color: var(--accent);
       color: var(--light);
@@ -85,12 +82,13 @@
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.25s ease;
+      margin-top: 1.5rem;
     }
     form button:hover {
       background-color: #16a085;
     }
 
-    
+  
     .back-link {
       display: block;
       text-align: center;
@@ -103,7 +101,7 @@
       color: var(--accent);
     }
 
-
+   
     @media (max-width: 500px) {
       .container {
         margin: 1.5rem 1rem;
@@ -112,8 +110,7 @@
       header h1 {
         font-size: 1.5rem;
       }
-      .form-group input,
-      .form-group select,
+      form input,
       form button {
         font-size: 0.95rem;
       }
@@ -123,44 +120,72 @@
 <body>
 
   <header>
-    <h1>Crear Nuevo Turno</h1>
+    <h1>Editar Datos Personales</h1>
   </header>
 
   <div class="container">
-    <form th:action="@{/cliente/crear-turno}" method="post">
+    <form th:action="@{/cliente/editar-datos}" method="post" th:object="${cliente}">
       <div class="form-group">
-        <label for="fecha">Fecha</label>
-        <input type="date" id="fecha" name="fecha" required />
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          th:field="*{email}"
+          required
+        />
       </div>
 
       <div class="form-group">
-        <label for="hora">Hora</label>
-        <input type="time" id="hora" name="hora" required />
+        <label for="contrasena">Contraseña</label>
+        <input
+          type="password"
+          id="contrasena"
+          th:field="*{contrasena}"
+          required
+        />
       </div>
 
       <div class="form-group">
-        <label for="servicioId">Servicio</label>
-        <select id="servicioId" name="servicioId" required>
-          <option value="" disabled selected>-- Seleccione un servicio --</option>
-          <th:block th:each="servicio : ${servicios}">
-            <option th:value="${servicio.id}"
-                    th:text="${servicio.tipoDeServicio}"></option>
-          </th:block>
-        </select>
+        <label for="numeroCliente">Número de Cliente</label>
+        <input
+          type="number"
+          id="numeroCliente"
+          th:field="*{numeroCliente}"
+          required
+        />
       </div>
 
       <div class="form-group">
-        <label for="disponibilidadId">Disponibilidad</label>
-        <select id="disponibilidadId" name="disponibilidadId" required>
-          <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
-          <th:block th:each="disp : ${disponibilidades}">
-            <option th:value="${disp.id}"
-                    th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
-          </th:block>
-        </select>
+        <label for="dni">DNI</label>
+        <input
+          type="number"
+          id="dni"
+          th:field="*{dni}"
+          required
+        />
       </div>
 
-      <button type="submit">Crear Turno</button>
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          th:field="*{nombre}"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          th:field="*{apellido}"
+          required
+        />
+      </div>
+
+      <button type="submit">Guardar Cambios</button>
     </form>
 
     <a th:href="@{/cliente/menu}" class="back-link">← Volver al Menú</a>
