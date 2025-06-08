@@ -3,6 +3,7 @@ package com.grupo14.turnos.controller;
 import com.grupo14.turnos.dto.DireccionDTO;
 import com.grupo14.turnos.dto.EspecificacionDTO;
 import com.grupo14.turnos.dto.ServicioDTO;
+import com.grupo14.turnos.modelo.Especificacion;
 import com.grupo14.turnos.modelo.Rubro;
 import com.grupo14.turnos.service.DireccionService;
 import com.grupo14.turnos.service.EspecificacionService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/especificaciones")
@@ -36,45 +38,62 @@ public class EspecificacionController {
 
     // 1) VISTA HTML: Listado + Formulario
     @GetMapping("/view")
-    public String verEspecificaciones(Model model) {
-        model.addAttribute("especificaciones", especificacionService.listarTodos());
-        model.addAttribute("servicios", servicioService.listarTodos());
-        model.addAttribute("rubros", Rubro.values());
-        model.addAttribute("direcciones", direccionService.listarTodos());
+    public String viewEspecificaciones(Model model) {
+        List<EspecificacionDTO> especificaciones = especificacionService.listarTodos();
+        List<ServicioDTO> servicios = servicioService.listarTodos();
+        List<Rubro> rubros = List.of(Rubro.values());
+
+        List<DireccionDTO> direcciones = direccionService.listarTodos();
+
+        model.addAttribute("especificaciones", especificaciones);
+        model.addAttribute("servicios", servicios);
+        model.addAttribute("rubros", rubros);
+        model.addAttribute("direcciones", direcciones);
+
         return "especificaciones";
     }
 
 
     // 2) FORM-SUBMIT: Crea una especificación y vuelve al listado
     @PostMapping("/create")
-    public String crear(@ModelAttribute EspecificacionDTO especificacionDTO, RedirectAttributes redirectAttributes) {
-        try {
-        	especificacionService.crear(especificacionDTO);
-            redirectAttributes.addFlashAttribute("mensaje", "Especificación creada exitosamente.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al crear especificación: " + e.getMessage());
-        }
+    public String crear(@RequestParam Long servicioId,
+                        @RequestParam Rubro rubro,
+                        @RequestParam String detalles,
+                        @RequestParam Integer direccionId) {
+    	ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
+    	String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
+
+
+        EspecificacionDTO dto = new EspecificacionDTO(null, servicioId, rubro, detalles, direccionId, servicioNombre);
+        especificacionService.crear(dto);
         return "redirect:/especificaciones/view";
     }
 
+
     
     @PostMapping("/delete")
-    public String eliminarEspecificacion(@RequestParam Integer id) {
+    public String eliminar(@RequestParam Integer id) {
         especificacionService.eliminar(id);
         return "redirect:/especificaciones/view";
     }
 
     @PostMapping("/update")
-    public String modificarEspecificacion(
-        @RequestParam Integer id,
-        @RequestParam Long servicioId,
-        @RequestParam Rubro rubro,
-        @RequestParam String detalles,
-        @RequestParam Integer direccionId
-    ) {
-        especificacionService.actualizarEspecificacion(id, servicioId, rubro, detalles, direccionId);
+    public String actualizar(@RequestParam Integer id,
+                             @RequestParam Long servicioId,
+                             @RequestParam Rubro rubro,
+                             @RequestParam String detalles,
+                             @RequestParam Integer direccionId) {
+
+        ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
+        String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
+
+        EspecificacionDTO dto = new EspecificacionDTO(id, servicioId, rubro, detalles, direccionId, servicioNombre);
+        especificacionService.actualizar(dto);
         return "redirect:/especificaciones/view";
     }
+
+
+
 
     // API REST endpoints
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -85,14 +104,15 @@ public class EspecificacionController {
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public EspecificacionDTO obtenerJson(@PathVariable Integer id) {
-        return especificacionService.obtenerPorId(id);
+    public Optional<Especificacion> obtenerJson(@PathVariable Integer id) {
+        return especificacionService.buscarPorId(id);
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
-                          produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public EspecificacionDTO crearJson(@RequestBody EspecificacionDTO nueva) {
-        return especificacionService.crear(nueva);
-    }
+            produces = MediaType.APPLICATION_JSON_VALUE)
+@ResponseBody
+public void crearJson(@RequestBody EspecificacionDTO nueva) {
+especificacionService.crear(nueva);
+}
+
 }

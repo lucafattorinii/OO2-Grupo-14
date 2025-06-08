@@ -9,5 +9,6 @@ public record EspecificacionDTO(
 	    @NotNull Long servicioId,
 	    @NotNull Rubro rubro,
 	    @NotNull String detalles,
-	    @NotNull Integer direccionId
+	    @NotNull Integer direccionId,
+	    String servicioNombre
 	) {}
