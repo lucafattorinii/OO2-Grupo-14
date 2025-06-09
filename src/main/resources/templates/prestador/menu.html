@@ -3,18 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <title>Menú Prestador</title>
-  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    body {
+      background-color: #f4f9ff;
+      font-family: Arial, sans-serif;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #ffffff;
+      box-shadow: 0 0 12px rgba(0, 0, 50, 0.1);
+      border-radius: 10px;
+    }
+
+    h1 {
+      color: #003366;
+      border-bottom: 2px solid #003366;
+      padding-bottom: 0.5rem;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #0055aa;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: #003366;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      border: 1px solid #cce0ff;
+      padding: 0.8rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #cce0ff;
+      color: #003366;
+    }
+
+    .btn-delete, .btn-add {
+      background-color: #0055aa;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-delete:hover, .btn-add:hover {
+      background-color: #003366;
+    }
+
+    .form-agregar input {
+      margin: 0.5rem 0.5rem 0.5rem 0;
+      padding: 0.4rem;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Bienvenido, Prestador</h1>
-    <p>Este es tu menú principal.</p>
+    <h1>Bienvenido, <span th:text="${prestador.razonSocial}">Prestador</span></h1>
 
     <nav>
       <ul>
-        <li><a th:href="@{/logout}">Cerrar Sesión</a></li>
+        <li><a th:href="@{/prestador/mis-datos}">Ver/Editar Mis Datos</a></li>
+        <li><a th:href="@{/login}">Cerrar Sesión</a></li>
       </ul>
     </nav>
+
+    <section class="servicios">
+      <h2>Mis Servicios</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Duración (min)</th>
+            <th>Precio ($)</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="servicio : ${servicios}">
+            <td th:text="${servicio.nombre}">Nombre</td>
+            <td th:text="${servicio.duracionMin}">Duración</td>
+            <td th:text="${servicio.precio}">Precio</td>
+            <td>
+              <form th:action="@{/prestador/eliminar-servicio}" method="post">
+                <input type="hidden" name="id" th:value="${servicio.idServicio}" />
+                <button type="submit" class="btn-delete">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Agregar Nuevo Servicio</h3>
+      <form th:action="@{/prestador/guardar-servicio}" method="post" class="form-agregar">
+        <input type="text" name="nombre" placeholder="Nombre del servicio" required />
+        <input type="number" name="duracionMin" placeholder="Duración en minutos" required />
+        <input type="number" step="0.01" name="precio" placeholder="Precio $" required />
+        <button type="submit" class="btn-add">Agregar</button>
+      </form>
+    </section>
   </div>
 </body>
 </html>
