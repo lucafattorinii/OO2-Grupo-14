@@ -83,7 +83,7 @@ public class EmpleadoMenuController {
 
         return vista;
     }
-    
+    /*
     @GetMapping("/crear-disponibilidad")
     public String mostrarFormularioDisponibilidad(HttpSession session, Model model) {
         String vista = "redirect:/login";
@@ -149,7 +149,7 @@ public class EmpleadoMenuController {
         }
 
         return exito;
-    }
+    }*/
     /*
     @GetMapping("/ver-disponibilidades")
     public String verDisponibilidadesDelServicioDelEmpleado(HttpSession session, Model model) {

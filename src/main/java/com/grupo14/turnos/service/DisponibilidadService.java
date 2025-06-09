@@ -126,12 +126,12 @@ public class DisponibilidadService {
     public List<DiaSemana> listarDiasSemana() {
         return List.of(DiaSemana.values());
     }
-    
+    /*
     public List<DisponibilidadDTO> obtenerPorServicio(Integer servicioId) {
         List<Disponibilidad> lista = repo.findByServiciosId(servicioId); // consulta para relación muchos a muchos
         return lista.stream()
             .map(this::convertirADTO)
             .collect(Collectors.toList());
-    }
+    }*/
 }
 
