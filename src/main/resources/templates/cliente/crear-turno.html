@@ -23,7 +23,7 @@
             <option value="" disabled selected>-- Seleccione un servicio --</option>
             <!-- Se iteran los servicios disponibles -->
             <th:block th:each="servicio : ${servicios}">
-                <option th:value="${servicio.id}" th:text="${servicio.tipoDeServicio}"></option>
+                <option th:value="${servicio.idServicio}" th:text="${servicio.nombre}"></option>
             </th:block>
         </select>
 
@@ -34,7 +34,7 @@
             <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
             <!-- Se iteran las disponibilidades -->
             <th:block th:each="disp : ${disponibilidades}">
-                <option th:value="${disp.id}" th:text="${disp.dia} + ' - ' + ${disp.horaInicio} + ' a ' + ${disp.horaFin}"></option>
+                <option th:value="${disp.id}" th:text="${disp.diaSemana} + ' - ' + ${disp.horaInicio} + ' a ' + ${disp.horaFin}"></option>
             </th:block>
         </select>
 
