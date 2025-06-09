@@ -5,6 +5,7 @@ import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Prestador;
 import com.grupo14.turnos.repository.PrestadorRepository;
 
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,5 +92,13 @@ public class PrestadorService {
 			p.setRol("PRESTADOR");
 			repo.save(p);
 }
+    
+    
+    public PrestadorDTO buscarPorEmail(String email) {
+    	 Prestador prestador = repo.findByEmail(email)
+    		        .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado con email: " + email));
+    		    return convertirADTO(prestador);
+    }
+    
 }
 
