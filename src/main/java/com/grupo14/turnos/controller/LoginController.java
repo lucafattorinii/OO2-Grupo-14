@@ -1,7 +1,9 @@
 package com.grupo14.turnos.controller;
 
+import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
 import com.grupo14.turnos.service.UsuarioService;
+import com.grupo14.turnos.service.PrestadorService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,8 @@ public class LoginController {
 
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private PrestadorService prestadorService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -50,6 +54,8 @@ public class LoginController {
                     destino = "redirect:/empleado/menu";
                     break;
                 case "PRESTADOR":
+				PrestadorDTO prestadorDTO = prestadorService.buscarPorEmail(email);
+                    session.setAttribute("prestador", prestadorDTO); // importante esto
                     destino = "redirect:/prestador/menu";
                     break;
                 default:
