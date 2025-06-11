@@ -34,7 +34,7 @@ public class Direccion {
     @Column(name = "codigo_postal", length = 10)
     private String codigoPostal;
 
-    // Constructor con todos los campos excepto idDireccion (que es generado)
+    // Constructor con todos los campos excepto idDireccion
     @Builder
     public Direccion(String pais, String provincia, String ciudad,
                      String calle, String numeroCalle, String codigoPostal) {
