@@ -25,10 +25,20 @@ public class Servicio {
     @Column(name = "descripcion", length = 255)
     private String descripcion;
 
+    @Column(name = "duracion_min", nullable = false)
+    private int duracionMin;
+
+    @Column(name = "precio", nullable = false)
+    private int precio;
+
     // Muchos servicios pueden pertenecer a un mismo prestador
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prestador_id", nullable = false)
     private Prestador prestador;
+
+    // Un servicio tiene una única especificación
+    @OneToOne(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Especificacion especificacion;
 
     // Un servicio puede tener muchos empleados
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -42,9 +52,9 @@ public class Servicio {
         inverseJoinColumns = @JoinColumn(name = "disponibilidad_id")
     )
     private Set<Disponibilidad> disponibilidades = new HashSet<>();
-    
 
-    // Método para vincular correctamente al prestador
+    // --- Métodos de conveniencia ---
+
     public void setPrestador(Prestador nuevoPrestador) {
         if (this.prestador != null) {
             this.prestador.getServicios().remove(this);
@@ -55,7 +65,6 @@ public class Servicio {
         }
     }
 
-    // Métodos de conveniencia para manejar empleados
     public void addEmpleado(Empleado empleado) {
         empleados.add(empleado);
         empleado.setServicio(this);
@@ -66,7 +75,6 @@ public class Servicio {
         empleado.setServicio(null);
     }
 
-    // Métodos de conveniencia para disponibilidades
     public void addDisponibilidad(Disponibilidad disponibilidad) {
         disponibilidades.add(disponibilidad);
         disponibilidad.getServicios().add(this);
