@@ -3,11 +3,107 @@
 <head>
   <meta charset="UTF-8" />
   <title>Menú Cliente</title>
-  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    
+    :root {
+      --dark:   #2c3e50;
+      --medium: #555555;
+      --light:  #ffffff;
+      --accent: #1abc9c;
+      --bg1:    #e0eafc;
+      --bg2:    #cfdef3;
+    }
+
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, var(--bg1), var(--bg2));
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    
+    header {
+      background-color: var(--dark);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      color: var(--light);
+    }
+    header h1 {
+      font-size: 1.75rem;
+    }
+
+    
+    .container {
+      max-width: 480px;
+      background-color: var(--light);
+      margin: 2.5rem auto;
+      padding: 2rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .container p {
+      margin-bottom: 1.5rem;
+      color: var(--medium);
+    }
+
+   
+    nav ul {
+      list-style: none;
+    }
+    nav li + li {
+      margin-top: 0.75rem;
+    }
+    nav a {
+      display: block;
+      text-decoration: none;
+      text-align: center;
+      background-color: var(--dark);
+      color: var(--light);
+      padding: 0.75rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      transition: background-color 0.25s ease;
+    }
+    nav a:hover {
+      background-color: var(--accent);
+    }
+
+  
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 0.85rem;
+      color: var(--medium);
+    }
+
+   
+    @media (max-width: 500px) {
+      .container {
+        margin: 1.5rem 1rem;
+        padding: 1.5rem 1rem;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+      nav a {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+
+  <header>
     <h1>Bienvenido, Cliente</h1>
+  </header>
+
+  <div class="container">
     <p>Este es tu menú principal.</p>
 
     <nav>
@@ -15,9 +111,14 @@
         <li><a th:href="@{/cliente/mis-turnos}">Ver mis turnos</a></li>
         <li><a th:href="@{/cliente/crear-turno}">Crear nuevo turno</a></li>
         <li><a th:href="@{/cliente/editar-datos}">Editar mis datos</a></li>
-        <li><a th:href="@{/login}">Cerrar Sesión</a></li>
+        <li><a th:href="@{/login}">Cerrar sesión</a></li>
       </ul>
     </nav>
   </div>
+
+  <footer>
+    &copy; 2025 OO2 – Grupo 14. Todos los derechos reservados.
+  </footer>
+  
 </body>
 </html>

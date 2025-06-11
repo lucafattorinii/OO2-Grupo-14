@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Empleado</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"> <!-- opcional -->
+</head>
+<body>
+    <h1>Editar Mis Datos</h1>
+
+    <!-- Mensaje de éxito -->
+    <div th:if="${exito}" style="color: green; font-weight: bold;">
+        <p th:text="${exito}"></p>
+    </div>
+
+    <!-- Mensaje de error general -->
+    <div th:if="${error}" style="color: red; font-weight: bold;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <!-- Formulario con campos precargados -->
+    <form th:action="@{/empleado/editar}" method="post" th:object="${empleado}">
+        <div>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" required />
+            <div th:if="${#fields.hasErrors('email')}" style="color:red;">
+                <p th:errors="*{email}">Email inválido</p>
+            </div>
+        </div>
+
+        <div>
+            <label>Contraseña (dejar en blanco si no desea cambiarla):</label>
+            <input type="password" th:field="*{contrasena}" />
+            <div th:if="${#fields.hasErrors('contrasena')}" style="color:red;">
+                <p th:errors="*{contrasena}">Contraseña inválida</p>
+            </div>
+        </div>
+
+        <div>
+            <label>Nombre:</label>
+            <input type="text" th:field="*{nombre}" required />
+            <div th:if="${#fields.hasErrors('nombre')}" style="color:red;">
+                <p th:errors="*{nombre}"></p>
+            </div>
+        </div>
+
+        <div>
+            <label>Apellido:</label>
+            <input type="text" th:field="*{apellido}" required />
+            <div th:if="${#fields.hasErrors('apellido')}" style="color:red;">
+                <p th:errors="*{apellido}"></p>
+            </div>
+        </div>
+
+        <div>
+            <label>DNI:</label>
+            <input type="number" th:field="*{dni}" required />
+            <div th:if="${#fields.hasErrors('dni')}" style="color:red;">
+                <p th:errors="*{dni}"></p>
+            </div>
+        </div>
+
+        <div>
+            <label>CUIT:</label>
+            <input type="number" th:field="*{cuit}" required />
+            <div th:if="${#fields.hasErrors('cuit')}" style="color:red;">
+                <p th:errors="*{cuit}"></p>
+            </div>
+        </div>
+
+        <div>
+            <label>Legajo:</label>
+            <input type="number" th:field="*{legajo}" required />
+            <div th:if="${#fields.hasErrors('legajo')}" style="color:red;">
+                <p th:errors="*{legajo}"></p>
+            </div>
+        </div>
+
+        <div>
+            <label>Puesto o Cargo:</label>
+            <input type="text" th:field="*{puestoCargo}" required />
+            <div th:if="${#fields.hasErrors('puestoCargo')}" style="color:red;">
+                <p th:errors="*{puestoCargo}"></p>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit">Guardar Cambios</button>
+        </div>
+    </form>
+
+    <div>
+        <a th:href="@{/empleado/menu}">Volver al menú</a>
+    </div>
+</body>
+</html>
