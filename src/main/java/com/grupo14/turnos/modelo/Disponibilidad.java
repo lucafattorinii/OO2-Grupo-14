@@ -17,7 +17,7 @@ public class Disponibilidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana", nullable = false)
