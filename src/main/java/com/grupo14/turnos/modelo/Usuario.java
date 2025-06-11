@@ -13,7 +13,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    protected long id;
 
     @Column(name = "email", length = 100, unique = true, nullable = false)
     private String email;
