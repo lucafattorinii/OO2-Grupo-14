@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record ServicioDTO(
-	    Long idServicio,
-	    @NotNull String nombre,
-	    @NotNull Integer duracionMin,
-	    @Positive Double precio,
-	    @NotNull Integer prestadorId
-	) {}
+    Long id,                   
+    @NotNull String nombre,
+    @NotNull int duracionMin,   
+    @Positive int precio,      
+    @NotNull Long prestadorId   
+) {}
