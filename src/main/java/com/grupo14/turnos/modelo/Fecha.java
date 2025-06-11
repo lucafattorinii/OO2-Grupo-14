@@ -16,7 +16,7 @@ public class Fecha {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private long id;
 
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
