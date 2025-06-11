@@ -146,12 +146,14 @@
             <option th:value="${servicio.idServicio}"
                     th:text="${servicio.nombre}"></option>
           </th:block>
+
         </select>
       </div>
 
       <div class="form-group">
         <label for="disponibilidadId">Disponibilidad</label>
         <select id="disponibilidadId" name="disponibilidadId" required>
+
           <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
           <th:block th:each="disp : ${disponibilidades}">
             <option th:value="${disp.id}"
