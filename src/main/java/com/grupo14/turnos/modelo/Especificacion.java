@@ -50,7 +50,7 @@ public class Especificacion {
     public void setServicio(Servicio servicio) {
         this.servicio = servicio;
         if (servicio != null) {
-            this.id = servicio.getId();
+            this.id = servicio.getIdServicio();
         }
     }
 }
