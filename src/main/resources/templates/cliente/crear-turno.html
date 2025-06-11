@@ -143,8 +143,8 @@
         <select id="servicioId" name="servicioId" required>
           <option value="" disabled selected>-- Seleccione un servicio --</option>
           <th:block th:each="servicio : ${servicios}">
-            <option th:value="${servicio.id}"
-                    th:text="${servicio.tipoDeServicio}"></option>
+            <option th:value="${servicio.idServicio}"
+                    th:text="${servicio.nombre}"></option>
           </th:block>
         </select>
       </div>
@@ -155,7 +155,7 @@
           <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
           <th:block th:each="disp : ${disponibilidades}">
             <option th:value="${disp.id}"
-                    th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
+                    th:text="${#strings.concat(disp.diaSemana, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
           </th:block>
         </select>
       </div>
