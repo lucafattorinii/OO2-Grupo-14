@@ -4,6 +4,7 @@ import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.modelo.Usuario;
 import com.grupo14.turnos.service.ClienteService;
 import com.grupo14.turnos.service.DisponibilidadService;
@@ -97,21 +98,29 @@ public class ClienteMenuController {
     @PostMapping("/crear-turno")
     public String crearNuevoTurno(
             HttpSession session,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam Long fechaId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
-            @RequestParam Integer disponibilidadId,
+            @RequestParam Long disponibilidadId,
             @RequestParam Long servicioId
     ) {
         String vista = "redirect:/cliente/mis-turnos";
+
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
         if (usuario == null) {
-            vista = "redirect:/login";
-        } else {
-            TurnoDTO nuevo = new TurnoDTO(
-                null, fecha, hora, "PENDIENTE", usuario.id(), disponibilidadId, servicioId
-            );
-            turnoService.crear(nuevo);
+            return "redirect:/login";
         }
+
+        TurnoDTO nuevo = new TurnoDTO(
+            null,
+            fechaId,
+            hora,
+            EstadoTurno.PENDIENTE,
+            usuario.id(),
+            disponibilidadId,
+            servicioId
+        );
+
+        turnoService.crear(nuevo);
         return vista;
     }
 
