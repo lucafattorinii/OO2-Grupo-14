@@ -73,7 +73,7 @@ public class ServicioService {
         repo.deleteById(id);
     }
     
-    public void actualizarServicio(Long id, String nombre, Integer duracionMin, Double precio, Integer prestadorId) {
+    public void actualizarServicio(Long id, String nombre, Integer duracionMin, Double precio, long prestadorId) {
         Servicio s = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id));
         

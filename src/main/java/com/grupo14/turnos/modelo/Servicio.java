@@ -29,7 +29,7 @@ public class Servicio {
     private int duracionMin;
 
     @Column(name = "precio", nullable = false)
-    private int precio;
+    private double precio;
 
     // Muchos servicios pueden pertenecer a un mismo prestador
     @ManyToOne(fetch = FetchType.LAZY)

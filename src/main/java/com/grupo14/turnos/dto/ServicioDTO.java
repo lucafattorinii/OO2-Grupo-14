@@ -7,6 +7,6 @@ public record ServicioDTO(
     Long id,                   
     @NotNull String nombre,
     @NotNull int duracionMin,   
-    @Positive int precio,      
+    @Positive double precio,      
     @NotNull Long prestadorId   
 ) {}
