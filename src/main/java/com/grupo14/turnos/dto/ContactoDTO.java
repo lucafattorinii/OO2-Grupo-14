@@ -1,8 +1,14 @@
 package com.grupo14.turnos.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record ContactoDTO(
-	    Integer id,
-	    String telefono,
-	    Integer direccionId,
-	    Integer usuarioId
-	) {}
+    Long id,
+    
+    @NotBlank
+    @Size(max = 20)
+    String telefono,
+
+    Long direccionId
+) {}
