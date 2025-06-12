@@ -3,36 +3,32 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.DisponibilidadDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Disponibilidad;
-import com.grupo14.turnos.modelo.Empleado;
 import com.grupo14.turnos.modelo.Servicio;
 import com.grupo14.turnos.repository.DisponibilidadRepository;
-import com.grupo14.turnos.repository.EmpleadoRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
 import org.springframework.stereotype.Service;
 import com.grupo14.turnos.modelo.DiaSemana;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class DisponibilidadService {
 
     private final DisponibilidadRepository repo;
-    private final EmpleadoRepository empRepo;
     private final ServicioRepository servRepo;
 
     public DisponibilidadService(
             DisponibilidadRepository repo,
-            EmpleadoRepository empRepo,
             ServicioRepository servRepo
     ) {
         this.repo = repo;
-        this.empRepo = empRepo;
         this.servRepo = servRepo;
     }
 
-    public DisponibilidadDTO obtenerPorId(Integer id) {
+    public DisponibilidadDTO obtenerPorId(long id) {
         Disponibilidad d = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
 
@@ -46,80 +42,94 @@ public class DisponibilidadService {
     }
 
     public DisponibilidadDTO crear(DisponibilidadDTO dto) {
-        Empleado emp = empRepo.findById(dto.empleadoId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + dto.empleadoId()));
-
-        Servicio serv = servRepo.findById(dto.servicioId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + dto.servicioId()));
-
         Disponibilidad d = new Disponibilidad();
-        d.setEmpleado(emp);
-        d.setServicio(serv);
-        d.setDiaSemana(DiaSemana.valueOf(dto.diaSemana()));
-        d.setHoraInicio(LocalTime.parse(dto.horaInicio()));
-        d.setHoraFin(LocalTime.parse(dto.horaFin()));
+        d.setDiaSemana(dto.diaSemana());
+        d.setHoraInicio(dto.horaInicio());
+        d.setHoraFin(dto.horaFin());
+
+        // Asociar múltiples servicios
+        if (dto.servicioIds() != null && !dto.servicioIds().isEmpty()) {
+            Set<Servicio> servicios = dto.servicioIds().stream()
+                .map(id -> servRepo.findById(id)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id)))
+                .collect(Collectors.toSet());
+
+            d.setServicios(servicios);
+        }
 
         Disponibilidad guardada = repo.save(d);
-
         return convertirADTO(guardada);
     }
     
-    public DisponibilidadDTO actualizar(Integer id, DisponibilidadDTO dto) {
+    public DisponibilidadDTO actualizar(long id, DisponibilidadDTO dto) {
         Disponibilidad d = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
-        
-        Empleado emp = empRepo.findById(dto.empleadoId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + dto.empleadoId()));
 
-        Servicio serv = servRepo.findById(dto.servicioId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + dto.servicioId()));
-        
-        d.setEmpleado(emp);
-        d.setServicio(serv);
-        d.setDiaSemana(DiaSemana.valueOf(dto.diaSemana()));
-        d.setHoraInicio(LocalTime.parse(dto.horaInicio()));
-        d.setHoraFin(LocalTime.parse(dto.horaFin()));
-        
+        d.setDiaSemana(dto.diaSemana());
+        d.setHoraInicio(dto.horaInicio());
+        d.setHoraFin(dto.horaFin());
+
+        // Actualizar los servicios asociados
+        if (dto.servicioIds() != null && !dto.servicioIds().isEmpty()) {
+            Set<Servicio> servicios = dto.servicioIds().stream()
+                .map(sid -> servRepo.findById(sid)
+                        .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + sid)))
+                .collect(Collectors.toSet());
+
+            d.setServicios(servicios);
+        } else {
+            d.getServicios().clear(); // O decide si mantener los anteriores
+        }
+
         Disponibilidad guardada = repo.save(d);
-        
+
         return convertirADTO(guardada);
     }
     
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id);
         }
         repo.deleteById(id);
     }
     
-    public void actualizarDisponibilidad(Integer id, String diaSemana, String horaInicio, 
-                                        String horaFin, Long servicioId, Integer empleadoId) {
-        Disponibilidad d = repo.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
-        
-        Empleado emp = empRepo.findById(empleadoId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + empleadoId));
+    
+    public void actualizarDisponibilidad(long id, String diaSemana, String horaInicio,  
+            String horaFin, Set<Long> servicioIds) {
 
-        Servicio serv = servRepo.findById(servicioId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + servicioId));
-        
-        d.setEmpleado(emp);
-        d.setServicio(serv);
-        d.setDiaSemana(DiaSemana.valueOf(diaSemana));
-        d.setHoraInicio(LocalTime.parse(horaInicio));
-        d.setHoraFin(LocalTime.parse(horaFin));
-        
-        repo.save(d);
+			Disponibilidad d = repo.findById(id)
+			.orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
+			
+			d.setDiaSemana(DiaSemana.valueOf(diaSemana.toUpperCase())); // aseguramos mayúsculas válidas para el enum
+			d.setHoraInicio(LocalTime.parse(horaInicio));
+			d.setHoraFin(LocalTime.parse(horaFin));
+			
+			// Actualizar los servicios asociados
+			if (servicioIds != null && !servicioIds.isEmpty()) {
+					Set<Servicio> servicios = servicioIds.stream()
+					.map(sid -> servRepo.findById(sid)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + sid)))
+					.collect(Collectors.toSet());
+			
+					d.setServicios(servicios);
+			} else {
+					d.getServicios().clear(); // O conserva los actuales, según tu lógica
+			}
+			
+			repo.save(d);
     }
     
     private DisponibilidadDTO convertirADTO(Disponibilidad d) {
+        Set<Long> servicioIds = d.getServicios().stream()
+                .map(Servicio::getIdServicio)
+                .collect(Collectors.toSet());
+
         return new DisponibilidadDTO(
                 d.getId(),
-                d.getDiaSemana().name(),
-                d.getHoraInicio().toString(),
-                d.getHoraFin().toString(),
-                d.getServicio().getIdServicio(),
-                d.getEmpleado().getId()
+                d.getDiaSemana(),
+                d.getHoraInicio(),
+                d.getHoraFin(),
+                servicioIds
         );
     }
     
