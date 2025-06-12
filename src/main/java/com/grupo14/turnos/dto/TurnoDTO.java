@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 public record TurnoDTO(
     Long id,                      
-    @NotNull Fecha fecha,     
+    @NotNull Long fechaId,     
     @NotNull LocalTime hora,
     @NotNull EstadoTurno estado,   
     @NotNull Long clienteId,      
