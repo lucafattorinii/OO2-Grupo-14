@@ -46,7 +46,7 @@ Este sistema permite la gestión completa de turnos para diferentes servicios, i
 
 2. Compilar el proyecto:
    ```
-   mvn clean package
+   mvn spring-boot:run
    ```
 
 3. Ejecutar la aplicación:
