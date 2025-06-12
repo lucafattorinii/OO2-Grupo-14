@@ -3,6 +3,7 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.EmpleadoDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Empleado;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.repository.EmpleadoRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,7 @@ public class EmpleadoService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public EmpleadoDTO obtenerPorId(Integer id) {
+    public EmpleadoDTO obtenerPorId(long id) {
         Empleado e = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + id));
         return convertirADTO(e);
@@ -40,7 +41,7 @@ public class EmpleadoService {
         return convertirADTO(guardado);
     }
     
-    public EmpleadoDTO actualizar(Integer id, EmpleadoDTO dto) {
+    public EmpleadoDTO actualizar(long id, EmpleadoDTO dto) {
         Empleado e = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + id));
         actualizarEmpleadoDesdeDTO(e, dto);
@@ -48,7 +49,7 @@ public class EmpleadoService {
         return convertirADTO(guardado);
     }
     
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Empleado no encontrado: " + id);
         }
@@ -56,6 +57,8 @@ public class EmpleadoService {
     }
     
     private EmpleadoDTO convertirADTO(Empleado e) {
+        Long servicioId = (e.getServicio() != null) ? e.getServicio().getIdServicio() : null;
+
         return new EmpleadoDTO(
             e.getId(), 
             e.getEmail(), 
@@ -65,7 +68,8 @@ public class EmpleadoService {
             e.getDni(), 
             e.getCuit(), 
             e.getLegajo(), 
-            e.getPuestoCargo()
+            e.getPuestoCargo(),
+            servicioId 
         );
     }
     
@@ -73,7 +77,7 @@ public class EmpleadoService {
         e.setEmail(dto.email());
 
         if (dto.contrasena() != null && !dto.contrasena().isEmpty()) {
-            e.setContrasena(passwordEncoder.encode(dto.contrasena())); // Encripta la contraseña
+            e.setContrasena(passwordEncoder.encode(dto.contrasena()));
         }
 
         e.setNombre(dto.nombre());
@@ -82,10 +86,11 @@ public class EmpleadoService {
         e.setCuit(dto.cuit());
         e.setLegajo(dto.legajo());
         e.setPuestoCargo(dto.puestoCargo());
-        e.setRol("EMPLEADO");
+
+        e.setRol(Rol.EMPLEADO); 
     }
     
-    public void actualizarEmpleado(Integer id, String email, String contrasena, Long dni, String nombre,
+    public void actualizarEmpleado(long id, String email, String contrasena, Long dni, String nombre,
             String apellido, Long cuit, Integer legajo, String puestoCargo) {
 			Empleado e = repo.findById(id)
 			.orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado: " + id));
@@ -102,7 +107,7 @@ public class EmpleadoService {
 			e.setCuit(cuit);
 			e.setLegajo(legajo);
 			e.setPuestoCargo(puestoCargo);
-			e.setRol("EMPLEADO");
+			e.setRol(Rol.EMPLEADO);
 			repo.save(e);
 }
 }
