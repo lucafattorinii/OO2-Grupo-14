@@ -24,7 +24,7 @@ public class DireccionService {
                 .collect(Collectors.toList());
     }
 
-    public DireccionDTO obtenerPorId(Integer id) {
+    public DireccionDTO obtenerPorId(long id) {
         Direccion dir = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + id));
         return convertirADTO(dir);
@@ -43,7 +43,7 @@ public class DireccionService {
         return convertirADTO(guardada);
     }
     
-    public DireccionDTO actualizar(Integer id, DireccionDTO dto) {
+    public DireccionDTO actualizar(long id, DireccionDTO dto) {
         Direccion dir = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Dirección no encontrada: " + id));
         
@@ -58,14 +58,14 @@ public class DireccionService {
         return convertirADTO(guardada);
     }
     
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Dirección no encontrada: " + id);
         }
         repo.deleteById(id);
     }
     
-    public void actualizarDireccion(Integer id, String pais, String provincia, 
+    public void actualizarDireccion(long id, String pais, String provincia, 
                                   String ciudad, String calle, 
                                   String numeroCalle, String codigoPostal) {
         Direccion dir = repo.findById(id)
