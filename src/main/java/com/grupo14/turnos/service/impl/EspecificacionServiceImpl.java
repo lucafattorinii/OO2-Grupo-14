@@ -31,21 +31,24 @@ public class EspecificacionServiceImpl implements EspecificacionService {
     @Override
     public List<EspecificacionDTO> listarTodos() {
         return repo.findAll().stream().map(e -> {
-            String nombreServicio = Optional.ofNullable(e.getServicio())
-                    .map(Servicio::getNombre)
-                    .orElse("Servicio no disponible");
-            
-            String direccionTexto = Optional.ofNullable(e.getDireccion())
-            	    .map(d -> d.getCalle() + " " + d.getNumeroCalle())
-            	    .orElse("Dirección no disponible");
+            Servicio servicio = e.getServicio();  // no puede ser null
+            if (servicio == null) {
+                throw new IllegalStateException("La especificación con id " + e.getId() + " no tiene un servicio asignado.");
+            }
 
-            Integer direccionId = Optional.ofNullable(e.getDireccion())
+            String nombreServicio = servicio.getNombre();
+
+            String direccionTexto = Optional.ofNullable(e.getDireccion())
+                    .map(d -> d.getCalle() + " " + d.getNumeroCalle())
+                    .orElse("Dirección no disponible");
+
+            Long direccionId = Optional.ofNullable(e.getDireccion())
                     .map(Direccion::getIdDireccion)
                     .orElse(null);
 
             return new EspecificacionDTO(
                     e.getId(),
-                    e.getServicio() != null ? e.getServicio().getIdServicio() : null,
+                    servicio.getIdServicio(),
                     e.getRubro(),
                     e.getDetalles(),
                     direccionId,
@@ -54,6 +57,7 @@ public class EspecificacionServiceImpl implements EspecificacionService {
             );
         }).collect(Collectors.toList());
     }
+    
 
     public boolean yaExiste(EspecificacionDTO dto) {
         return repo.existsByServicio_IdServicioAndDireccion_IdDireccionAndRubro(
@@ -95,12 +99,12 @@ public class EspecificacionServiceImpl implements EspecificacionService {
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         repo.deleteById(id);
     }
 
     @Override
-    public Optional<Especificacion> buscarPorId(Integer id) {
+    public Optional<Especificacion> buscarPorId(long id) {
         return repo.findById(id);
     }
 }
