@@ -3,6 +3,7 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Prestador;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.repository.PrestadorRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ public class PrestadorService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public PrestadorDTO obtenerPorId(Integer id) {
+    public PrestadorDTO obtenerPorId(long id) {
         Prestador p = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
         return convertirADTO(p);
@@ -41,7 +42,7 @@ public class PrestadorService {
         return convertirADTO(guardado);
     }
     
-    public PrestadorDTO actualizar(Integer id, PrestadorDTO dto) {
+    public PrestadorDTO actualizar(long id, PrestadorDTO dto) {
         Prestador p = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
         actualizarPrestadorDesdeDTO(p, dto);
@@ -49,7 +50,7 @@ public class PrestadorService {
         return convertirADTO(guardado);
     }
     
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Prestador no encontrado: " + id);
         }
@@ -73,11 +74,11 @@ public class PrestadorService {
         }
         p.setRazonSocial(dto.razonSocial());
         p.setHabilitado(dto.habilitado());
-        p.setRol("PRESTADOR");
+        p.setRol(Rol.PRESTADOR);
     }
     
     
-    public void actualizarPrestador(Integer id, String email, String contrasena, String razonSocial, Boolean habilitado) {
+    public void actualizarPrestador(long id, String email, String contrasena, String razonSocial, Boolean habilitado) {
 			Prestador p = repo.findById(id)
 			.orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
 			p.setEmail(email);
@@ -88,7 +89,7 @@ public class PrestadorService {
 			
 			p.setRazonSocial(razonSocial);
 			p.setHabilitado(habilitado);
-			p.setRol("PRESTADOR");
+			p.setRol(Rol.PRESTADOR);
 			repo.save(p);
 }
 }
