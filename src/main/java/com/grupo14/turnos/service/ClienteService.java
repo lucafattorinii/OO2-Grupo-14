@@ -3,6 +3,7 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Cliente;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.repository.ClienteRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ public class ClienteService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	public ClienteDTO obtenerPorId(Integer id) {
+	public ClienteDTO obtenerPorId(long id) {
 		Cliente c = repo.findById(id)
 				.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + id));
 		return mapToDTO(c);
@@ -36,14 +37,14 @@ public class ClienteService {
 		return clientes;
 	}
 
-	public void eliminarPorId(Integer id) {
+	public void eliminarPorId(long id) {
 		if (!repo.existsById(id)) {
 			throw new RecursoNoEncontradoException("Cliente no existe: " + id);
 		}
 		repo.deleteById(id);
 	}
 
-	public ClienteDTO actualizarCliente(Integer id, String email, String contrasena, Long numeroCliente, Long dni,
+	public ClienteDTO actualizarCliente(long id, String email, String contrasena, Long numeroCliente, Long dni,
             String nombre, String apellido) {
 			Cliente c = repo.findById(id)
 			.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + id));
@@ -60,7 +61,7 @@ public class ClienteService {
 			c.setDni(dni);
 			c.setNombre(nombre);
 			c.setApellido(apellido);
-			c.setRol("CLIENTE");
+			c.setRol(Rol.CLIENTE);
 			
 			Cliente actualizado = repo.save(c);
 			return mapToDTO(actualizado);
@@ -74,7 +75,7 @@ public class ClienteService {
 		c.setDni(dto.dni());
 		c.setNombre(dto.nombre());
 		c.setApellido(dto.apellido());
-		c.setRol("CLIENTE");
+		c.setRol(Rol.CLIENTE);
 		Cliente guardado = repo.save(c);
 		return mapToDTO(guardado);
 	}
