@@ -1,6 +1,7 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +41,16 @@ public class LoginController {
             UsuarioDTO usuario = usuarioService.login(email, contrasena);
             session.setAttribute("usuario", usuario);
 
-            String rol = usuario.rol().toUpperCase();
+            Rol rol = usuario.rol(); // Ya es enum, no hace falta convertir
 
             switch (rol) {
-                case "CLIENTE":
+                case CLIENTE:
                     destino = "redirect:/cliente/menu";
                     break;
-                case "EMPLEADO":
+                case EMPLEADO:
                     destino = "redirect:/empleado/menu";
                     break;
-                case "PRESTADOR":
+                case PRESTADOR:
                     destino = "redirect:/prestador/menu";
                     break;
                 default:
