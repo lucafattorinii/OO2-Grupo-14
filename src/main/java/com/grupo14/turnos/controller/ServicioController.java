@@ -35,9 +35,9 @@ public class ServicioController {
     @PostMapping("/create")
     public String crearServicio(
             @RequestParam String nombre,
-            @RequestParam Integer duracionMin,
-            @RequestParam Double precio,
-            @RequestParam Integer prestadorId
+            @RequestParam int duracionMin,
+            @RequestParam double precio,
+            @RequestParam Long prestadorId
     ) {
         ServicioDTO nuevo = new ServicioDTO(
             null, nombre, duracionMin, precio, prestadorId
