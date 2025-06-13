@@ -17,7 +17,7 @@ public class Turno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fecha_id", nullable = false, foreignKey = @ForeignKey(name = "turno_fecha_fk"))
     private Fecha fecha;
 
