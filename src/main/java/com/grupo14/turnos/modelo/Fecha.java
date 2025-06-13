@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "fecha")
@@ -25,9 +27,8 @@ public class Fecha {
     @Column(name = "dia_semana", nullable = false)
     private DiaSemana diaSemana;
 
-    // Relación uno a uno con Turno (obligatoria)
-    @OneToOne(mappedBy = "fecha", optional = false)
-    private Turno turno;
+    @OneToMany(mappedBy = "fecha", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Turno> turnos = new ArrayList<>();
 
     // Relación uno a uno con Dirección 
     @OneToOne(fetch = FetchType.LAZY)
