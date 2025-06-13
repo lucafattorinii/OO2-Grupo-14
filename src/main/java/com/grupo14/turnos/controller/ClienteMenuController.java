@@ -1,11 +1,14 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.ClienteDTO;
+import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
 import com.grupo14.turnos.modelo.EstadoTurno;
+import com.grupo14.turnos.modelo.Fecha;
 import com.grupo14.turnos.modelo.Usuario;
+import com.grupo14.turnos.repository.FechaRepository;
 import com.grupo14.turnos.service.ClienteService;
 import com.grupo14.turnos.service.DisponibilidadService;
 import com.grupo14.turnos.service.ServicioService;
@@ -33,13 +36,16 @@ public class ClienteMenuController {
 	private final ServicioService servicioService;
 	private final DisponibilidadService disponibilidadService;
 	private final ClienteService clienteService;
+	private final FechaRepository fechaRepository;
 
     // Inyección por constructor
-	public ClienteMenuController(TurnoService turnoService, ServicioService servicioService, DisponibilidadService disponibilidadService, ClienteService clienteService) {
+	public ClienteMenuController(TurnoService turnoService, ServicioService servicioService, DisponibilidadService disponibilidadService, ClienteService clienteService,
+			FechaRepository fechaRepository) {
 	    this.turnoService = turnoService;
 	    this.servicioService = servicioService;
 	    this.disponibilidadService = disponibilidadService;
 	    this.clienteService = clienteService;
+	    this.fechaRepository = fechaRepository;
 	}
 
     @GetMapping("/menu")
@@ -103,24 +109,29 @@ public class ClienteMenuController {
             @RequestParam Long disponibilidadId,
             @RequestParam Long servicioId
     ) {
-        String vista = "redirect:/cliente/mis-turnos";
+        String vista;
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
         if (usuario == null) {
-            return "redirect:/login";
+            vista = "redirect:/login";
+        } else {
+            Fecha fecha = fechaRepository.findById(fechaId)
+                .orElseThrow(() -> new RuntimeException("Fecha no encontrada"));
+
+            TurnoConFechaDTO nuevo = new TurnoConFechaDTO(
+                fecha.getFecha(),
+                hora,
+                EstadoTurno.PENDIENTE,
+                usuario.id(),
+                disponibilidadId,
+                servicioId,
+                fecha.getDireccion().getIdDireccion()
+            );
+
+            turnoService.crear(nuevo);
+            vista = "redirect:/cliente/mis-turnos";
         }
 
-        TurnoDTO nuevo = new TurnoDTO(
-            null,
-            fechaId,
-            hora,
-            EstadoTurno.PENDIENTE,
-            usuario.id(),
-            disponibilidadId,
-            servicioId
-        );
-
-        turnoService.crear(nuevo);
         return vista;
     }
 
