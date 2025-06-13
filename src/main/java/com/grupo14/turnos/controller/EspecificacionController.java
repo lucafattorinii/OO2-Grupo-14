@@ -59,16 +59,24 @@ public class EspecificacionController {
     public String crear(@RequestParam Long servicioId,
                         @RequestParam Rubro rubro,
                         @RequestParam String detalles,
-                        @RequestParam Integer direccionId) {
-    	ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
-    	String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
+                        @RequestParam Long direccionId) {
 
+        ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
+        String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
 
-        EspecificacionDTO dto = new EspecificacionDTO(null, servicioId, rubro, detalles, direccionId, servicioNombre, null);
+        EspecificacionDTO dto = new EspecificacionDTO(
+            null,
+            servicioId,
+            rubro,
+            detalles,
+            direccionId,
+            servicioNombre,
+            null  // Podés completar `direccionTexto` más adelante si hace falta
+        );
+
         especificacionService.crear(dto);
         return "redirect:/especificaciones/view";
     }
-
 
     
     @PostMapping("/delete")
@@ -78,16 +86,25 @@ public class EspecificacionController {
     }
 
     @PostMapping("/update")
-    public String actualizar(@RequestParam Integer id,
+    public String actualizar(@RequestParam Long id,
                              @RequestParam Long servicioId,
                              @RequestParam Rubro rubro,
                              @RequestParam String detalles,
-                             @RequestParam Integer direccionId) {
+                             @RequestParam Long direccionId) {
 
         ServicioDTO servicio = servicioService.obtenerPorId(servicioId);
         String servicioNombre = (servicio != null) ? servicio.nombre() : "Desconocido";
 
-        EspecificacionDTO dto = new EspecificacionDTO(id, servicioId, rubro, detalles, direccionId, servicioNombre, null);
+        EspecificacionDTO dto = new EspecificacionDTO(
+            id,
+            servicioId,
+            rubro,
+            detalles,
+            direccionId,
+            servicioNombre,
+            null // direcciónTexto, si hace falta podés recuperarlo desde otro servicio
+        );
+
         especificacionService.actualizar(dto);
         return "redirect:/especificaciones/view";
     }
