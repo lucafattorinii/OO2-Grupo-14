@@ -1,5 +1,6 @@
 package com.grupo14.turnos.service;
 
+import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
@@ -11,6 +12,7 @@ import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.modelo.Fecha;
 import com.grupo14.turnos.repository.ClienteRepository;
 import com.grupo14.turnos.repository.DisponibilidadRepository;
+import com.grupo14.turnos.repository.FechaRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
 import com.grupo14.turnos.repository.TurnoRepository;
 import org.springframework.stereotype.Service;
@@ -27,17 +29,23 @@ public class TurnoService {
     private final ClienteRepository cliRepo;
     private final ServicioRepository serRepo;
     private final DisponibilidadRepository disRepo;
+    private final FechaRepository fechaRepo;
+    private final FechaService fechaService;
 
     public TurnoService(
         TurnoRepository repo,
         ClienteRepository cliRepo,
         ServicioRepository serRepo,
-        DisponibilidadRepository disRepo
+        DisponibilidadRepository disRepo,
+        FechaRepository fechaRepo,
+        FechaService fechaService
     ) {
         this.repo = repo;
         this.cliRepo = cliRepo;
         this.serRepo = serRepo;
         this.disRepo = disRepo;
+        this.fechaRepo= fechaRepo;
+        this.fechaService = fechaService;
     }
     
     public TurnoDTO obtenerPorId(long id) {
@@ -61,7 +69,7 @@ public class TurnoService {
             .collect(Collectors.toList());
     }
 
-    public TurnoDTO crear(TurnoDTO dto) {
+    public TurnoConFechaDTO  crear(TurnoConFechaDTO dto) {
         Cliente cliente = cliRepo.findById(dto.clienteId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + dto.clienteId()));
 
@@ -71,20 +79,22 @@ public class TurnoService {
         Disponibilidad disponibilidad = disRepo.findById(dto.disponibilidadId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + dto.disponibilidadId()));
 
+        // Crear la fecha usando el helper del servicio
+        Fecha fecha = fechaService.crear(dto.fecha(), dto.direccionId());
+
         Turno turno = new Turno();
         turno.setCliente(cliente);
         turno.setServicio(servicio);
         turno.setDisponibilidad(disponibilidad);
-        turno.setFecha(dto.fecha());
+        turno.setFecha(fecha);
         turno.setHora(dto.hora());
         turno.setEstado(dto.estado());
 
         Turno guardado = repo.save(turno);
-
-        return convertirADTO(guardado);
+        return convertirATurnoConFechaDTO(guardado);
     }
     
-    public TurnoDTO actualizar(long id, TurnoDTO dto) {
+    public TurnoConFechaDTO actualizar(long id, TurnoConFechaDTO dto) {
         Turno turno = repo.findById(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado: " + id));
         
@@ -96,17 +106,19 @@ public class TurnoService {
 
         Disponibilidad disponibilidad = disRepo.findById(dto.disponibilidadId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + dto.disponibilidadId()));
-        
+
+        // Usar el servicio para crear/actualizar Fecha
+        Fecha fecha = fechaService.crear(dto.fecha(), dto.direccionId());
+
         turno.setCliente(cliente);
         turno.setServicio(servicio);
         turno.setDisponibilidad(disponibilidad);
-        turno.setFecha(dto.fecha());
+        turno.setFecha(fecha);
         turno.setHora(dto.hora());
         turno.setEstado(dto.estado());
-        
+
         Turno guardado = repo.save(turno);
-        
-        return convertirADTO(guardado);
+        return convertirATurnoConFechaDTO(guardado);
     }
     
     public void eliminar(long id) {
@@ -116,30 +128,34 @@ public class TurnoService {
         repo.deleteById(id);
     }
     
-    public void actualizarTurno(long id, Fecha fecha, LocalTime hora, 
-                               String estado, long clienteId, 
-                               long disponibilidadId, long servicioId) {
-        Turno turno = repo.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado: " + id));
-        
-        Cliente cliente = cliRepo.findById(clienteId)
-            .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + clienteId));
-
-        Servicio servicio = serRepo.findById(servicioId)
-            .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + servicioId));
-
-        Disponibilidad disponibilidad = disRepo.findById(disponibilidadId)
-            .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + disponibilidadId));
-        
-        turno.setCliente(cliente);
-        turno.setServicio(servicio);
-        turno.setDisponibilidad(disponibilidad);
-        turno.setFecha(fecha);
-        turno.setHora(hora);
-        turno.setEstado(EstadoTurno.valueOf(estado.toUpperCase()));
-        
-        repo.save(turno);
-    }
+    public void actualizarTurno(long id, Long fechaId, LocalTime hora, 
+           
+    		String estado, long clienteId, 
+            long disponibilidadId, long servicioId) {
+			Turno turno = repo.findById(id)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado: " + id));
+			
+			Cliente cliente = cliRepo.findById(clienteId)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + clienteId));
+			
+			Servicio servicio = serRepo.findById(servicioId)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + servicioId));
+			
+			Disponibilidad disponibilidad = disRepo.findById(disponibilidadId)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + disponibilidadId));
+			
+			Fecha fecha = fechaRepo.findById(fechaId)
+					.orElseThrow(() -> new RecursoNoEncontradoException("Fecha no encontrada: " + fechaId));
+			
+			turno.setCliente(cliente);
+			turno.setServicio(servicio);
+			turno.setDisponibilidad(disponibilidad);
+			turno.setFecha(fecha);
+			turno.setHora(hora);
+			turno.setEstado(EstadoTurno.valueOf(estado.toUpperCase()));
+			
+			repo.save(turno);
+}
     
     public void cambiarEstado(long id, String nuevoEstado) {
         Turno turno = repo.findById(id)
@@ -152,12 +168,24 @@ public class TurnoService {
     private TurnoDTO convertirADTO(Turno t) {
         return new TurnoDTO(
             t.getId(),
-            t.getFecha(),
+            t.getFecha().getId(), 
             t.getHora(),
             t.getEstado(),
             t.getCliente().getId(),
             t.getDisponibilidad().getId(),
             t.getServicio().getIdServicio()
+        );
+    }
+    
+    private TurnoConFechaDTO convertirATurnoConFechaDTO(Turno t) {
+        return new TurnoConFechaDTO(
+            t.getFecha().getFecha(),             // LocalDate fecha
+            t.getHora(),                         // LocalTime hora
+            t.getEstado(),                       // EstadoTurno estado
+            t.getCliente().getId(),              // Long clienteId
+            t.getDisponibilidad().getId(),      // Long disponibilidadId
+            t.getServicio().getIdServicio(),    // Long servicioId
+            t.getFecha().getDireccion().getIdDireccion() // Long direccionId
         );
     }
     
