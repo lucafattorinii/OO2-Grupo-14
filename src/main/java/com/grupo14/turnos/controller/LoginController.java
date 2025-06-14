@@ -1,7 +1,9 @@
 package com.grupo14.turnos.controller;
 
+import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
 import com.grupo14.turnos.modelo.Rol;
+import com.grupo14.turnos.service.ClienteService;
 import com.grupo14.turnos.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class LoginController {
 
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private ClienteService clienteService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -41,8 +45,7 @@ public class LoginController {
             UsuarioDTO usuario = usuarioService.login(email, contrasena);
             session.setAttribute("usuario", usuario);
 
-            Rol rol = usuario.rol(); // Ya es enum, no hace falta convertir
-
+            Rol rol = usuario.rol(); 
             switch (rol) {
                 case CLIENTE:
                     destino = "redirect:/cliente/menu";
@@ -63,5 +66,34 @@ public class LoginController {
         }
 
         return destino;
+    }
+    
+    @GetMapping("/registro")
+    public String mostrarFormularioRegistro() {
+        return "cliente/registrar";
+    }
+
+    @PostMapping("/registrar")
+    public String registrarCliente(
+        @RequestParam String email,
+        @RequestParam String contrasena,
+        @RequestParam Long numeroCliente,
+        @RequestParam Long dni,
+        @RequestParam String nombre,
+        @RequestParam String apellido,
+        Model model
+    ) {
+        String vista;
+        try {
+            ClienteDTO dto = new ClienteDTO(null, email, contrasena, numeroCliente, dni, nombre, apellido);
+            clienteService.crear(dto);
+            model.addAttribute("mensaje", "Registro exitoso. Ahora puedes iniciar sesión.");
+            vista = "login";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al registrar cliente: " + e.getMessage());
+            vista = "cliente/registrar";
+        }
+
+        return vista;
     }
 }

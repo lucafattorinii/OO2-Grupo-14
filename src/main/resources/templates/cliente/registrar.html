@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro de Cliente</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>Registrarse como Cliente</h2>
+
+    <!-- Mensaje de éxito o error -->
+    <div th:if="${mensaje}" style="color: green;">
+        <p th:text="${mensaje}"></p>
+    </div>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <!-- Formulario de registro -->
+    <form th:action="@{/registrar}" method="post">
+        <label>Email:</label><br/>
+        <input type="email" name="email" required/><br/><br/>
+
+        <label>Contraseña:</label><br/>
+        <input type="password" name="contrasena" required/><br/><br/>
+
+        <label>Número de Cliente:</label><br/>
+        <input type="number" name="numeroCliente" required/><br/><br/>
+
+        <label>DNI:</label><br/>
+        <input type="number" name="dni" required/><br/><br/>
+
+        <label>Nombre:</label><br/>
+        <input type="text" name="nombre" required/><br/><br/>
+
+        <label>Apellido:</label><br/>
+        <input type="text" name="apellido" required/><br/><br/>
+
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <br/>
+    <a th:href="@{/login}">Volver al login</a>
+</body>
+</html>
