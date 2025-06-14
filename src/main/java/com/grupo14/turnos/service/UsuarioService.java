@@ -1,6 +1,7 @@
 package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.exception.EmailInvalidoException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Usuario;
 import com.grupo14.turnos.repository.UsuarioRepository;
@@ -104,8 +105,14 @@ public class UsuarioService {
     }
     
     public UsuarioDTO login(String email, String contrasena) {
+
+        // Validar formato del email
+        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new EmailInvalidoException("El email ingresado no tiene un formato válido.");
+        }
+
         Usuario usuario = repo.findByEmail(email)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Credenciales inválidas"));
+            .orElseThrow(() -> new RecursoNoEncontradoException("Credenciales inválidas"));
 
         if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
             throw new RecursoNoEncontradoException("Credenciales inválidas");
@@ -113,5 +120,6 @@ public class UsuarioService {
 
         return convertirADTO(usuario);
     }
+
 }
 

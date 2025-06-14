@@ -2,7 +2,9 @@ package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
+import com.grupo14.turnos.exception.HorarioNoDisponibleException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
+import com.grupo14.turnos.exception.TurnoNoEncontradoException;
 import com.grupo14.turnos.modelo.Cliente;
 import com.grupo14.turnos.modelo.Disponibilidad;
 import com.grupo14.turnos.modelo.Servicio;
@@ -12,6 +14,8 @@ import com.grupo14.turnos.repository.ClienteRepository;
 import com.grupo14.turnos.repository.DisponibilidadRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
 import com.grupo14.turnos.repository.TurnoRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,13 +43,19 @@ public class TurnoService {
         this.disRepo = disRepo;
     }
     
+    @Autowired
+    private DisponibilidadService disponibilidadService;
+
+    
     public TurnoDTO obtenerPorId(Integer id) {
-        Turno t = repo.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado: " + id));
+    	Turno t = repo.findById(id)
+    		    .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado: " + id));
+
         
         return convertirADTO(t);
     }
-
+    
+   
     public List<TurnoDTO> listarTodos() {
         return repo.findAll().stream()
             .map(this::convertirADTO)
@@ -69,6 +79,13 @@ public class TurnoService {
 
         Disponibilidad disponibilidad = disRepo.findById(dto.disponibilidadId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + dto.disponibilidadId()));
+        
+     // Verificar que el horario esté disponible
+        if (!disponibilidadService.estaDisponible(dto.disponibilidadId().longValue(), dto.fecha(), dto.hora())) {
+            throw new HorarioNoDisponibleException("El horario ya está ocupado.");
+        }
+
+
 
         Turno turno = new Turno();
         turno.setCliente(cliente);

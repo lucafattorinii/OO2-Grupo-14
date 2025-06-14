@@ -1,7 +1,9 @@
 package com.grupo14.turnos.config;
 
+import com.grupo14.turnos.exception.EmailInvalidoException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +38,18 @@ public class ExceptionHandlerGlobal {
      * @param model Modelo para la vista
      * @return Nombre de la vista a renderizar
      */
+    
+    @ExceptionHandler(EmailInvalidoException.class)
+    public ResponseEntity<String> manejarEmailInvalido(EmailInvalidoException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    
+    
+    
+    
+    
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGeneral(Exception ex, Model model) {
