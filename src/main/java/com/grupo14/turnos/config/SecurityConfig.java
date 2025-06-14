@@ -3,14 +3,11 @@ package com.grupo14.turnos.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -21,23 +18,35 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // Permitir acceso a Swagger, autenticación y vistas
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/login", "/auth/**", "/view/**").permitAll()
-                // Permitir acceso a recursos estáticos
+                // Permitir acceso a Swagger, login, registro y recursos estáticos
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/login", "/registro", "/auth/**", "/view/**").permitAll()
                 .requestMatchers("/styles.css", "/scripts.js", "/images/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            .formLogin(form -> form
+                .loginPage("/login")                // GET /login para mostrar formulario
+                .loginProcessingUrl("/login")      // POST /login para procesar datos
+                .defaultSuccessUrl("/default", true)  // URL a redirigir tras login exitoso
+                .failureUrl("/login?error=true")   // URL en caso de error
+                .permitAll()
+            )
+            .logout(logout -> logout.permitAll());
+
         return http.build();
     }
 
     @Bean
-    public UserDetailsService users(PasswordEncoder passwordEncoder) {
-        var admin = User.withUsername("admin")
-            .password(passwordEncoder.encode("admin123"))
-            .roles("ADMIN")
-            .build();
-        return new InMemoryUserDetailsManager(admin);
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        return username -> {
+            if ("admin".equals(username)) {
+                return org.springframework.security.core.userdetails.User
+                    .withUsername("admin")
+                    .password(passwordEncoder.encode("admin123"))
+                    .roles("ADMIN")
+                    .build();
+            }
+            throw new RuntimeException("Usuario no encontrado");
+        };
     }
 
     @Bean
@@ -49,6 +58,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-
 }
-
