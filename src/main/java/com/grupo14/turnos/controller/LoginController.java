@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,51 +35,37 @@ public class LoginController {
 
     @GetMapping("/login")
     public String mostrarLogin() {
-        return "login";
+        return "login"; 
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // cerrar sesión
-        return "redirect:/login";
-    }
-
-    @PostMapping("/login")
-    public String procesarLogin(
-        @RequestParam String email,
-        @RequestParam String contrasena,
-        HttpSession session,
-        Model model
-    ) {
+   
+    @GetMapping("/default")
+    public String redireccionPostLogin(Authentication auth, HttpSession session) {
         String destino;
 
-        try {
-            UsuarioDTO usuario = usuarioService.login(email, contrasena);
+        if ("admin".equals(auth.getName())) {
+            destino = "menu"; // Vista general para admin (menu.html)
+        } else {
+            UsuarioDTO usuario = usuarioService.buscarPorEmail(auth.getName());
             session.setAttribute("usuario", usuario);
 
-            Rol rol = usuario.rol(); 
-            switch (rol) {
-                case CLIENTE:
-                    destino = "redirect:/cliente/menu";
-                    break;
-                case EMPLEADO:
-                    destino = "redirect:/empleado/menu";
-                    break;
-                case PRESTADOR:
-                    destino = "redirect:/prestador/menu";
-                    break;
-                default:
-                    model.addAttribute("error", "Rol desconocido.");
-                    destino = "login";
-            }
-        } catch (Exception e) {
-            model.addAttribute("error", "Credenciales inválidas.");
-            destino = "login";
+            destino = switch (usuario.rol()) {
+                case CLIENTE -> "redirect:/cliente/menu";
+                case EMPLEADO -> "redirect:/empleado/menu";
+                case PRESTADOR -> "redirect:/prestador/menu";
+                default -> "redirect:/login?error=rol_desconocido";
+            };
         }
 
         return destino;
     }
-    
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); 
+        return "redirect:/login";
+    }
+
     @GetMapping("/registro")
     public String mostrarFormularioRegistro() {
         return "cliente/registrar";
@@ -107,17 +94,17 @@ public class LoginController {
 
         return vista;
     }
-    
+
     @GetMapping("/visitante")
     public String vistaVisitante(Model model) {
         PrestadorDTO prestador = prestadorService.obtenerUnico()
-            .orElseThrow(() -> new RuntimeException("No hay prestador disponible")); 
+            .orElseThrow(() -> new RuntimeException("No hay prestador disponible"));
 
         List<ServicioDTO> servicios = servicioService.listarServiciosDelUnicoPrestador();
 
         model.addAttribute("prestador", prestador);
         model.addAttribute("servicios", servicios);
 
-        return "visitante"; 
+        return "visitante";
     }
 }

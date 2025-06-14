@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService {
 
+	
     private final UsuarioRepository repo;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -111,6 +112,18 @@ public class UsuarioService {
         }
 
         return convertirADTO(usuario);
+    }
+    
+    public UsuarioDTO buscarPorEmail(String email) {
+        Usuario usuario = repo.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+        
+        return new UsuarioDTO(
+            usuario.getId(),
+            usuario.getEmail(),
+            usuario.getContrasena(),
+            usuario.getRol()
+        );
     }
 }
 
