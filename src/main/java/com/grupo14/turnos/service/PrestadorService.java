@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,5 +93,10 @@ public class PrestadorService {
 			p.setRol(Rol.PRESTADOR);
 			repo.save(p);
 }
+    
+    public Optional<PrestadorDTO> obtenerUnico() {
+        return repo.findTopByOrderByIdAsc()
+                   .map(this::convertirADTO);
+    }
 }
 

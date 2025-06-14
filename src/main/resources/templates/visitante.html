@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${prestador.razonSocial}">Nombre Empresa</title>
+    <link rel="stylesheet" href="/css/estilos.css"> <!-- Opcional -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .botones {
+            display: flex;
+            gap: 10px;
+        }
+        .servicios {
+            margin-top: 30px;
+        }
+        .servicio {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1 th:text="${prestador.razonSocial}">Nombre Empresa</h1>
+    <div class="botones">
+        <a href="/login"><button>Iniciar sesión</button></a>
+        <a href="/registro"><button>Registrarse</button></a>
+    </div>
+</div>
+
+<div class="servicios">
+    <h2>Servicios disponibles</h2>
+    <div th:each="servicio : ${servicios}" class="servicio">
+        <h3 th:text="${servicio.nombre}">Nombre del servicio</h3>
+        <p><strong>Duración:</strong> <span th:text="${servicio.duracionMin}">0</span> minutos</p>
+        <p><strong>Precio:</strong> $<span th:text="${servicio.precio}">0.00</span></p>
+    </div>
+</div>
+
+</body>
+</html>

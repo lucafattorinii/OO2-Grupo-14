@@ -1,11 +1,18 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.ClienteDTO;
+import com.grupo14.turnos.dto.PrestadorDTO;
+import com.grupo14.turnos.dto.ServicioDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
 import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.service.ClienteService;
+import com.grupo14.turnos.service.PrestadorService;
+import com.grupo14.turnos.service.ServicioService;
 import com.grupo14.turnos.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +27,10 @@ public class LoginController {
     private UsuarioService usuarioService;
     @Autowired
     private ClienteService clienteService;
+    @Autowired
+    private PrestadorService prestadorService;
+    @Autowired
+    private ServicioService servicioService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -95,5 +106,18 @@ public class LoginController {
         }
 
         return vista;
+    }
+    
+    @GetMapping("/visitante")
+    public String vistaVisitante(Model model) {
+        PrestadorDTO prestador = prestadorService.obtenerUnico()
+            .orElseThrow(() -> new RuntimeException("No hay prestador disponible")); 
+
+        List<ServicioDTO> servicios = servicioService.listarServiciosDelUnicoPrestador();
+
+        model.addAttribute("prestador", prestador);
+        model.addAttribute("servicios", servicios);
+
+        return "visitante"; 
     }
 }

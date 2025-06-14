@@ -97,5 +97,16 @@ public class ServicioService {
                 s.getPrestador().getId()
         );
     }
+    
+    public List<ServicioDTO> listarServiciosDelUnicoPrestador() {
+        Prestador prestador = prestadorRepo.findTopByOrderByIdAsc()
+                .orElseThrow(() -> new RecursoNoEncontradoException("No hay ningún prestador cargado."));
+        
+        return repo.findByPrestadorId(prestador.getId()).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+    
+   
 }
 
