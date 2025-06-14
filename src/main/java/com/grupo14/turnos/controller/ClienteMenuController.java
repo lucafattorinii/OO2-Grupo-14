@@ -10,6 +10,7 @@ import com.grupo14.turnos.modelo.Fecha;
 import com.grupo14.turnos.modelo.Usuario;
 import com.grupo14.turnos.repository.FechaRepository;
 import com.grupo14.turnos.service.ClienteService;
+import com.grupo14.turnos.service.DireccionService;
 import com.grupo14.turnos.service.DisponibilidadService;
 import com.grupo14.turnos.service.ServicioService;
 import com.grupo14.turnos.service.TurnoService;
@@ -37,15 +38,17 @@ public class ClienteMenuController {
 	private final DisponibilidadService disponibilidadService;
 	private final ClienteService clienteService;
 	private final FechaRepository fechaRepository;
+	private final DireccionService direccionService;
 
     // Inyección por constructor
 	public ClienteMenuController(TurnoService turnoService, ServicioService servicioService, DisponibilidadService disponibilidadService, ClienteService clienteService,
-			FechaRepository fechaRepository) {
+			FechaRepository fechaRepository, DireccionService direccionService) {
 	    this.turnoService = turnoService;
 	    this.servicioService = servicioService;
 	    this.disponibilidadService = disponibilidadService;
 	    this.clienteService = clienteService;
 	    this.fechaRepository = fechaRepository;
+	    this.direccionService= direccionService;
 	}
 
     @GetMapping("/menu")
@@ -97,6 +100,7 @@ public class ClienteMenuController {
         } else {
             model.addAttribute("servicios", servicioService.listarTodos());
             model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
+            model.addAttribute("direcciones", direccionService.listarTodos());
         }
         return vista;
     }
@@ -104,10 +108,12 @@ public class ClienteMenuController {
     @PostMapping("/crear-turno")
     public String crearNuevoTurno(
             HttpSession session,
-            @RequestParam Long fechaId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
             @RequestParam Long disponibilidadId,
-            @RequestParam Long servicioId
+            @RequestParam Long servicioId,
+            @RequestParam Long direccionId,  
+            Model model
     ) {
         String vista;
 
@@ -115,21 +121,25 @@ public class ClienteMenuController {
         if (usuario == null) {
             vista = "redirect:/login";
         } else {
-            Fecha fecha = fechaRepository.findById(fechaId)
-                .orElseThrow(() -> new RuntimeException("Fecha no encontrada"));
-
             TurnoConFechaDTO nuevo = new TurnoConFechaDTO(
-                fecha.getFecha(),
+                fecha,
                 hora,
                 EstadoTurno.PENDIENTE,
                 usuario.id(),
                 disponibilidadId,
                 servicioId,
-                fecha.getDireccion().getIdDireccion()
+                direccionId
             );
 
-            turnoService.crear(nuevo);
-            vista = "redirect:/cliente/mis-turnos";
+            try {
+                clienteService.crearTurnoCliente(nuevo);
+                vista = "redirect:/cliente/mis-turnos";
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("error", e.getMessage());
+                model.addAttribute("servicios", servicioService.listarTodos());
+                model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
+                vista = "cliente/crear-turno";
+            }
         }
 
         return vista;

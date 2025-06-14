@@ -15,10 +15,10 @@ public record DireccionDTO(
     @NotBlank @Size(max = 50)
     String ciudad,
 
-    @NotBlank @Size(max = 100)
+    @Size(max = 100)
     String calle,
 
-    @NotBlank @Size(max = 10)
+    @Size(max = 10)
     String numeroCalle,
 
     @NotBlank @Size(max = 10)

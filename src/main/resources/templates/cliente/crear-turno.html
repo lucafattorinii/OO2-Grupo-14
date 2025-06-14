@@ -126,42 +126,52 @@
     <h1>Crear Nuevo Turno</h1>
   </header>
 
-  <div class="container">
-    <form th:action="@{/cliente/crear-turno}" method="post">
-      <div class="form-group">
-        <label for="fecha">Fecha</label>
-        <input type="date" id="fecha" name="fecha" required />
-      </div>
+  <form th:action="@{/cliente/crear-turno}" method="post">
+    <div class="form-group">
+      <label for="fecha">Fecha</label>
+      <input type="date" id="fecha" name="fecha" required />
+    </div>
 
-      <div class="form-group">
-        <label for="hora">Hora</label>
-        <input type="time" id="hora" name="hora" required />
-      </div>
+    <div class="form-group">
+      <label for="hora">Hora</label>
+      <input type="time" id="hora" name="hora" required />
+    </div>
 
-      <div class="form-group">
-        <label for="servicioId">Servicio</label>
-        <select id="servicioId" name="servicioId" required>
-          <option value="" disabled selected>-- Seleccione un servicio --</option>
-          <th:block th:each="servicio : ${servicios}">
-            <option th:value="${servicio.id}"
-                    th:text="${servicio.tipoDeServicio}"></option>
-          </th:block>
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="servicioId">Servicio</label>
+      <select id="servicioId" name="servicioId" required>
+        <option value="" disabled selected>-- Seleccione un servicio --</option>
+        <th:block th:each="servicio : ${servicios}">
+          <option th:value="${servicio.id}"
+                  th:text="${servicio.tipoDeServicio}"></option>
+        </th:block>
+      </select>
+    </div>
 
-      <div class="form-group">
-        <label for="disponibilidadId">Disponibilidad</label>
-        <select id="disponibilidadId" name="disponibilidadId" required>
-          <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
-          <th:block th:each="disp : ${disponibilidades}">
-            <option th:value="${disp.id}"
-                    th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
-          </th:block>
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="disponibilidadId">Disponibilidad</label>
+      <select id="disponibilidadId" name="disponibilidadId" required>
+        <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
+        <th:block th:each="disp : ${disponibilidades}">
+          <option th:value="${disp.id}"
+                  th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
+        </th:block>
+      </select>
+    </div>
 
-      <button type="submit">Crear Turno</button>
-    </form>
+    <div class="form-group">
+      <label for="direccionId">Dirección</label>
+      <select id="direccionId" name="direccionId" required>
+        <option value="" disabled selected>-- Seleccione una dirección --</option>
+        <th:block th:each="dir : ${direcciones}">
+          <option th:value="${dir.idDireccion}"
+                  th:text="${#strings.concat(dir.calle, ' ', dir.numero, ', ', dir.localidad)}"></option>
+        </th:block>
+      </select>
+    </div>
+
+    <button type="submit">Crear Turno</button>
+  </form>
 
     <a th:href="@{/cliente/menu}" class="back-link">← Volver al Menú</a>
   </div>
