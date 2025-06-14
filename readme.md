@@ -103,6 +103,11 @@ El sistema sigue el siguiente diagrama de clases:
 - **Contacto**: Información de contacto.
 - **Fecha**: Representación de fechas en el sistema.
 
+- ## Variables de entorno necesarias
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `DB_URL`, `DB_USER`, `DB_PASSWORD`
+
 ## Contribuidores
 
 - Grupo 14 - OO2 - 2025
