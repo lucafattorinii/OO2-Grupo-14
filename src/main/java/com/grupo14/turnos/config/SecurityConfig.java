@@ -40,7 +40,7 @@ public class SecurityConfig {
         return username -> {
             if ("admin".equals(username)) {
                 return org.springframework.security.core.userdetails.User
-                    .withUsername("admin")
+                    .withUsername("admin@gmail.com")
                     .password(passwordEncoder.encode("admin123"))
                     .roles("ADMIN")
                     .build();
