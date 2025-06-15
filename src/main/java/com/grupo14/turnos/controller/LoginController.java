@@ -25,22 +25,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     @Autowired
+    private UsuarioService usuarioService;
+    @Autowired
     private ClienteService clienteService;
-
     @Autowired
     private PrestadorService prestadorService;
-
     @Autowired
     private ServicioService servicioService;
-
-    @Autowired
-    private UsuarioService usuarioService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
         return "login"; 
     }
 
+   
     @GetMapping("/default")
     public String redireccionPostLogin(Authentication auth, HttpSession session) {
         UsuarioDTO usuario = usuarioService.buscarPorEmail(auth.getName());
@@ -103,3 +101,4 @@ public class LoginController {
         return "visitante";
     }
 }
+
