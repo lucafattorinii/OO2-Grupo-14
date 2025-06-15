@@ -5,14 +5,10 @@ import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Disponibilidad;
 import com.grupo14.turnos.modelo.Servicio;
 import com.grupo14.turnos.repository.DisponibilidadRepository;
-import com.grupo14.turnos.repository.EmpleadoRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
-import com.grupo14.turnos.repository.TurnoRepository;
-
 import org.springframework.stereotype.Service;
 import com.grupo14.turnos.modelo.DiaSemana;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -22,21 +18,14 @@ import java.util.stream.Collectors;
 public class DisponibilidadService {
 
     private final DisponibilidadRepository repo;
-    private final EmpleadoRepository empRepo;
     private final ServicioRepository servRepo;
-    private final TurnoRepository turnoRepo;
 
     public DisponibilidadService(
             DisponibilidadRepository repo,
-            EmpleadoRepository empRepo,
-            ServicioRepository servRepo,
-            TurnoRepository turnoRepo
-
+            ServicioRepository servRepo
     ) {
         this.repo = repo;
-        this.empRepo= empRepo;
         this.servRepo = servRepo;
-		this.turnoRepo = turnoRepo;
     }
 
     public DisponibilidadDTO obtenerPorId(long id) {
@@ -51,12 +40,6 @@ public class DisponibilidadService {
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
-    
-    public boolean estaDisponible(Long disponibilidadId, LocalDate fecha, LocalTime hora) {
-        // Buscar si ya hay un turno asignado en esa disponibilidad, fecha y hora
-        return !turnoRepo.existsByDisponibilidadIdAndFechaAndHora(disponibilidadId, fecha, hora);
-    }
-
 
     public DisponibilidadDTO crear(DisponibilidadDTO dto) {
         Disponibilidad d = new Disponibilidad();
@@ -161,4 +144,3 @@ public class DisponibilidadService {
             .collect(Collectors.toList());
     }*/
 }
-
