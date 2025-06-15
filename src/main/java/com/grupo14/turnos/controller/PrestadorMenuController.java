@@ -2,6 +2,7 @@ package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.ServicioDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.service.PrestadorService;
 import com.grupo14.turnos.service.ServicioService;
@@ -27,13 +28,15 @@ public class PrestadorMenuController {
     @GetMapping("/menu")
     public String menuPrestador(HttpSession session, Model model) {
         UsuarioDTO usuarioDTO = (UsuarioDTO) session.getAttribute("usuario");
-        if (usuarioDTO == null || !"PRESTADOR".equals(usuarioDTO.rol())) {
+        if (usuarioDTO == null || usuarioDTO.rol() != Rol.PRESTADOR) {
+            System.out.println("Usuario no tiene rol PRESTADOR o no está logueado");
             return "redirect:/login";
         }
 
-        // Buscar al prestador completo por su email (asumiendo que tenés este método)
         PrestadorDTO prestadorDTO = prestadorService.buscarPorEmail(usuarioDTO.email());
-        if (prestadorDTO == null) return "redirect:/login";
+        if (prestadorDTO == null) {
+            return "redirect:/login";
+        }
 
         List<ServicioDTO> servicios = servicioService.listarTodos().stream()
                 .filter(s -> s.prestadorId().equals(prestadorDTO.id()))
@@ -41,9 +44,12 @@ public class PrestadorMenuController {
 
         model.addAttribute("prestador", prestadorDTO);
         model.addAttribute("servicios", servicios);
+
+        System.out.println("Entró a /prestador/menu");
+        System.out.println("Usuario en sesión: " + usuarioDTO);
+
         return "prestador/menu";
     }
-
 
 
     @PostMapping("/guardar-servicio")

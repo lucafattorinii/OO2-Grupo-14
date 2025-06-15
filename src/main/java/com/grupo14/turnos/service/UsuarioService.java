@@ -91,17 +91,15 @@ public class UsuarioService {
     }
     
     private Rol determinarRol(Usuario usuario) {
-        Rol rol = null;
-
         if (usuario instanceof com.grupo14.turnos.modelo.Cliente) {
-            rol = Rol.CLIENTE;
+            return Rol.CLIENTE;
         } else if (usuario instanceof com.grupo14.turnos.modelo.Empleado) {
-            rol = Rol.EMPLEADO;
+            return Rol.EMPLEADO;
         } else if (usuario instanceof com.grupo14.turnos.modelo.Prestador) {
-            rol = Rol.PRESTADOR;
+            return Rol.PRESTADOR;
+        } else {
+            return usuario.getRol();  // Para casos como ADMIN u otros
         }
-
-        return rol;
     }
     
     public UsuarioDTO login(String email, String contrasena) {
@@ -125,8 +123,13 @@ public class UsuarioService {
     public UsuarioDTO buscarPorEmail(String email) {
         Usuario usuario = repo.findByEmail(email)
             .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con email: " + email));
-        
-        return convertirADTO(usuario); 
+
+        return new UsuarioDTO(
+            usuario.getId(),
+            usuario.getEmail(),
+            usuario.getContrasena(), 
+            usuario.getRol() 
+        );
     }
 
 }
