@@ -25,7 +25,7 @@ public class DataInitializer {
             Usuario admin = new Usuario();
             admin.setEmail("grupo14.tp@gmail.com");
             admin.setContrasena(passwordEncoder.encode("admin123"));
-            admin.setRol(Rol.ADMIN); // Si usás enum Rol
+            admin.setRol(Rol.ADMIN); 
 
             usuarioRepository.save(admin);
             System.out.println("Admin creado correctamente.");

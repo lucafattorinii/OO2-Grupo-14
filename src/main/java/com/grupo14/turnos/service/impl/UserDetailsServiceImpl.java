@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -18,15 +18,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.println(">>> Entró al loadUserByUsername con email: " + email);
+
         UsuarioDTO usuario = usuarioService.buscarPorEmail(email);
 
         if (usuario == null) {
+            System.out.println(">>> Usuario no encontrado");
             throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
         }
 
+        System.out.println(">>> Usuario encontrado: " + usuario.email() + " con rol " + usuario.rol());
+
         return new User(
             usuario.email(),
-            usuario.contrasena(), // ⚠️ Tiene que estar encriptada
+            usuario.contrasena(),
             List.of(new SimpleGrantedAuthority("ROLE_" + usuario.rol().name()))
         );
     }

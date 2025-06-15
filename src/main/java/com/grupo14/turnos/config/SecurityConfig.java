@@ -14,8 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
+    
     public UserDetailsService userDetailsService(UserDetailsServiceImpl impl) {
+    	System.out.println(">>> UserDetailsServiceImpl inyectado en SecurityConfig");
         return impl;
     }
 
@@ -56,4 +57,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
+   
 }

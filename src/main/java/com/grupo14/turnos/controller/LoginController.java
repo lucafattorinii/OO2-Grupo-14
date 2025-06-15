@@ -41,23 +41,16 @@ public class LoginController {
    
     @GetMapping("/default")
     public String redireccionPostLogin(Authentication auth, HttpSession session) {
-        String destino;
+        UsuarioDTO usuario = usuarioService.buscarPorEmail(auth.getName());
+        session.setAttribute("usuario", usuario);
 
-        if ("grupo14.tp@gmail.com".equals(auth.getName())) {
-            destino = "menu"; // Vista general para admin (menu.html)
-        } else {
-            UsuarioDTO usuario = usuarioService.buscarPorEmail(auth.getName());
-            session.setAttribute("usuario", usuario);
-
-            destino = switch (usuario.rol()) {
-                case CLIENTE -> "redirect:/cliente/menu";
-                case EMPLEADO -> "redirect:/empleado/menu";
-                case PRESTADOR -> "redirect:/prestador/menu";
-                default -> "redirect:/login?error=rol_desconocido";
-            };
-        }
-
-        return destino;
+        return switch (usuario.rol()) {
+            case ADMIN -> "menu"; // Vista en templates/menu.html
+            case CLIENTE -> "redirect:/cliente/menu";
+            case EMPLEADO -> "redirect:/empleado/menu";
+            case PRESTADOR -> "redirect:/prestador/menu";
+            default -> "redirect:/login?error=rol_desconocido";
+        };
     }
 
     @GetMapping("/logout")
