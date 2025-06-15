@@ -43,7 +43,7 @@ public class LoginController {
     public String redireccionPostLogin(Authentication auth, HttpSession session) {
         String destino;
 
-        if ("admin".equals(auth.getName())) {
+        if ("grupo14.tp@gmail.com".equals(auth.getName())) {
             destino = "menu"; // Vista general para admin (menu.html)
         } else {
             UsuarioDTO usuario = usuarioService.buscarPorEmail(auth.getName());
