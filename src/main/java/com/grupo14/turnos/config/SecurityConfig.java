@@ -38,10 +38,10 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         return username -> {
-            if ("admin".equals(username)) {
+            if ("grupo14.tp@gmail.com".equals(username)) {
                 return org.springframework.security.core.userdetails.User
-                    .withUsername("admin@gmail.com")
-                    .password(passwordEncoder.encode("admin123"))
+                    .withUsername("grupo14.tp@gmail.com")
+                    .password(passwordEncoder.encode("admin123")) 
                     .roles("ADMIN")
                     .build();
             }
