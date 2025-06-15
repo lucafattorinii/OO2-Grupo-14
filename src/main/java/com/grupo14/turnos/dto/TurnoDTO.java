@@ -1,16 +1,19 @@
 package com.grupo14.turnos.dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import com.grupo14.turnos.modelo.EstadoTurno;
+import com.grupo14.turnos.modelo.Fecha;
 
 import jakarta.validation.constraints.NotNull;
 
+
+import java.time.LocalTime;
+
 public record TurnoDTO(
-    Integer id,
-    @NotNull LocalDate fecha,
+    Long id,                      
+    @NotNull Long fechaId,     
     @NotNull LocalTime hora,
-    @NotNull String estado,
-    @NotNull Integer clienteId,
-    @NotNull Integer disponibilidadId,
+    @NotNull EstadoTurno estado,   
+    @NotNull Long clienteId,      
+    @NotNull Long disponibilidadId, 
     @NotNull Long servicioId
 ) {}

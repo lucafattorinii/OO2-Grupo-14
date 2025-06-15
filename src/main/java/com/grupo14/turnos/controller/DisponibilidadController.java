@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -52,32 +55,40 @@ public class DisponibilidadController {
             @RequestParam String diaSemana,
             @RequestParam String horaInicio,
             @RequestParam String horaFin,
-            @RequestParam Long servicioId,
-            @RequestParam Integer empleadoId
+            @RequestParam List<Long> servicioIds
     ) {
         DisponibilidadDTO nueva = new DisponibilidadDTO(
-            null, diaSemana, horaInicio, horaFin, servicioId, empleadoId
+            null,
+            DiaSemana.valueOf(diaSemana.toUpperCase()), 
+            LocalTime.parse(horaInicio),
+            LocalTime.parse(horaFin),    
+            new HashSet<>(servicioIds)   
         );
         disponibilidadService.crear(nueva);
         return "redirect:/disponibilidades/view";
     }
     
     @PostMapping("/delete")
-    public String eliminarDisponibilidad(@RequestParam Integer id) {
+    public String eliminarDisponibilidad(@RequestParam long id) {
         disponibilidadService.eliminar(id);
         return "redirect:/disponibilidades/view";
     }
 
     @PostMapping("/update")
     public String modificarDisponibilidad(
-        @RequestParam Integer id,
+        @RequestParam Long id,
         @RequestParam String diaSemana,
         @RequestParam String horaInicio,
         @RequestParam String horaFin,
-        @RequestParam Long servicioId,
-        @RequestParam Integer empleadoId
+        @RequestParam List<Long> servicioIds
     ) {
-        disponibilidadService.actualizarDisponibilidad(id, diaSemana, horaInicio, horaFin, servicioId, empleadoId);
+        disponibilidadService.actualizarDisponibilidad(
+            id,
+            diaSemana,
+            horaInicio,
+            horaFin,
+            new HashSet<>(servicioIds)
+        );
         return "redirect:/disponibilidades/view";
     }
 

@@ -48,8 +48,8 @@ public class ViewController {
     @GetMapping("/test")
     public String testThymeleaf(Model model) {
         List<ClienteDTO> clientes = List.of(
-            new ClienteDTO(3, "correo1@example.com", "pass1", 1001L, 30123456L, "Juan", "Perez"),
-            new ClienteDTO(4, "correo2@example.com", "pass2", 1002L, 40123456L, "Ana", "Garcia")
+            new ClienteDTO(3L, "correo1@example.com", "pass1", 1001L, 30123456L, "Juan", "Perez"),
+            new ClienteDTO(4L, "correo2@example.com", "pass2", 1002L, 40123456L, "Ana", "Garcia")
         );
         model.addAttribute("clientes", clientes);
         return "test";

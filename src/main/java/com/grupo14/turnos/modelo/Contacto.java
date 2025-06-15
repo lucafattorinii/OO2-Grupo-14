@@ -1,21 +1,25 @@
 package com.grupo14.turnos.modelo;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 @Entity
 @Table(name = "contacto")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Contacto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id; // Ahora depende del ID de Usuario
 
     @Column(name = "telefono", length = 20)
     private String telefono;
 
-  
+    // Relación 1 a 1 con Direccion (no bidireccional)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "direccion_id",
@@ -24,57 +28,13 @@ public class Contacto {
     )
     private Direccion direccion;
 
-   
-    @OneToOne(fetch = FetchType.LAZY)
+    // Relación 1 a 1 con Usuario (comparten ID, y Contacto depende de Usuario)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId // Comparte el mismo ID con Usuario
     @JoinColumn(
-        name = "usuario_id",
+        name = "id",
         referencedColumnName = "id",
-        unique = true,
         foreignKey = @ForeignKey(name = "contacto_usuario_fk")
     )
     private Usuario usuario;
-
-   
-    public Contacto() { }
-
-    public Contacto(String telefono, Direccion direccion, Usuario usuario) {
-        this.telefono = telefono;
-        this.direccion = direccion;
-        this.usuario = usuario;
-    }
-
-   
-    // Getters / Setters
-    
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public Direccion getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 }

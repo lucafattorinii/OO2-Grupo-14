@@ -1,12 +1,18 @@
 package com.grupo14.turnos.modelo;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "prestador")
 @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Prestador extends Usuario {
 
     @Column(name = "razon_social", length = 100)
@@ -15,7 +21,6 @@ public class Prestador extends Usuario {
     @Column(name = "habilitado")
     private Boolean habilitado;
 
- 
     @OneToMany(
         mappedBy = "prestador",
         cascade = CascadeType.ALL,
@@ -24,39 +29,12 @@ public class Prestador extends Usuario {
     )
     private Set<Servicio> servicios = new HashSet<>();
 
-   
-    public Prestador() { }
-
-    public Prestador(String email, String contrasena, String rol,
+  
+    public Prestador(String email, String contrasena, Rol rol,
                      String razonSocial, Boolean habilitado) {
         super(email, contrasena, rol);
         this.razonSocial = razonSocial;
         this.habilitado = habilitado;
-    }
-
-    /// getters y setters
-    public String getRazonSocial() {
-        return razonSocial;
-    }
-
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
-    }
-
-    public Boolean getHabilitado() {
-        return habilitado;
-    }
-
-    public void setHabilitado(Boolean habilitado) {
-        this.habilitado = habilitado;
-    }
-
-    public Set<Servicio> getServicios() {
-        return servicios;
-    }
-
-    public void setServicios(Set<Servicio> servicios) {
-        this.servicios = servicios;
     }
 
     

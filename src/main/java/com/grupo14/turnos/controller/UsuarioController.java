@@ -1,6 +1,7 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.service.UsuarioService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,7 @@ public class UsuarioController {
     public String crearUsuario(
             @RequestParam String email,
             @RequestParam String contrasena,
-            @RequestParam String rol
+            @RequestParam Rol rol
     ) {
         UsuarioDTO nuevo = new UsuarioDTO(
             null, email, contrasena, rol

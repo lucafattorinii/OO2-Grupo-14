@@ -92,21 +92,32 @@
     </div>
 
     <!-- Mostrar mensaje de error desde el controlador -->
-    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+	<div th:if="${param.error}" class="error-message">
+	  Usuario o contraseña incorrectos.
+	</div>
 
-    <form class="login-form" th:action="@{/login}" method="post">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required autofocus />
-      </div>
+	<form class="login-form" th:action="@{/login}" method="post">
+	  <div class="form-group">
+	    <label for="username">Email:</label>
+	    <input type="email" id="username" name="username" required autofocus />
+	  </div>
 
-      <div class="form-group">
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" name="contrasena" required />
-      </div>
+	  <div class="form-group">
+	    <label for="password">Contraseña:</label>
+	    <input type="password" id="password" name="password" required />
+	  </div>
 
-      <button type="submit">Iniciar Sesión</button>
-    </form>
+	  <button type="submit">Iniciar Sesión</button>
+	</form>
+
+    <!--  NUEVOS BOTONES  -->
+    <div class="extra-options">
+      <p>¿No tenés cuenta?</p>
+      <a href="/registro" class="btn-link">Registrarse como cliente</a>
+
+      <p>¿Solo querés mirar?</p>
+      <a href="/visitante" class="btn-link">Ingresar como visitante</a>
+    </div>
 
     <div class="login-footer">
       &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.

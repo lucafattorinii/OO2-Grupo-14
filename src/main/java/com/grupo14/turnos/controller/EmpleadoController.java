@@ -35,10 +35,11 @@ public class EmpleadoController {
             @RequestParam String apellido,
             @RequestParam Long cuit,
             @RequestParam Integer legajo,
-            @RequestParam String puestoCargo
+            @RequestParam String puestoCargo,
+            @RequestParam Long servicioId // nuevo parámetro
     ) {
         EmpleadoDTO nuevo = new EmpleadoDTO(
-            null, email, contrasena, nombre, apellido, dni, cuit, legajo, puestoCargo
+            null, email, contrasena, nombre, apellido, dni, cuit, legajo, puestoCargo, servicioId
         );
         empleadoService.crear(nuevo);
         return "redirect:/empleados/view";

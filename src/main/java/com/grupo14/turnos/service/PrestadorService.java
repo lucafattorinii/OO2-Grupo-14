@@ -3,13 +3,14 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Prestador;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.repository.PrestadorRepository;
-
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +24,7 @@ public class PrestadorService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public PrestadorDTO obtenerPorId(Integer id) {
+    public PrestadorDTO obtenerPorId(long id) {
         Prestador p = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
         return convertirADTO(p);
@@ -41,32 +42,32 @@ public class PrestadorService {
         Prestador guardado = repo.save(p);
         return convertirADTO(guardado);
     }
-    
-    public PrestadorDTO actualizar(Integer id, PrestadorDTO dto) {
+
+    public PrestadorDTO actualizar(long id, PrestadorDTO dto) {
         Prestador p = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
         actualizarPrestadorDesdeDTO(p, dto);
         Prestador guardado = repo.save(p);
         return convertirADTO(guardado);
     }
-    
-    public void eliminar(Integer id) {
+
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Prestador no encontrado: " + id);
         }
         repo.deleteById(id);
     }
-    
+
     private PrestadorDTO convertirADTO(Prestador p) {
         return new PrestadorDTO(
-            p.getId(), 
-            p.getEmail(), 
-            p.getContrasena(), 
-            p.getRazonSocial(), 
+            p.getId(),
+            p.getEmail(),
+            p.getContrasena(),
+            p.getRazonSocial(),
             p.getHabilitado()
         );
     }
-    
+
     private void actualizarPrestadorDesdeDTO(Prestador p, PrestadorDTO dto) {
         p.setEmail(dto.email());
         if (dto.contrasena() != null && !dto.contrasena().isEmpty()) {
@@ -74,31 +75,30 @@ public class PrestadorService {
         }
         p.setRazonSocial(dto.razonSocial());
         p.setHabilitado(dto.habilitado());
-        p.setRol("PRESTADOR");
+        p.setRol(Rol.PRESTADOR);
     }
-    
-    
-    public void actualizarPrestador(Integer id, String email, String contrasena, String razonSocial, Boolean habilitado) {
-			Prestador p = repo.findById(id)
-			.orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
-			p.setEmail(email);
-			
-			if (contrasena != null && !contrasena.isEmpty()) {
-				p.setContrasena(passwordEncoder.encode(contrasena));
-			}
-			
-			p.setRazonSocial(razonSocial);
-			p.setHabilitado(habilitado);
-			p.setRol("PRESTADOR");
-			repo.save(p);
-}
-    
-    
-    public PrestadorDTO buscarPorEmail(String email) {
-    	 Prestador prestador = repo.findByEmail(email)
-    		        .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado con email: " + email));
-    		    return convertirADTO(prestador);
-    }
-    
-}
 
+    public void actualizarPrestador(long id, String email, String contrasena, String razonSocial, Boolean habilitado) {
+        Prestador p = repo.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + id));
+        p.setEmail(email);
+        if (contrasena != null && !contrasena.isEmpty()) {
+            p.setContrasena(passwordEncoder.encode(contrasena));
+        }
+        p.setRazonSocial(razonSocial);
+        p.setHabilitado(habilitado);
+        p.setRol(Rol.PRESTADOR);
+        repo.save(p);
+    }
+
+    public PrestadorDTO buscarPorEmail(String email) {
+        Prestador prestador = repo.findByEmail(email)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado con email: " + email));
+        return convertirADTO(prestador);
+    }
+
+    public Optional<PrestadorDTO> obtenerUnico() {
+        return repo.findTopByOrderByIdAsc()
+                   .map(this::convertirADTO);
+    }
+}

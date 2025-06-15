@@ -3,6 +3,7 @@ package com.grupo14.turnos.controller;
 import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.dto.DisponibilidadDTO;
 import com.grupo14.turnos.dto.ServicioDTO;
+import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.service.ClienteService;
@@ -60,15 +61,22 @@ public class TurnoController {
     // 2) FORM-SUBMIT: Crea un turno y vuelve al listado
     @PostMapping("/create")
     public String crearTurno(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,  
+            @RequestParam Long direccionId,   
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
             @RequestParam String estado,
-            @RequestParam Integer clienteId,
-            @RequestParam Integer disponibilidadId,
+            @RequestParam Long clienteId,
+            @RequestParam Long disponibilidadId,
             @RequestParam Long servicioId
     ) {
-        TurnoDTO nuevo = new TurnoDTO(
-            null, fecha, hora, estado, clienteId, disponibilidadId, servicioId
+        TurnoConFechaDTO nuevo = new TurnoConFechaDTO(
+            fecha,
+            hora,
+            EstadoTurno.valueOf(estado.toUpperCase()),
+            clienteId,
+            disponibilidadId,
+            servicioId,
+            direccionId
         );
         turnoService.crear(nuevo);
         return "redirect:/turnos/view";
@@ -82,15 +90,25 @@ public class TurnoController {
 
     @PostMapping("/update")
     public String modificarTurno(
-        @RequestParam Integer id,
+        @RequestParam Long id,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+        @RequestParam Long direccionId,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
         @RequestParam String estado,
-        @RequestParam Integer clienteId,
-        @RequestParam Integer disponibilidadId,
+        @RequestParam Long clienteId,
+        @RequestParam Long disponibilidadId,
         @RequestParam Long servicioId
     ) {
-        turnoService.actualizarTurno(id, fecha, hora, estado, clienteId, disponibilidadId, servicioId);
+        TurnoConFechaDTO dto = new TurnoConFechaDTO(
+            fecha,
+            hora,
+            EstadoTurno.valueOf(estado.toUpperCase()),
+            clienteId,
+            disponibilidadId,
+            servicioId,
+            direccionId
+        );
+        turnoService.actualizar(id, dto);
         return "redirect:/turnos/view";
     }
     
@@ -141,7 +159,7 @@ public class TurnoController {
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
                           produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TurnoDTO crearJson(@RequestBody TurnoDTO nuevo) {
+    public TurnoConFechaDTO crearJson(@RequestBody TurnoConFechaDTO nuevo) {
         return turnoService.crear(nuevo);
     }
 }

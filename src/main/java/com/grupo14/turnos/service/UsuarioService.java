@@ -3,6 +3,7 @@ package com.grupo14.turnos.service;
 import com.grupo14.turnos.dto.UsuarioDTO;
 import com.grupo14.turnos.exception.EmailInvalidoException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.modelo.Usuario;
 import com.grupo14.turnos.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService {
 
+	
     private final UsuarioRepository repo;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -28,7 +30,7 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
-    public UsuarioDTO obtenerPorId(Integer id) {
+    public UsuarioDTO obtenerPorId(long id) {
         Usuario usuario = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
         return convertirADTO(usuario);
@@ -43,7 +45,7 @@ public class UsuarioService {
         return convertirADTO(guardado);
     }
     
-    public UsuarioDTO actualizar(Integer id, UsuarioDTO dto) {
+    public UsuarioDTO actualizar(long id, UsuarioDTO dto) {
         Usuario usuario = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
         
@@ -58,14 +60,14 @@ public class UsuarioService {
         return convertirADTO(guardado);
     }
     
-    public void eliminar(Integer id) {
+    public void eliminar(long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Usuario no encontrado: " + id);
         }
         repo.deleteById(id);
     }
     
-    public void actualizarUsuario(Integer id, String email, String contrasena) {
+    public void actualizarUsuario(long id, String email, String contrasena) {
         Usuario usuario = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado: " + id));
         
@@ -88,17 +90,15 @@ public class UsuarioService {
         );
     }
     
-    private String determinarRol(Usuario usuario) {
-        String rol;
+    private Rol determinarRol(Usuario usuario) {
+        Rol rol = null;
 
         if (usuario instanceof com.grupo14.turnos.modelo.Cliente) {
-            rol = "CLIENTE";
+            rol = Rol.CLIENTE;
         } else if (usuario instanceof com.grupo14.turnos.modelo.Empleado) {
-            rol = "EMPLEADO";
+            rol = Rol.EMPLEADO;
         } else if (usuario instanceof com.grupo14.turnos.modelo.Prestador) {
-            rol = "PRESTADOR";
-        } else {
-            rol = "USUARIO";
+            rol = Rol.PRESTADOR;
         }
 
         return rol;
@@ -119,6 +119,14 @@ public class UsuarioService {
         }
 
         return convertirADTO(usuario);
+    }
+
+    
+    public UsuarioDTO buscarPorEmail(String email) {
+        Usuario usuario = repo.findByEmail(email)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con email: " + email));
+        
+        return convertirADTO(usuario); 
     }
 
 }

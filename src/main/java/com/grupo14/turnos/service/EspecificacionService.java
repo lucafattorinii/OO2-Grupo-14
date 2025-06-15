@@ -46,9 +46,9 @@ public interface EspecificacionService {
 
     void actualizar(EspecificacionDTO dto);
 
-    void eliminar(Integer id);
+    void eliminar(long id);
 
-    Optional<Especificacion> buscarPorId(Integer id);
+    Optional<Especificacion> buscarPorId(long id);
     
    /// public void actualizarEspecificacion(Integer id, Long servicioId, Rubro rubro, String detalles, Integer direccionId);
     

@@ -1,74 +1,41 @@
 package com.grupo14.turnos.modelo;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import lombok.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "fecha")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fecha {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private long id;
 
-    @Column(name = "fecha")
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "dia_semana")
+    @Column(name = "dia_semana", nullable = false)
     private DiaSemana diaSemana;
 
- 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fecha", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Turno> turnos = new ArrayList<>();
+
+    // Relación uno a uno con Dirección 
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "direccion_id",
         referencedColumnName = "id_direccion",
         foreignKey = @ForeignKey(name = "fecha_direccion_fk")
     )
     private Direccion direccion;
-
-
-    public Fecha() { }
-
-    public Fecha(LocalDate fecha, DiaSemana diaSemana, Direccion direccion) {
-        this.fecha = fecha;
-        this.diaSemana = diaSemana;
-        this.direccion = direccion;
-    }
-
-
-    // getters y setters
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public DiaSemana getDiaSemana() {
-        return diaSemana;
-    }
-
-    public void setDiaSemana(DiaSemana diaSemana) {
-        this.diaSemana = diaSemana;
-    }
-
-    public Direccion getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
 }
