@@ -1,44 +1,157 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Registro de Cliente</title>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <title>Registro de Cliente</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .login-container {
+      background-color: #fff;
+      padding: 32px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 380px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .login-header h1 {
+      color: #2c3e50;
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+    .login-header p {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin: 0;
+    }
+    .success-message,
+    .error-message {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .login-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 24px;
+    }
+    .login-form label {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      display: block;
+    }
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .login-form button {
+      grid-column: 1 / -1;
+      margin-top: 24px;
+      padding: 14px;
+      font-size: 15px;
+      background-color: #2980b9;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color .3s;
+    }
+    .login-form button:hover {
+      background-color: #1abc9c;
+    }
+    .extra-options {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 28px;
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    .extra-options a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+    .extra-options a:hover {
+      text-decoration: underline;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+  </style>
 </head>
 <body>
-    <h2>Registrarse como Cliente</h2>
-
-    <!-- Mensaje de éxito o error -->
-    <div th:if="${mensaje}" style="color: green;">
-        <p th:text="${mensaje}"></p>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>Registro de Cliente</h1>
+      <p>Complete sus datos para crear una cuenta</p>
     </div>
-    <div th:if="${error}" style="color: red;">
-        <p th:text="${error}"></p>
+    <div th:if="${mensaje}" class="success-message">
+      <p th:text="${mensaje}"></p>
     </div>
-
-    <!-- Formulario de registro -->
-    <form th:action="@{/registrar}" method="post">
-        <label>Email:</label><br/>
-        <input type="email" name="email" required/><br/><br/>
-
-        <label>Contraseña:</label><br/>
-        <input type="password" name="contrasena" required/><br/><br/>
-
-        <label>Número de Cliente:</label><br/>
-        <input type="number" name="numeroCliente" required/><br/><br/>
-
-        <label>DNI:</label><br/>
-        <input type="number" name="dni" required/><br/><br/>
-
-        <label>Nombre:</label><br/>
-        <input type="text" name="nombre" required/><br/><br/>
-
-        <label>Apellido:</label><br/>
-        <input type="text" name="apellido" required/><br/><br/>
-
-        <button type="submit">Registrarse</button>
+    <div th:if="${error}" class="error-message">
+      <p th:text="${error}"></p>
+    </div>
+    <form class="login-form" th:action="@{/registrar}" method="post">
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div>
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" required />
+      </div>
+      <div>
+        <label for="numeroCliente">Número de Cliente:</label>
+        <input type="number" id="numeroCliente" name="numeroCliente" required />
+      </div>
+      <div>
+        <label for="dni">DNI:</label>
+        <input type="number" id="dni" name="dni" required />
+      </div>
+      <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required />
+      </div>
+      <div>
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" required />
+      </div>
+      <button type="submit">Registrarse</button>
     </form>
-
-    <br/>
-    <a th:href="@{/login}">Volver al login</a>
+    <div class="extra-options">
+      <a href="/login">Volver al login</a>
+    </div>
+    <div class="login-footer">
+      &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+    </div>
+  </div>
 </body>
 </html>
