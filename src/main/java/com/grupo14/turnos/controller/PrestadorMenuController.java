@@ -54,12 +54,22 @@ public class PrestadorMenuController {
 
     @PostMapping("/guardar-servicio")
     public String guardarServicio(@RequestParam String nombre,
-                                  @RequestParam Integer duracionMin,
-                                  @RequestParam Double precio,
-                                  HttpSession session) {
-        PrestadorDTO prestador = (PrestadorDTO) session.getAttribute("prestador");
-        if (prestador == null) return "redirect:/login";
+                                @RequestParam Integer duracionMin,
+                                @RequestParam Double precio,
+                                HttpSession session) {
+        
+        UsuarioDTO usuarioDTO = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuarioDTO == null || usuarioDTO.rol() != Rol.PRESTADOR) {
+            return "redirect:/login";
+        }
 
+        
+        PrestadorDTO prestador = prestadorService.buscarPorEmail(usuarioDTO.email());
+        if (prestador == null) {
+            return "redirect:/login";
+        }
+
+        
         ServicioDTO nuevo = new ServicioDTO(null, nombre, duracionMin, precio, prestador.id());
         servicioService.crear(nuevo);
 
