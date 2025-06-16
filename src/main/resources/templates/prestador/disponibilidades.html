@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestionar Disponibilidades</title>
+  <style>
+    body {
+      background-color: #f4f9ff;
+      font-family: Arial, sans-serif;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .container {
+      max-width: 1000px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 50, 0.1);
+      border-radius: 10px;
+      padding: 32px;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #003366;
+      border-bottom: 2px solid #003366;
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: #0055aa;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #003366;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #bb2d3b;
+    }
+
+    .btn-back {
+      background-color: #6c757d;
+      color: white;
+      margin-right: 10px;
+    }
+
+    .btn-back:hover {
+      background-color: #5a6268;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #cce0ff;
+      color: #003366;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+
+    tr:hover {
+      background-color: #e9ecef;
+    }
+
+    .form-container {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-control:focus {
+      border-color: #80bdff;
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .servicios-checkbox {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .servicio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="btn-container">
+      <a th:href="@{/prestador/menu}" class="btn btn-back">← Volver al Menú</a>
+      <h1>Gestionar Disponibilidades</h1>
+      <div></div>
+    </div>
+
+    <!-- Lista de disponibilidades existentes -->
+    <h2>Disponibilidades Registradas</h2>
+    <div th:if="${disponibilidades.isEmpty()}">
+      <p>No hay disponibilidades registradas.</p>
+    </div>
+    <div th:unless="${disponibilidades.isEmpty()}">
+      <table>
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Hora Inicio</th>
+            <th>Hora Fin</th>
+            <th>Servicios</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="disponibilidad : ${disponibilidades}">
+            <td th:text="${disponibilidad.diaSemana}">Día</td>
+            <td th:text="${#temporals.format(disponibilidad.horaInicio(), 'HH:mm')}">Hora Inicio</td>
+            <td th:text="${#temporals.format(disponibilidad.horaFin(), 'HH:mm')}">Hora Fin</td>
+            <td>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li th:each="servicioId : ${disponibilidad.servicioIds()}">
+                  <th:block th:each="servicio : ${servicios}">
+                    <span th:if="${servicio.id() == servicioId}" th:text="${servicio.nombre}"></span>
+                  </th:block>
+                  <span th:if="${!#lists.contains(servicios.![id()], servicioId)}" style="color: #dc3545;">
+                    Servicio no encontrado (ID: <span th:text="${servicioId}"></span>)
+                  </span>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <form th:action="@{/prestador/disponibilidades/eliminar/} + ${disponibilidad.id()}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar esta disponibilidad?')">
+                  Eliminar
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Formulario para agregar nueva disponibilidad -->
+    <div class="form-container">
+      <h2>Agregar Nueva Disponibilidad</h2>
+      <form th:action="@{/prestador/disponibilidades/guardar}" method="post" th:object="${nuevaDisponibilidad}">
+        <div class="form-group">
+          <label for="diaSemana">Día de la semana:</label>
+          <select id="diaSemana" class="form-control" th:field="*{diaSemana}" required>
+            <option value="">Seleccione un día</option>
+            <option th:each="dia : ${diasSemana}" 
+                    th:value="${dia}" 
+                    th:text="${#strings.capitalize(#strings.toLowerCase(dia.name()))}">
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="horaInicio">Hora de inicio:</label>
+          <input type="time" id="horaInicio" name="horaInicio" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="horaFin">Hora de fin:</label>
+          <input type="time" id="horaFin" name="horaFin" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Servicios disponibles:</label>
+          <div class="servicios-checkbox">
+            <div th:each="servicio : ${servicios}" class="servicio-item">
+              <input type="checkbox" 
+                     th:id="'servicio' + ${servicio.id}" 
+                     name="servicioIds" 
+                     th:value="${servicio.id}">
+              <label th:for="'servicio' + ${servicio.id}" th:text="${servicio.nombre}"></label>
+            </div>
+            <div th:if="${#lists.isEmpty(servicios)}">
+              <p>No hay servicios registrados. Primero debe crear un servicio.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group" style="text-align: right;">
+          <button type="submit" class="btn btn-primary" th:disabled="${#lists.isEmpty(servicios)}">
+            Guardar Disponibilidad
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
