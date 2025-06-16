@@ -9,30 +9,35 @@
       font-family: Arial, sans-serif;
       color: #1a1a1a;
       margin: 0;
-      padding: 0;
+      padding: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
+    
     .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 2rem;
+      max-width: 800px;
       background-color: #ffffff;
-      box-shadow: 0 0 12px rgba(0, 0, 50, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 50, 0.1);
       border-radius: 10px;
+      padding: 32px;
     }
 
     h1 {
       color: #003366;
       border-bottom: 2px solid #003366;
-      padding-bottom: 0.5rem;
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
     nav ul {
       list-style: none;
       padding: 0;
       display: flex;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
     }
 
     nav a {
@@ -45,40 +50,81 @@
       color: #003366;
     }
 
+    .servicios h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 2rem;
+      margin-bottom: 32px;
     }
 
     th, td {
       border: 1px solid #cce0ff;
-      padding: 0.8rem;
+      padding: 12px;
       text-align: left;
     }
 
     th {
       background-color: #cce0ff;
       color: #003366;
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
     }
 
     .btn-delete, .btn-add {
       background-color: #0055aa;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 10px 16px;
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      font-size: 14px;
     }
 
     .btn-delete:hover, .btn-add:hover {
       background-color: #003366;
     }
 
+    .form-agregar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
     .form-agregar input {
-      margin: 0.5rem 0.5rem 0.5rem 0;
-      padding: 0.4rem;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .mt-4 {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .btn-outline-primary {
+      padding: 12px 20px;
+      font-size: 14px;
+      color: #0055aa;
+      border: 2px solid #0055aa;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #0055aa;
+      color: white;
     }
   </style>
 </head>
@@ -111,7 +157,7 @@
             <td th:text="${servicio.precio}">Precio</td>
             <td>
               <form th:action="@{/prestador/eliminar-servicio}" method="post">
-                <input type="hidden" name="id" th:value="${servicio.idServicio}" />
+                <input type="hidden" name="id" th:value="${servicio.id}" />
                 <button type="submit" class="btn-delete">Eliminar</button>
               </form>
             </td>
@@ -128,9 +174,12 @@
       </form>
     </section>
   </div>
-  <div class="mt-4 text-center">
-  <a th:href="@{/prestador/menu}" class="btn btn-outline-primary">Volver al menú</a>
+
+  <div style="margin-top: 40px; display: flex; justify-content: center;">
+    <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
 </div>
-  
+
+
+
 </body>
 </html>
