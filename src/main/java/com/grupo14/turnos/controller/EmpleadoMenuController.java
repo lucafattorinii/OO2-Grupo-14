@@ -3,6 +3,7 @@ package com.grupo14.turnos.controller;
 import com.grupo14.turnos.dto.DisponibilidadDTO;
 import com.grupo14.turnos.dto.EmpleadoDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.service.DisponibilidadService;
 import com.grupo14.turnos.service.EmpleadoService;
 import com.grupo14.turnos.service.ServicioService;
@@ -33,10 +34,10 @@ public class EmpleadoMenuController {
 
     @GetMapping("/menu")
     public String menuEmpleado(HttpSession session, Model model, @RequestParam(required = false) String editado) {
-        String vista = "redirect:/login";
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
 
-        if (usuario != null) {
+        String vista = "redirect:/login";
+        if (usuario != null && usuario.rol() == Rol.EMPLEADO) {
             model.addAttribute("usuario", usuario);
             if ("true".equals(editado)) {
                 model.addAttribute("exito", "Datos actualizados correctamente.");
