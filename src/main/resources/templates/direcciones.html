@@ -52,16 +52,16 @@
         </thead>
         <tbody>
           <!-- stat.count renderiza 1,2,3... sin huecos -->
-          <tr th:each="d, stat : ${direcciones}">
-            <td th:text="${stat.count}"></td>
-            <td th:text="${d.id()}"></td>
-            <td th:text="${d.pais()}"></td>
-            <td th:text="${d.provincia()}"></td>
-            <td th:text="${d.ciudad()}"></td>
-            <td th:text="${d.calle()}"></td>
-            <td th:text="${d.numeroCalle()}"></td>
-            <td th:text="${d.codigoPostal()}"></td>
-          </tr>
+		  <tr th:each="d, stat : ${direcciones}">
+		    <td th:text="${stat.count}"></td>
+		    <td th:text="${d.idDireccion()}"></td>
+		    <td th:text="${d.pais()}"></td>
+		    <td th:text="${d.provincia()}"></td>
+		    <td th:text="${d.ciudad()}"></td>
+		    <td th:text="${d.calle()}"></td>
+		    <td th:text="${d.numeroCalle()}"></td>
+		    <td th:text="${d.codigoPostal()}"></td>
+		  </tr>
         </tbody>
       </table>
 
@@ -119,9 +119,9 @@
               <label>Dirección a eliminar:</label>
               <select name="id" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.id()}">
-                  <span th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad() + ', ' + d.provincia()}"></span>
-                </option>
+				<option th:each="d : ${direcciones}" th:value="${d.idDireccion()}">
+				  <span th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad() + ', ' + d.provincia()}"></span>
+				</option>
               </select>
             </div>
             <div class="form-actions">
@@ -142,9 +142,9 @@
               <label>Dirección a modificar:</label>
               <select name="id" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.id()}">
-                  <span th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad() + ', ' + d.provincia()}"></span>
-                </option>
+				<option th:each="d : ${direcciones}" th:value="${d.idDireccion()}">
+				  <span th:text="${d.calle() + ' ' + d.numeroCalle() + ', ' + d.ciudad() + ', ' + d.provincia()}"></span>
+				</option>
               </select>
             </div>
             <div class="form-group">

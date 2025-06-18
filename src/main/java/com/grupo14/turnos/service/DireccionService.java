@@ -92,5 +92,9 @@ public class DireccionService {
                 dir.getCodigoPostal()
         );
     }
+    
+    public boolean existePorId(Long id) {
+        return repo.existsById(id);
+    }
 }
 
