@@ -47,11 +47,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/swagger-ui/**", "/v3/api-docs/**",
-                    "/login", "/registro", "/auth/**", "/view/**",
-                    "/styles.css", "/scripts.js", "/images/**"
-                ).permitAll()
+            		.requestMatchers(
+            			    "/swagger-ui/**", "/v3/api-docs/**",
+            			    "/login", "/registro", "/visitante",  
+            			    "/auth/**", "/view/**",
+            			    "/styles.css", "/scripts.js", "/images/**"
+            			).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
