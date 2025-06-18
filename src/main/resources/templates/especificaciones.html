@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Especificaciones</title>
   <link rel="stylesheet" th:href="@{/styles.css}" />
 </head>
@@ -26,11 +26,12 @@
     <section class="client-section">
       <h2>Especificaciones</h2>
       <p>Total especificaciones: <span th:text="${especificaciones.size()}">0</span></p>
+
       <div th:if="${#lists.isEmpty(especificaciones)}" class="empty-msg">
         No hay especificaciones cargadas.
       </div>
 
-      <table class="client-table">
+      <table class="client-table" th:if="${!#lists.isEmpty(especificaciones)}">
         <thead>
           <tr>
             <th>#</th>
@@ -42,48 +43,46 @@
         </thead>
         <tbody>
           <tr th:each="e, stat : ${especificaciones}">
-  <td th:text="${stat.count}"></td>
-  <td th:text="${e.servicioNombre()}"></td>  <!-- corregido -->
-  <td th:text="${e.rubro()}"></td>
-  <td th:text="${e.detalles()}"></td>
-  <td th:text="${e.direccionTexto()}"></td>
- 
-</tr>
-
+            <td th:text="${stat.count}"></td>
+            <td th:text="${e.servicioNombre()}"></td>
+            <td th:text="${e.rubro()}"></td>
+            <td th:text="${e.detalles()}"></td>
+            <td th:text="${e.direccionTexto()}"></td>
+          </tr>
         </tbody>
       </table>
 
-      <div style="margin:20px 0">
+      <div style="margin: 20px 0;">
         <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
       </div>
 
       <!-- Crear -->
       <div class="form-wrapper">
-        <button id="show-create-btn" class="menu-button">Crear Especificación</button>
-        <div id="create-container" class="create-form">
+        <button id="show-create-btn" class="menu-button" type="button">Crear Especificación</button>
+        <div id="create-container" class="create-form" style="display:none;">
           <h3>Nueva Especificación</h3>
           <form th:action="@{/especificaciones/create}" method="post">
             <div class="form-group">
-              <label>Servicio:</label>
-              <select name="servicioId" required>
+              <label for="servicioId">Servicio:</label>
+              <select id="servicioId" name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
                 <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Rubro:</label>
-              <select name="rubro" required>
+              <label for="rubro">Rubro:</label>
+              <select id="rubro" name="rubro" required>
                 <option value="">Seleccione un rubro</option>
                 <option th:each="r : ${rubros}" th:value="${r}" th:text="${r}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Detalles:</label>
-              <input type="text" name="detalles" required>
+              <label for="detalles">Detalles:</label>
+              <input id="detalles" type="text" name="detalles" required />
             </div>
             <div class="form-group">
-              <label>Dirección:</label>
-              <select name="direccionId" required>
+              <label for="direccionId">Dirección:</label>
+              <select id="direccionId" name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
                 <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
@@ -98,16 +97,15 @@
 
       <!-- Eliminar -->
       <div class="form-wrapper">
-        <button id="show-delete-btn" class="menu-button">Eliminar Especificación</button>
-        <div id="delete-container" class="delete-form">
+        <button id="show-delete-btn" class="menu-button" type="button">Eliminar Especificación</button>
+        <div id="delete-container" class="delete-form" style="display:none;">
           <h3>Eliminar Especificación</h3>
           <form th:action="@{/especificaciones/delete}" method="post">
             <div class="form-group">
-              <label>Especificación a eliminar:</label>
-              <select name="id" required>
+              <label for="idEliminar">Especificación a eliminar:</label>
+              <select id="idEliminar" name="id" required>
                 <option value="">Seleccione una especificación</option>
-                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${e.servicioNombre() + ' - ' + e.rubro()}"
-                ></option>
+                <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${e.servicioNombre() + ' - ' + e.rubro()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -120,38 +118,38 @@
 
       <!-- Modificar -->
       <div class="form-wrapper">
-        <button id="show-update-btn" class="menu-button">Modificar Especificación</button>
-        <div id="update-container" class="update-form">
+        <button id="show-update-btn" class="menu-button" type="button">Modificar Especificación</button>
+        <div id="update-container" class="update-form" style="display:none;">
           <h3>Modificar Especificación</h3>
           <form th:action="@{/especificaciones/update}" method="post">
             <div class="form-group">
-              <label>Especificación a modificar:</label>
-              <select name="id" required>
+              <label for="idModificar">Especificación a modificar:</label>
+              <select id="idModificar" name="id" required>
                 <option value="">Seleccione una especificación</option>
                 <option th:each="e : ${especificaciones}" th:value="${e.id()}" th:text="${e.servicioNombre() + ' - ' + e.rubro()}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Servicio:</label>
-              <select name="servicioId" required>
+              <label for="servicioIdMod">Servicio:</label>
+              <select id="servicioIdMod" name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
                 <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Rubro:</label>
-              <select name="rubro" required>
+              <label for="rubroMod">Rubro:</label>
+              <select id="rubroMod" name="rubro" required>
                 <option value="">Seleccione un rubro</option>
                 <option th:each="r : ${rubros}" th:value="${r}" th:text="${r}"></option>
               </select>
             </div>
             <div class="form-group">
-              <label>Detalles:</label>
-              <input type="text" name="detalles" required>
+              <label for="detallesMod">Detalles:</label>
+              <input id="detallesMod" type="text" name="detalles" required />
             </div>
             <div class="form-group">
-              <label>Dirección:</label>
-              <select name="direccionId" required>
+              <label for="direccionIdMod">Dirección:</label>
+              <select id="direccionIdMod" name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
                 <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
@@ -172,5 +170,6 @@
   </footer>
 
   <script th:src="@{/scripts.js}"></script>
+
 </body>
 </html>
