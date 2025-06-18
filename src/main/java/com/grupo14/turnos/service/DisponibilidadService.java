@@ -61,7 +61,7 @@ public class DisponibilidadService {
         return convertirADTO(guardada);
     }
     
-    public DisponibilidadDTO actualizar(long id, DisponibilidadDTO dto) {
+    public DisponibilidadDTO actualizar(Long id, DisponibilidadDTO dto) {
         Disponibilidad d = repo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + id));
 
@@ -69,20 +69,17 @@ public class DisponibilidadService {
         d.setHoraInicio(dto.horaInicio());
         d.setHoraFin(dto.horaFin());
 
-        // Actualizar los servicios asociados
         if (dto.servicioIds() != null && !dto.servicioIds().isEmpty()) {
             Set<Servicio> servicios = dto.servicioIds().stream()
                 .map(sid -> servRepo.findById(sid)
                         .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + sid)))
                 .collect(Collectors.toSet());
-
             d.setServicios(servicios);
         } else {
-            d.getServicios().clear(); // O decide si mantener los anteriores
+            d.getServicios().clear();
         }
 
         Disponibilidad guardada = repo.save(d);
-
         return convertirADTO(guardada);
     }
     

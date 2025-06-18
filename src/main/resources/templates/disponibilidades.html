@@ -36,7 +36,7 @@
         No hay disponibilidades cargadas.
       </div>
 
-      <!-- 1) TABLA CON Thymeleaf -->
+      <!-- 1) TABLA -->
       <table class="client-table">
         <thead>
           <tr>
@@ -45,12 +45,10 @@
             <th>Día Semana</th>
             <th>Hora Inicio</th>
             <th>Hora Fin</th>
-            <th>Empleado</th>
-            <th>Servicio</th>
+            <th>Servicios</th>
           </tr>
         </thead>
         <tbody>
-          <!-- stat.count renderiza 1,2,3... sin huecos -->
           <tr th:each="d, stat : ${disponibilidades}">
             <td th:text="${stat.count}"></td>
             <td th:text="${d.id()}"></td>
@@ -58,23 +56,21 @@
             <td th:text="${d.horaInicio()}"></td>
             <td th:text="${d.horaFin()}"></td>
             <td>
-              <span th:each="e : ${empleados}" th:if="${e.id() == d.empleadoId()}" 
-                    th:text="${e.nombre() + ' ' + e.apellido()}"></span>
-            </td>
-            <td>
-              <span th:each="s : ${servicios}" th:if="${s.idServicio() == d.servicioId()}" 
-                    th:text="${s.nombre()}"></span>
+              <ul>
+                <li th:each="sid : ${d.servicioIds}">
+                  <span th:each="s : ${servicios}" th:if="${s.idServicio() == sid}" th:text="${s.nombre()}"></span>
+                </li>
+              </ul>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- 2) VOLVER AL MENÚ ABAJO DE LA TABLA -->
+      <!-- 2) VOLVER AL MENÚ -->
       <div style="margin:20px 0">
         <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
         <a class="menu-button" th:href="@{/disponibilidades/calendario}">Ver Calendario</a>
       </div>
-
 
       <!-- 3) CREAR DISPONIBILIDAD -->
       <div class="form-wrapper">
@@ -98,18 +94,9 @@
               <input type="time" name="horaFin" required />
             </div>
             <div class="form-group">
-              <label>Servicio:</label>
-              <select name="servicioId" required>
-                <option value="">Seleccione un servicio</option>
+              <label>Servicios:</label>
+              <select name="servicioIds" multiple required>
                 <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Empleado:</label>
-              <select name="empleadoId" required>
-                <option value="">Seleccione un empleado</option>
-                <option th:each="e : ${empleados}" th:value="${e.id()}" 
-                        th:text="${e.nombre() + ' ' + e.apellido()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -130,9 +117,8 @@
               <label>Disponibilidad a eliminar:</label>
               <select name="id" required>
                 <option value="">Seleccione una disponibilidad</option>
-                <option th:each="d : ${disponibilidades}" th:value="${d.id()}">
-                  <span th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></span>
-                </option>
+                <option th:each="d : ${disponibilidades}" th:value="${d.id()}"
+                        th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -153,9 +139,8 @@
               <label>Disponibilidad a modificar:</label>
               <select name="id" required>
                 <option value="">Seleccione una disponibilidad</option>
-                <option th:each="d : ${disponibilidades}" th:value="${d.id()}">
-                  <span th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></span>
-                </option>
+                <option th:each="d : ${disponibilidades}" th:value="${d.id()}"
+                        th:text="${d.diaSemana() + ' ' + d.horaInicio() + '-' + d.horaFin()}"></option>
               </select>
             </div>
             <div class="form-group">
@@ -174,18 +159,9 @@
               <input type="time" name="horaFin" required />
             </div>
             <div class="form-group">
-              <label>Servicio:</label>
-              <select name="servicioId" required>
-                <option value="">Seleccione un servicio</option>
+              <label>Servicios:</label>
+              <select name="servicioIds" multiple required>
                 <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Empleado:</label>
-              <select name="empleadoId" required>
-                <option value="">Seleccione un empleado</option>
-                <option th:each="e : ${empleados}" th:value="${e.id()}" 
-                        th:text="${e.nombre() + ' ' + e.apellido()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -206,4 +182,3 @@
   <script th:src="@{/scripts.js}"></script>
 </body>
 </html>
-

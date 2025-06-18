@@ -1,7 +1,6 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.DisponibilidadDTO;
-import com.grupo14.turnos.dto.EmpleadoDTO;
 import com.grupo14.turnos.dto.ServicioDTO;
 import com.grupo14.turnos.modelo.DiaSemana;
 import com.grupo14.turnos.service.DisponibilidadService;
@@ -19,17 +18,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/disponibilidades")
 public class DisponibilidadController {
+
     private final DisponibilidadService disponibilidadService;
-    private final EmpleadoService empleadoService;
     private final ServicioService servicioService;
 
     public DisponibilidadController(
         DisponibilidadService disponibilidadService,
-        EmpleadoService empleadoService,
         ServicioService servicioService
     ) {
         this.disponibilidadService = disponibilidadService;
-        this.empleadoService = empleadoService;
         this.servicioService = servicioService;
     }
 
@@ -37,19 +34,17 @@ public class DisponibilidadController {
     @GetMapping("/view")
     public String verDisponibilidades(Model model) {
         List<DisponibilidadDTO> disponibilidades = disponibilidadService.listarTodos();
-        List<EmpleadoDTO> empleados = empleadoService.listarTodos();
         List<ServicioDTO> servicios = servicioService.listarTodos();
         List<DiaSemana> diasSemana = disponibilidadService.listarDiasSemana();
-        
+
         model.addAttribute("disponibilidades", disponibilidades);
-        model.addAttribute("empleados", empleados);
         model.addAttribute("servicios", servicios);
         model.addAttribute("diasSemana", diasSemana);
-        
-        return "disponibilidades";        // templates/disponibilidades.html
+
+        return "disponibilidades"; // templates/disponibilidades.html
     }
 
-    // 2) FORM-SUBMIT: Crea una disponibilidad y vuelve al listado
+    // 2) FORM-SUBMIT: Crear nueva disponibilidad
     @PostMapping("/create")
     public String crearDisponibilidad(
             @RequestParam String diaSemana,
@@ -58,61 +53,66 @@ public class DisponibilidadController {
             @RequestParam List<Long> servicioIds
     ) {
         DisponibilidadDTO nueva = new DisponibilidadDTO(
-            null,
-            DiaSemana.valueOf(diaSemana.toUpperCase()), 
-            LocalTime.parse(horaInicio),
-            LocalTime.parse(horaFin),    
-            new HashSet<>(servicioIds)   
+                null,
+                DiaSemana.valueOf(diaSemana.toUpperCase()),
+                LocalTime.parse(horaInicio),
+                LocalTime.parse(horaFin),
+                new HashSet<>(servicioIds)
         );
         disponibilidadService.crear(nueva);
         return "redirect:/disponibilidades/view";
     }
-    
+
+    // 3) FORM-SUBMIT: Eliminar disponibilidad
     @PostMapping("/delete")
-    public String eliminarDisponibilidad(@RequestParam long id) {
+    public String eliminarDisponibilidad(@RequestParam Long id) {
         disponibilidadService.eliminar(id);
         return "redirect:/disponibilidades/view";
     }
 
+    // 4) FORM-SUBMIT: Modificar disponibilidad
     @PostMapping("/update")
     public String modificarDisponibilidad(
-        @RequestParam Long id,
-        @RequestParam String diaSemana,
-        @RequestParam String horaInicio,
-        @RequestParam String horaFin,
-        @RequestParam List<Long> servicioIds
+            @RequestParam Long id,
+            @RequestParam String diaSemana,
+            @RequestParam String horaInicio,
+            @RequestParam String horaFin,
+            @RequestParam List<Long> servicioIds
     ) {
-        disponibilidadService.actualizarDisponibilidad(
-            id,
-            diaSemana,
-            horaInicio,
-            horaFin,
-            new HashSet<>(servicioIds)
+        DisponibilidadDTO dto = new DisponibilidadDTO(
+                id,
+                DiaSemana.valueOf(diaSemana.toUpperCase()),
+                LocalTime.parse(horaInicio),
+                LocalTime.parse(horaFin),
+                new HashSet<>(servicioIds)
         );
+        disponibilidadService.actualizar(id, dto);
         return "redirect:/disponibilidades/view";
     }
 
-    // API REST endpoints
+    // 5) API REST: Listar todos
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<DisponibilidadDTO> listarTodosJson() {
         return disponibilidadService.listarTodos();
     }
 
+    // 6) API REST: Obtener por ID
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public DisponibilidadDTO obtenerJson(@PathVariable Integer id) {
+    public DisponibilidadDTO obtenerJson(@PathVariable Long id) {
         return disponibilidadService.obtenerPorId(id);
     }
 
+    // 7) API REST: Crear desde JSON
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
                           produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public DisponibilidadDTO crearJson(@RequestBody DisponibilidadDTO nueva) {
         return disponibilidadService.crear(nueva);
     }
-    
-    // Endpoint para el calendario de disponibilidades
+
+    // 8) VISTA: Calendario
     @GetMapping("/calendario")
     public String verCalendario(Model model) {
         List<DisponibilidadDTO> disponibilidades = disponibilidadService.listarTodos();
