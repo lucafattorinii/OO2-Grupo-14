@@ -7,167 +7,159 @@
 </head>
 <body id="body">
 
-  <!-- HEADER + HAMBURGUESA -->
-  <header class="main-header">
-    <div class="menu-icon" onclick="toggleMenu()">☰</div>
-    <h1>Gestión de Turnos</h1>
-  </header>
+<header class="main-header">
+  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+  <h1>Gestión de Turnos</h1>
+</header>
 
-  <!-- SIDE-MENU -->
-  <nav class="side-menu" id="sideMenu">
-    <span class="close-btn" onclick="toggleMenu()">×</span>
-    <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
-    <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
-    <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
-    <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
-    <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
-    <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
-    <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
-    <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
-    <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
-  </nav>
+<nav class="side-menu" id="sideMenu">
+  <span class="close-btn" onclick="toggleMenu()">×</span>
+  <a class="menu-button" th:href="@{/clientes/view}">Clientes</a>
+  <a class="menu-button" th:href="@{/empleados/view}">Empleados</a>
+  <a class="menu-button" th:href="@{/prestadores/view}">Prestadores</a>
+  <a class="menu-button" th:href="@{/servicios/view}">Servicios</a>
+  <a class="menu-button" th:href="@{/especificaciones/view}">Especificaciones</a>
+  <a class="menu-button" th:href="@{/direcciones/view}">Direcciones</a>
+  <a class="menu-button" th:href="@{/turnos/view}">Turnos</a>
+  <a class="menu-button" th:href="@{/disponibilidades/view}">Disponibilidades</a>
+  <a class="menu-button" th:href="@{/logout}">Cerrar Sesión</a>
+</nav>
 
-  <main>
-    <section class="client-section">
-      <h2>Lista de Servicios</h2>
-      <p>Total servicios recibidos: <span th:text="${servicios.size()}">0</span></p>
-      <div th:if="${#lists.isEmpty(servicios)}" class="empty-msg">
-        No hay servicios cargados.
-      </div>
+<main>
+<section class="client-section">
+  <h2>Lista de Servicios</h2>
+  <p>Total servicios recibidos: <span th:text="${servicios.size()}">0</span></p>
+  <div th:if="${#lists.isEmpty(servicios)}" class="empty-msg">No hay servicios cargados.</div>
 
-      <!-- 1) TABLA CON Thymeleaf -->
-      <table class="client-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>ID Servicio</th>
-            <th>Nombre</th>
-            <th>Duración (min)</th>
-            <th>Precio</th>
-            <th>Prestador ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- stat.count renderiza 1,2,3... sin huecos -->
-          <tr th:each="s, stat : ${servicios}">
-            <td th:text="${stat.count}"></td>
-            <td th:text="${s.idServicio()}"></td>
-            <td th:text="${s.nombre()}"></td>
-            <td th:text="${s.duracionMin()}"></td>
-            <td th:text="${s.precio()}"></td>
-            <td th:text="${s.prestadorId()}"></td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Tabla de servicios -->
+  <table class="client-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Duración (min)</th>
+        <th>Precio</th>
+        <th>Prestador ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="s, stat : ${servicios}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${s.id()}"></td>
+        <td th:text="${s.nombre()}"></td>
+        <td th:text="${s.duracionMin()}"></td>
+        <td th:text="${s.precio()}"></td>
+        <td th:text="${s.prestadorId()}"></td>
+      </tr>
+    </tbody>
+  </table>
 
-      <!-- 2) VOLVER AL MENÚ ABAJO DE LA TABLA -->
-      <div style="margin:20px 0">
-        <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
-      </div>
+  <div style="margin:20px 0">
+    <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
+  </div>
 
-
-      <!-- 3) CREAR SERVICIO -->
-      <div class="form-wrapper">
-        <button id="show-create-btn" class="menu-button">Crear Servicio</button>
-        <div id="create-container" class="create-form">
-          <h3>Nuevo Servicio</h3>
-          <form th:action="@{/servicios/create}" method="post">
-            <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required />
-            </div>
-            <div class="form-group">
-              <label>Duración (min):</label>
-              <input type="number" name="duracionMin" required />
-            </div>
-            <div class="form-group">
-              <label>Precio:</label>
-              <input type="number" name="precio" step="0.01" required />
-            </div>
-            <div class="form-group">
-              <label>Prestador:</label>
-              <select name="prestadorId" required>
-                <option value="">Seleccione un prestador</option>
-                <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
-              </select>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Crear</button>
-              <button type="button" id="cancel-create-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
+  <!-- Crear servicio -->
+  <div class="form-wrapper">
+    <button id="show-create-btn" class="menu-button">Crear Servicio</button>
+    <div id="create-container" class="create-form">
+      <h3>Nuevo Servicio</h3>
+      <form th:action="@{/servicios/create}" method="post">
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" name="nombre" required />
         </div>
-      </div>
-
-      <!-- 4) ELIMINAR SERVICIO -->
-      <div class="form-wrapper">
-        <button id="show-delete-btn" class="menu-button">Eliminar Servicio</button>
-        <div id="delete-container" class="delete-form">
-          <h3>Eliminar Servicio</h3>
-          <form th:action="@{/servicios/delete}" method="post">
-            <div class="form-group">
-              <label>ID a eliminar:</label>
-              <select name="id" required>
-                <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
-              </select>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Eliminar</button>
-              <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
+        <div class="form-group">
+          <label>Duración (min):</label>
+          <input type="number" name="duracionMin" required />
         </div>
-      </div>
-
-      <!-- 5) MODIFICAR SERVICIO -->
-      <div class="form-wrapper">
-        <button id="show-update-btn" class="menu-button">Modificar Servicio</button>
-        <div id="update-container" class="update-form">
-          <h3>Modificar Servicio</h3>
-          <form th:action="@{/servicios/update}" method="post">
-            <div class="form-group">
-              <label>Servicio a modificar:</label>
-              <select name="id" required>
-                <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" required/>
-            </div>
-            <div class="form-group">
-              <label>Duración (min):</label>
-              <input type="number" name="duracionMin" required/>
-            </div>
-            <div class="form-group">
-              <label>Precio:</label>
-              <input type="number" name="precio" step="0.01" required/>
-            </div>
-            <div class="form-group">
-              <label>Prestador:</label>
-              <select name="prestadorId" required>
-                <option value="">Seleccione un prestador</option>
-                <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
-              </select>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="menu-button">Guardar Cambios</button>
-              <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
-            </div>
-          </form>
+        <div class="form-group">
+          <label>Precio:</label>
+          <input type="number" name="precio" step="0.01" required />
         </div>
-      </div>
+        <div class="form-group">
+          <label>Prestador:</label>
+          <select name="prestadorId" required>
+            <option value="">Seleccione un prestador</option>
+            <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="menu-button">Crear</button>
+          <button type="button" id="cancel-create-btn" class="menu-button">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    </section>
-  </main>
+  <!-- Eliminar servicio -->
+  <div class="form-wrapper">
+    <button id="show-delete-btn" class="menu-button">Eliminar Servicio</button>
+    <div id="delete-container" class="delete-form">
+      <h3>Eliminar Servicio</h3>
+      <form th:action="@{/servicios/delete}" method="post">
+        <div class="form-group">
+          <label>Servicio a eliminar:</label>
+          <select name="id" required>
+            <option value="">Seleccione un servicio</option>
+            <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="menu-button">Eliminar</button>
+          <button type="button" id="cancel-delete-btn" class="menu-button">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <footer class="main-footer">
-    &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
-  </footer>
+  <!-- Modificar servicio -->
+  <div class="form-wrapper">
+    <button id="show-update-btn" class="menu-button">Modificar Servicio</button>
+    <div id="update-container" class="update-form">
+      <h3>Modificar Servicio</h3>
+      <form th:action="@{/servicios/update}" method="post">
+        <div class="form-group">
+          <label>Servicio a modificar:</label>
+          <select name="id" required>
+            <option value="">Seleccione un servicio</option>
+            <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" name="nombre" required />
+        </div>
+        <div class="form-group">
+          <label>Duración (min):</label>
+          <input type="number" name="duracionMin" required />
+        </div>
+        <div class="form-group">
+          <label>Precio:</label>
+          <input type="number" name="precio" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label>Prestador:</label>
+          <select name="prestadorId" required>
+            <option value="">Seleccione un prestador</option>
+            <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="menu-button">Guardar Cambios</button>
+          <button type="button" id="cancel-update-btn" class="menu-button">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <script th:src="@{/scripts.js}"></script>
+</section>
+</main>
+
+<footer class="main-footer">
+  &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+</footer>
+
+<script th:src="@{/scripts.js}"></script>
 </body>
 </html>
-
