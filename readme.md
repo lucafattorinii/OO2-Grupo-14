@@ -82,7 +82,7 @@ Instala Lombok en STS4:
 
 -   Verifica que aparezca el mensaje "Installation successful".
 
-.   Cierra y vuelve a abrir STS4.
+-   Cierra y vuelve a abrir STS4.
 
 Habilita el procesamiento de anotaciones en el proyecto:
 
