@@ -40,8 +40,7 @@ Este sistema permite la gestión completa de turnos para diferentes servicios, i
 
 1. Clonar el repositorio:
    ```
-   git clone https://github.com/tu-usuario/OO2-Grupo-14.git
-   cd OO2-Grupo-14
+   git clone https://github.com/lucafattorinii/OO2-Grupo-14.git
    ```
 
 2. Compilar el proyecto:
