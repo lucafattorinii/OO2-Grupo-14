@@ -62,10 +62,35 @@ Este sistema permite la gestión completa de turnos para diferentes servicios, i
 1. Importar como proyecto Maven en Eclipse, IntelliJ IDEA o Spring Tool Suite.
 2. Ejecutar la clase `TurnosApplication.java` como aplicación Java.
 
-## Credenciales de Acceso (Desarrollo)
+### Configuración de Lombok en STS4
 
-- **Usuario**: admin
-- **Contraseña**: admin123
+Este proyecto usa Lombok para simplificar el código (por ejemplo, generando getters y setters automáticamente). Sigue estos pasos para configurar Lombok desde cero en STS4:
+
+Descarga Lombok:
+
+-   Ve a https://projectlombok.org/download y descarga lombok-1.18.3X.jar.
+
+-   Guárdalo en una carpeta accesible, como C:\Users\TuUsuario\Desktop.
+
+Instala Lombok en STS4:
+
+-   Haz clic derecho en lombok-1.18.3X.jar y selecciona Ejecutar como administrador.
+
+-   En la ventana del instalador, selecciona la carpeta donde está instalado STS4.
+
+-   Selecciona la carpeta donde tenga el archivo SpringToolSuite4.ini y haz clic en Install/Update.
+
+-   Verifica que aparezca el mensaje "Installation successful".
+
+.   Cierra y vuelve a abrir STS4.
+
+Habilita el procesamiento de anotaciones en el proyecto:
+
+-   En STS4, haz clic derecho en el proyecto > Properties.
+
+-   Ve a Java Compiler > Annotation Processing.
+
+-   Marca las casillas Enable project specific settings y Enable annotation processing.
 
 ## Estructura del Proyecto
 
