@@ -2,6 +2,7 @@ package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
+import com.grupo14.turnos.exception.TurnoNoEncontradoException;
 import com.grupo14.turnos.modelo.Prestador;
 import com.grupo14.turnos.modelo.Rol;
 import com.grupo14.turnos.repository.PrestadorRepository;
@@ -53,13 +54,16 @@ public class PrestadorService {
     
     
     public void actualizar(PrestadorDTO dto) {
-        Prestador entidad = repo.findById(dto.getId()).orElseThrow();
+        Prestador prestador = repo.findById(dto.getId())
+            .orElseThrow(() -> new TurnoNoEncontradoException("Prestador no encontrado con ID: " + dto.getId()));
 
-        entidad.setEmail(dto.getEmail());
-        entidad.setRazonSocial(dto.getRazonSocial());
+        // Actualizamos solo los campos que se pueden editar
+        prestador.setEmail(dto.getEmail());
+        prestador.setRazonSocial(dto.getRazonSocial());
 
-        repo.save(entidad);
+        repo.save(prestador);
     }
+
 
 
 
@@ -86,7 +90,7 @@ public class PrestadorService {
             p.setContrasena(passwordEncoder.encode(dto.getContrasena())); // ENCRIPTA la contraseña
         }
         p.setRazonSocial(dto.getRazonSocial());
-        p.setHabilitado(dto.getHabilitado());
+        p.setHabilitado(dto.isHabilitado());
         p.setRol(Rol.PRESTADOR);
     }
 

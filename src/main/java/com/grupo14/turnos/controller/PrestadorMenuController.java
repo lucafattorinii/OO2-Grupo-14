@@ -71,21 +71,23 @@ public class PrestadorMenuController {
             return "redirect:/login";
         }
 
-        // Crear nueva versión del DTO con datos actualizados
+        // Crear un nuevo DTO con los datos actualizados
         PrestadorDTO actualizado = new PrestadorDTO(
             prestadorEnSesion.getId(),
             datos.getEmail(),
             prestadorEnSesion.getContrasena(),
             datos.getRazonSocial(),
-            prestadorEnSesion.getHabilitado()
+            prestadorEnSesion.isHabilitado()
+            
         );
 
-        // Guardar en BD y sesión
         prestadorService.actualizar(actualizado);
         session.setAttribute("prestador", actualizado);
 
         return "redirect:/prestador/menu?actualizado=true";
     }
+
+
 
     @GetMapping("/servicios")
     public String verMisServicios(HttpSession session, Model model) {
