@@ -45,13 +45,18 @@ public class LoginController {
         session.setAttribute("usuario", usuario);
 
         return switch (usuario.rol()) {
-            case ADMIN -> "menu"; // Vista en templates/menu.html
+            case ADMIN -> "menu";
             case CLIENTE -> "redirect:/cliente/menu";
             case EMPLEADO -> "redirect:/empleado/menu";
-            case PRESTADOR -> "redirect:/prestador/menu";
+            case PRESTADOR -> {
+                PrestadorDTO prestador = prestadorService.buscarPorEmail(usuario.email());
+                session.setAttribute("prestador", prestador);
+                yield "redirect:/prestador/menu";
+            }
             default -> "redirect:/login?error=rol_desconocido";
         };
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {

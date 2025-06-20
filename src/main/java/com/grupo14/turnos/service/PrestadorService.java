@@ -50,6 +50,18 @@ public class PrestadorService {
         Prestador guardado = repo.save(p);
         return convertirADTO(guardado);
     }
+    
+    
+    public void actualizar(PrestadorDTO dto) {
+        Prestador entidad = repo.findById(dto.getId()).orElseThrow();
+
+        entidad.setEmail(dto.getEmail());
+        entidad.setRazonSocial(dto.getRazonSocial());
+
+        repo.save(entidad);
+    }
+
+
 
     public void eliminar(long id) {
         if (!repo.existsById(id)) {
@@ -69,12 +81,12 @@ public class PrestadorService {
     }
 
     private void actualizarPrestadorDesdeDTO(Prestador p, PrestadorDTO dto) {
-        p.setEmail(dto.email());
-        if (dto.contrasena() != null && !dto.contrasena().isEmpty()) {
-            p.setContrasena(passwordEncoder.encode(dto.contrasena())); // ENCRIPTA la contraseña
+        p.setEmail(dto.getEmail());
+        if (dto.getContrasena() != null && !dto.getContrasena().isEmpty()) {
+            p.setContrasena(passwordEncoder.encode(dto.getContrasena())); // ENCRIPTA la contraseña
         }
-        p.setRazonSocial(dto.razonSocial());
-        p.setHabilitado(dto.habilitado());
+        p.setRazonSocial(dto.getRazonSocial());
+        p.setHabilitado(dto.getHabilitado());
         p.setRol(Rol.PRESTADOR);
     }
 
