@@ -78,14 +78,19 @@ public class ClienteMenuController {
     }
     
     @PostMapping("/turnos/{id}/eliminar")
-    public String eliminarTurno(@PathVariable Integer id, HttpSession session) {
-        String vista = "redirect:/mis-turnos"; 
+    public String eliminarTurno(@PathVariable Long id, HttpSession session) {
+        String vista = "redirect:/cliente/mis-turnos"; 
         
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
         if (usuario == null) {
             vista = "redirect:/login";
         } else {
-            turnoService.eliminar(id);
+            try {
+                turnoService.eliminar(id);
+            } catch (Exception e) {
+                // Log the error if needed
+                System.err.println("Error al eliminar el turno: " + e.getMessage());
+            }
         }
         
         return vista;
@@ -112,7 +117,7 @@ public class ClienteMenuController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
             @RequestParam Long disponibilidadId,
             @RequestParam Long servicioId,
-            @RequestParam Long direccionId,  
+            @RequestParam(required = false) Long direccionId,  
             Model model
     ) {
         String vista;
@@ -121,6 +126,9 @@ public class ClienteMenuController {
         if (usuario == null) {
             vista = "redirect:/login";
         } else {
+            // Usar una dirección por defecto si no se proporciona
+            Long direccionFinal = direccionId != null ? direccionId : 1L; // Asumiendo que 1 es el ID de una dirección por defecto
+            
             TurnoConFechaDTO nuevo = new TurnoConFechaDTO(
                 fecha,
                 hora,
@@ -128,7 +136,7 @@ public class ClienteMenuController {
                 usuario.id(),
                 disponibilidadId,
                 servicioId,
-                direccionId
+                direccionFinal
             );
 
             try {
@@ -136,6 +144,11 @@ public class ClienteMenuController {
                 vista = "redirect:/cliente/mis-turnos";
             } catch (IllegalArgumentException e) {
                 model.addAttribute("error", e.getMessage());
+                model.addAttribute("servicios", servicioService.listarTodos());
+                model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
+                vista = "cliente/crear-turno";
+            } catch (Exception e) {
+                model.addAttribute("error", "Error al crear el turno: " + e.getMessage());
                 model.addAttribute("servicios", servicioService.listarTodos());
                 model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
                 vista = "cliente/crear-turno";
