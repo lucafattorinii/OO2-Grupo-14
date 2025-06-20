@@ -16,6 +16,8 @@ public class ServicioService {
 
     private final ServicioRepository repo;
     private final PrestadorRepository prestadorRepo;
+    
+    
 
     public ServicioService(ServicioRepository repo, PrestadorRepository prestadorRepo) {
         this.repo = repo;
@@ -88,6 +90,21 @@ public class ServicioService {
         repo.save(s);
     }
     
+    public List<ServicioDTO> buscarPorPrestadorId(Long prestadorId) {
+        List<Servicio> lista = repo.findByPrestador_Id(prestadorId);
+
+        return lista.stream().map(s -> new ServicioDTO(
+        	    s.getIdServicio(),
+        	    s.getNombre(),
+        	    s.getDuracionMin(),
+        	    s.getPrecio(),
+        	    s.getPrestador().getId()
+        	)).toList();
+
+    }
+
+
+    
     private ServicioDTO convertirADTO(Servicio s) {
         return new ServicioDTO(
                 s.getIdServicio(),
@@ -102,7 +119,7 @@ public class ServicioService {
         Prestador prestador = prestadorRepo.findTopByOrderByIdAsc()
                 .orElseThrow(() -> new RecursoNoEncontradoException("No hay ningún prestador cargado."));
         
-        return repo.findByPrestadorId(prestador.getId()).stream()
+        return repo.findByPrestador_Id(prestador.getId()).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }

@@ -87,6 +87,19 @@ public class PrestadorMenuController {
         return "redirect:/prestador/menu?actualizado=true";
     }
 
+    @GetMapping("/servicios")
+    public String verMisServicios(HttpSession session, Model model) {
+        PrestadorDTO prestador = (PrestadorDTO) session.getAttribute("prestador");
+
+        if (prestador == null) {
+            return "redirect:/login";
+        }
+
+        List<ServicioDTO> servicios = servicioService.buscarPorPrestadorId(prestador.getId());
+        model.addAttribute("servicios", servicios);
+
+        return "prestador/servicios";
+    }
 
 
 
