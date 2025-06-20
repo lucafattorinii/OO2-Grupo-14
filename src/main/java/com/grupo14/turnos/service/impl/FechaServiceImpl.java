@@ -41,12 +41,14 @@ public class FechaServiceImpl implements FechaService {
         Direccion direccion = direccionRepository.findById(direccionId)
             .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
 
-        Fecha fecha = new Fecha();
-        fecha.setFecha(date);
-        fecha.setDiaSemana(convertirADiaSemana(date));
-        fecha.setDireccion(direccion);
-
-        return fechaRepository.save(fecha);
+        return fechaRepository.findByFechaAndDireccionId(date, direccionId)
+            .orElseGet(() -> {
+                Fecha nueva = new Fecha();
+                nueva.setFecha(date);
+                nueva.setDiaSemana(convertirADiaSemana(date));
+                nueva.setDireccion(direccion);
+                return fechaRepository.save(nueva);
+            });
     }
 
     @Override

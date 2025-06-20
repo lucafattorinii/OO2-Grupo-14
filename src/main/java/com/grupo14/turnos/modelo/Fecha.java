@@ -30,12 +30,18 @@ public class Fecha {
     @OneToMany(mappedBy = "fecha", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Turno> turnos = new ArrayList<>();
 
-    // Relación uno a uno con Dirección 
-    @OneToOne(fetch = FetchType.LAZY)
+    // Relación muchos a uno con Dirección 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "direccion_id",
         referencedColumnName = "id_direccion",
         foreignKey = @ForeignKey(name = "fecha_direccion_fk")
     )
     private Direccion direccion;
+    
+    public Fecha(DiaSemana diaSemana, Direccion direccion, LocalDate fecha) {
+        this.diaSemana = diaSemana;
+        this.direccion = direccion;
+        this.fecha = fecha;
+    }
 }
