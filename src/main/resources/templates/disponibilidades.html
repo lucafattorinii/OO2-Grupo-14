@@ -58,7 +58,7 @@
             <td>
               <ul>
                 <li th:each="sid : ${d.servicioIds}">
-                  <span th:each="s : ${servicios}" th:if="${s.idServicio() == sid}" th:text="${s.nombre()}"></span>
+                  <span th:each="s : ${servicios}" th:if="${s.id() == sid}" th:text="${s.nombre()}"></span>
                 </li>
               </ul>
             </td>
@@ -96,7 +96,7 @@
             <div class="form-group">
               <label>Servicios:</label>
               <select name="servicioIds" multiple required>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -161,7 +161,7 @@
             <div class="form-group">
               <label>Servicios:</label>
               <select name="servicioIds" multiple required>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-actions">
