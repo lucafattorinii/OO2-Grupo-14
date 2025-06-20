@@ -95,14 +95,14 @@
     /* Ajuste para el botón Volver al menú */
     .btn-marine {
       background-color: #000080;
-      margin-left: 2rem;   
+      margin-left: 2rem;    /* separación desde el borde izquierdo */
     }
     .btn-marine:hover {
       background-color: #000060;
     }
     .back-container {
       display: flex;
-      justify-content: flex-start;  
+      justify-content: flex-start;  /* alinea al inicio */
       margin: 1.5rem 0;
     }
 
@@ -152,7 +152,7 @@
           <td th:text="${turno.estado}"></td>
           <td th:text="${turno.nombreServicio}"></td>
           <td>
-            <form th:action="@{/turnos/{id}/eliminar(id=${turno.id})}" method="post"
+            <form th:action="@{/cliente/turnos/{id}/eliminar(id=${turno.id})}" method="post"
                   onsubmit="return confirm('¿Seguro quieres cancelar este turno?');">
               <button type="submit" class="btn btn-cancel">Cancelar</button>
             </form>
