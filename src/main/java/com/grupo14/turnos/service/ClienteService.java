@@ -64,7 +64,7 @@ public class ClienteService {
 		repo.deleteById(id);
 	}
 
-	public ClienteDTO actualizarCliente(long id, String email, String contrasena, Long numeroCliente, Long dni,
+	public ClienteDTO actualizarCliente(long id, String email, String contrasena, Long dni,
             String nombre, String apellido) {
 			Cliente c = repo.findById(id)
 			.orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + id));
@@ -77,7 +77,6 @@ public class ClienteService {
 				c.setContrasena(passwordEncoder.encode(contrasena));
 			}
 			
-			c.setNumeroCliente(numeroCliente);
 			c.setDni(dni);
 			c.setNombre(nombre);
 			c.setApellido(apellido);
@@ -88,16 +87,23 @@ public class ClienteService {
 		}
 
 	public ClienteDTO crear(ClienteDTO dto) {
-		Cliente c = new Cliente();
-		c.setEmail(dto.email());
-		c.setContrasena(passwordEncoder.encode(dto.contrasena())); //Encriptacion 
-		c.setNumeroCliente(dto.numeroCliente());
-		c.setDni(dto.dni());
-		c.setNombre(dto.nombre());
-		c.setApellido(dto.apellido());
-		c.setRol(Rol.CLIENTE);
-		Cliente guardado = repo.save(c);
-		return mapToDTO(guardado);
+	    Long proximoNumero = repo.findTopByOrderByNumeroClienteDesc()
+	        .map(c -> c.getNumeroCliente() + 1)
+	        .orElse(1L); // valor inicial si no hay clientes
+
+	    Cliente c = new Cliente();
+	    c.setEmail(dto.email());
+	    c.setContrasena(passwordEncoder.encode(dto.contrasena())); //Encriptacion 
+	    c.setNumeroCliente(proximoNumero);
+	    c.setDni(dto.dni());
+	    c.setNombre(dto.nombre());
+	    c.setApellido(dto.apellido());
+	    c.setRol(Rol.CLIENTE);
+
+	    Cliente guardado = repo.save(c);
+	    System.out.println("Guardando cliente en BD: " + c.getEmail() + " | Número asignado: " + proximoNumero);
+
+	    return mapToDTO(guardado);
 	}
 
 	private ClienteDTO mapToDTO(Cliente c) {

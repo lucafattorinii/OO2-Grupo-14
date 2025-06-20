@@ -176,7 +176,6 @@ public class ClienteMenuController {
             HttpSession session,
             @RequestParam String email,
             @RequestParam String contrasena,
-            @RequestParam Long numeroCliente,
             @RequestParam Long dni,
             @RequestParam String nombre,
             @RequestParam String apellido
@@ -186,7 +185,7 @@ public class ClienteMenuController {
         if (usuario == null) {
             vista = "redirect:/login";
         } else {
-            clienteService.actualizarCliente(usuario.id(), email, contrasena, numeroCliente, dni, nombre, apellido);
+            clienteService.actualizarCliente(usuario.id(), email, contrasena, dni, nombre, apellido);
         }
         return vista;
     }

@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Cliente extends Persona {
 
-    @Column(name = "numero_cliente")
+    @Column(name = "numero_cliente", unique = true, nullable = false)
     private Long numeroCliente;
 
     @OneToMany(

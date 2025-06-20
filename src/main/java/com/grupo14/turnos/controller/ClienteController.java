@@ -73,13 +73,12 @@ public class ClienteController {
         @RequestParam Integer id,
         @RequestParam String email,
         @RequestParam String contrasena,
-        @RequestParam Long numeroCliente,
         @RequestParam Long dni,
         @RequestParam String nombre,
         @RequestParam String apellido
     ) {
-        clienteService.actualizarCliente(id, email, contrasena,
-                                         numeroCliente, dni, nombre, apellido);
+        clienteService.actualizarCliente(id, email, contrasena
+                                         , dni, nombre, apellido);
         return "redirect:/clientes/view";
     }
 }

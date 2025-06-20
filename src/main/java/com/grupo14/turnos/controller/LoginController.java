@@ -73,15 +73,15 @@ public class LoginController {
     public String registrarCliente(
         @RequestParam String email,
         @RequestParam String contrasena,
-        @RequestParam Long numeroCliente,
         @RequestParam Long dni,
         @RequestParam String nombre,
         @RequestParam String apellido,
         Model model
     ) {
+        System.out.println("DTO: " + email + " - " + contrasena + " - " + dni + " - " + nombre + " - " + apellido);
         String vista;
         try {
-            ClienteDTO dto = new ClienteDTO(null, email, contrasena, numeroCliente, dni, nombre, apellido);
+            ClienteDTO dto = new ClienteDTO(null, email, contrasena, null, dni, nombre, apellido);
             clienteService.crear(dto);
             model.addAttribute("mensaje", "Registro exitoso. Ahora puedes iniciar sesión.");
             vista = "login";
