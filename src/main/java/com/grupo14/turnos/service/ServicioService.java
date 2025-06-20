@@ -107,6 +107,20 @@ public class ServicioService {
                 .collect(Collectors.toList());
     }
     
+    public ServicioDTO crearServicioSinSincronizar(ServicioDTO dto) {
+        Prestador p = prestadorRepo.findById(dto.prestadorId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Prestador no encontrado: " + dto.prestadorId()));
+
+        Servicio s = new Servicio();
+        s.setNombre(dto.nombre());
+        s.setDuracionMin(dto.duracionMin());
+        s.setPrecio(dto.precio());
+        s.asignarPrestadorSinActualizarColeccion(p);
+
+        Servicio guardado = repo.save(s);
+        return convertirADTO(guardado);
+    }
+    
    
 }
 

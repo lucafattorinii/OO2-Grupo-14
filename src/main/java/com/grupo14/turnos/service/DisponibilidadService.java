@@ -7,6 +7,8 @@ import com.grupo14.turnos.modelo.Servicio;
 import com.grupo14.turnos.repository.DisponibilidadRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.grupo14.turnos.modelo.DiaSemana;
 
 import java.time.LocalTime;
@@ -140,4 +142,11 @@ public class DisponibilidadService {
             .map(this::convertirADTO)
             .collect(Collectors.toList());
     }*/
+    
+    @Transactional(readOnly = true)
+    public List<DisponibilidadDTO> listarTodosConServicios() {
+        return repo.findAllWithServicios().stream()
+            .map(this::convertirADTO)
+            .collect(Collectors.toList());
+    }
 }

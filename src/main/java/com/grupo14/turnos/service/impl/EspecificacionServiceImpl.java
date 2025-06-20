@@ -1,6 +1,7 @@
 package com.grupo14.turnos.service.impl;
 
 import com.grupo14.turnos.dto.EspecificacionDTO;
+import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Direccion;
 import com.grupo14.turnos.modelo.Especificacion;
 import com.grupo14.turnos.modelo.Servicio;
@@ -106,6 +107,46 @@ public class EspecificacionServiceImpl implements EspecificacionService {
     @Override
     public Optional<Especificacion> buscarPorId(long id) {
         return repo.findById(id);
+    }
+    
+    private EspecificacionDTO toDTO(Especificacion e) {
+        return new EspecificacionDTO(
+            e.getId(),
+            e.getServicio().getIdServicio(),
+            e.getRubro(),
+            e.getDetalles(),
+            e.getDireccion() != null ? e.getDireccion().getIdDireccion() : null,
+            e.getServicio().getNombre(),
+            e.getDireccion() != null ? e.getDireccion().toString() : null
+        );
+    }
+    
+    @Override
+    public EspecificacionDTO crearSinId(EspecificacionDTO dto) {
+        Servicio servicio = servicioRepo.findById(dto.servicioId())
+            .orElseThrow(() -> new IllegalArgumentException("Servicio no encontrado con id: " + dto.servicioId()));
+
+        Direccion direccion = null;
+        if (dto.direccionId() != null) {
+            direccion = direccionRepo.findById(dto.direccionId())
+                .orElseThrow(() -> new IllegalArgumentException("Dirección no encontrada con id: " + dto.direccionId()));
+        }
+
+        Especificacion especificacion = Especificacion.builder()
+            .servicio(servicio)
+            .direccion(direccion)
+            .rubro(dto.rubro())
+            .detalles(dto.detalles())
+            .build();
+
+        // asignamos bidireccionalmente
+        servicio.setEspecificacion(especificacion);
+
+        // guardamos el servicio (con cascada se guarda la especificacion)
+        servicioRepo.save(servicio);
+
+        // ahora especificacion tiene id asignado
+        return toDTO(especificacion);
     }
 }
 

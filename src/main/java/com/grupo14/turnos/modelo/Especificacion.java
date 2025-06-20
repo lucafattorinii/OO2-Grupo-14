@@ -13,7 +13,7 @@ public class Especificacion {
 
     @Id
     @Column(name = "id")
-    private long id; // Este ID se compartirá con el ID de Servicio
+    private Long id; // Este ID se compartirá con el ID de Servicio
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

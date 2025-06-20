@@ -49,6 +49,7 @@ public interface EspecificacionService {
     void eliminar(long id);
 
     Optional<Especificacion> buscarPorId(long id);
+    public EspecificacionDTO crearSinId(EspecificacionDTO dto);
     
    /// public void actualizarEspecificacion(Integer id, Long servicioId, Rubro rubro, String detalles, Integer direccionId);
     

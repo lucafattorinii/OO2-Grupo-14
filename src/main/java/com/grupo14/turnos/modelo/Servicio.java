@@ -64,6 +64,10 @@ public class Servicio {
             nuevoPrestador.getServicios().add(this);
         }
     }
+    
+    public void asignarPrestadorSinActualizarColeccion(Prestador nuevoPrestador) {
+        this.prestador = nuevoPrestador;
+    }
 
     public void addEmpleado(Empleado empleado) {
         empleados.add(empleado);
