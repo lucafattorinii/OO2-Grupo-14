@@ -39,7 +39,7 @@ public class PrestadorMenuController {
         }
 
         List<ServicioDTO> servicios = servicioService.listarTodos().stream()
-                .filter(s -> s.prestadorId().equals(prestadorDTO.getId()))
+                .filter(s -> s.prestadorId().equals(prestadorDTO.id()))
                 .collect(Collectors.toList());
 
         model.addAttribute("prestador", prestadorDTO);
@@ -73,11 +73,11 @@ public class PrestadorMenuController {
 
         // Crear nueva versión del DTO con datos actualizados
         PrestadorDTO actualizado = new PrestadorDTO(
-            prestadorEnSesion.getId(),
-            datos.getEmail(),
-            prestadorEnSesion.getContrasena(),
-            datos.getRazonSocial(),
-            prestadorEnSesion.getHabilitado()
+            prestadorEnSesion.id(),
+            datos.email(),
+            prestadorEnSesion.contrasena(),
+            datos.razonSocial(),
+            prestadorEnSesion.habilitado()
         );
 
         // Guardar en BD y sesión
@@ -95,7 +95,7 @@ public class PrestadorMenuController {
             return "redirect:/login";
         }
 
-        List<ServicioDTO> servicios = servicioService.buscarPorPrestadorId(prestador.getId());
+        List<ServicioDTO> servicios = servicioService.buscarPorPrestadorId(prestador.id());
         model.addAttribute("servicios", servicios);
 
         return "prestador/servicios";
@@ -121,7 +121,7 @@ public class PrestadorMenuController {
         }
 
         
-        ServicioDTO nuevo = new ServicioDTO(null, nombre, duracionMin, precio, prestador.getId());
+        ServicioDTO nuevo = new ServicioDTO(null, nombre, duracionMin, precio, prestador.id());
         servicioService.crear(nuevo);
 
         return "redirect:/prestador/menu";
