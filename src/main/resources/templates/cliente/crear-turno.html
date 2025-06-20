@@ -15,6 +15,11 @@
       --bg-end:       #cfdef3;
       --input-bg:     #f5f5f5;
       --input-border: #ccc;
+      --disabled-bg:  #f0f0f0;
+      --disabled-text:#a0a0a0;
+      --warning:      #f39c12;
+      --warning-bg:   #fef5e6;
+      --success:      #2ecc71;
     }
 
 
@@ -72,6 +77,64 @@
       font-size: 1rem;
       color: var(--dark);
     }
+    .form-group input[type="date"] {
+      padding: 0.5rem;
+      border: 1px solid var(--input-border);
+      border-radius: 0.25rem;
+      background-color: var(--input-bg);
+      color: var(--dark);
+    }
+    
+    /* Estilo para los días no disponibles en el calendario */
+    .calendario-activo input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 1;
+    }
+    
+    /* Deshabilitar los días no disponibles */
+    .calendario-activo input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+      color: var(--dark);
+    }
+    
+    .calendario-activo input[type="date"]:invalid {
+      color: var(--disabled-text);
+    }
+    
+    .info-dia {
+      font-size: 0.85em;
+      color: var(--medium);
+      margin-top: 0.25rem;
+    }
+    
+    /* Estilos para advertencias */
+    .form-group.con-advertencia input,
+    .form-group.con-advertencia select {
+      border-color: var(--warning) !important;
+      background-color: var(--warning-bg);
+    }
+    
+    .advertencia-mensaje {
+      color: var(--warning);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+    
+    .advertencia-global {
+      background-color: var(--warning-bg);
+      color: var(--warning);
+      padding: 1rem;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+      border-right: 4px solid var(--warning);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .advertencia-global::before {
+      content: '⚠️';
+      font-size: 1.2rem;
+    }
     form button {
       display: block;
       width: 100%;
@@ -126,56 +189,389 @@
     <h1>Crear Nuevo Turno</h1>
   </header>
 
-  <form th:action="@{/cliente/crear-turno}" method="post">
-    <div class="form-group">
-      <label for="fecha">Fecha</label>
-      <input type="date" id="fecha" name="fecha" required />
-    </div>
-
-    <div class="form-group">
-      <label for="hora">Hora</label>
-      <input type="time" id="hora" name="hora" required />
-    </div>
-
+  <form th:action="@{/cliente/crear-turno}" method="post" id="turnoForm">
+    <!-- Paso 1: Selección de Servicio -->
     <div class="form-group">
       <label for="servicioId">Servicio</label>
-      <select id="servicioId" name="servicioId" required>
+      <select id="servicioId" name="servicioId" required onchange="cargarDisponibilidades()">
         <option value="" disabled selected>-- Seleccione un servicio --</option>
         <th:block th:each="servicio : ${servicios}">
           <option th:value="${servicio.id}"
+                  th:data-nombre="${servicio.nombre}"
                   th:text="${servicio.nombre}"></option>
         </th:block>
       </select>
     </div>
 
+    <!-- Paso 2: Selección de Disponibilidad -->
     <div class="form-group">
       <label for="disponibilidadId">Disponibilidad</label>
-      <select id="disponibilidadId" name="disponibilidadId" required>
-        <option value="" disabled selected>-- Seleccione una disponibilidad --</option>
+      <select id="disponibilidadId" name="disponibilidadId" required disabled onchange="cargarFechasDisponibles()">
+        <option value="" disabled selected>-- Primero seleccione un servicio --</option>
         <th:block th:each="disp : ${disponibilidades}">
-          <option th:value="${disp.id}"
-                  th:text="${#strings.concat(disp.dia, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
+          <option th:each="servicioId : ${disp.servicioIds()}" 
+                  th:value="${disp.id}"
+                  th:data-servicio-id="${servicioId}"
+                  th:data-dia="${disp.diaSemana}"
+                  th:data-hora-inicio="${disp.horaInicio}"
+                  th:data-hora-fin="${disp.horaFin}"
+                  th:text="${#strings.concat(disp.diaSemana, ' - ', disp.horaInicio, ' a ', disp.horaFin)}"></option>
         </th:block>
       </select>
     </div>
 
+    <!-- Paso 3: Selección de Fecha -->
+    <div class="form-group">
+      <label for="fecha">Fecha</label>
+      <input type="date" id="fecha" name="fecha" required disabled onchange="cargarHorasDisponibles()" />
+    </div>
+
+    <!-- Paso 4: Selección de Hora -->
+    <div class="form-group">
+      <label for="hora">Hora</label>
+      <select id="hora" name="hora" required disabled>
+        <option value="" disabled selected>-- Primero seleccione una fecha --</option>
+      </select>
+    </div>
+
+    <!-- Paso 5: Selección de Dirección -->
     <div class="form-group">
       <label for="direccionId">Dirección</label>
-      <select id="direccionId" name="direccionId" required>
+      <select id="direccionId" name="direccionId" required disabled>
         <option value="" disabled selected>-- Seleccione una dirección --</option>
         <th:block th:each="dir : ${direcciones}">
           <option th:value="${dir.idDireccion}"
-                  th:text="${#strings.concat(dir.calle, ' ', dir.numero, ', ', dir.localidad)}"></option>
+                  th:text="${#strings.concat(dir.calle, ' ', dir.numeroCalle, ', ', dir.ciudad)}"></option>
         </th:block>
       </select>
     </div>
 
-    <button type="submit">Crear Turno</button>
+    <button type="submit" id="submitBtn" disabled>Crear Turno</button>
   </form>
 
   <div class="mt-4 text-center">
-    <a th:href="@{/cliente/menu}" class="btn btn-outline-primary">Volver al menú</a>
+    <a th:href="@{/cliente/menu}" class="back-link">← Volver al menú</a>
   </div>
+
+
+  <script th:inline="javascript">
+    // Variables globales
+    let disponibilidades = [];
+    let fechasDisponibles = [];
+    let horasDisponibles = [];
+
+    // Cargar todas las disponibilidades al inicio
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener todas las disponibilidades del DOM
+      const opcionesDisponibilidad = document.querySelectorAll('#disponibilidadId option');
+      disponibilidades = Array.from(opcionesDisponibilidad)
+        .filter(opt => opt.value)
+        .map(opt => ({
+          id: opt.value,
+          servicioId: opt.dataset.servicioId,
+          dia: opt.dataset.dia,
+          horaInicio: opt.dataset.horaInicio,
+          horaFin: opt.dataset.horaFin,
+          text: opt.textContent
+        }));
+    });
+
+    // Filtrar disponibilidades según el servicio seleccionado
+    function cargarDisponibilidades() {
+      const servicioSelect = document.getElementById('servicioId');
+      const disponibilidadSelect = document.getElementById('disponibilidadId');
+      const fechaInput = document.getElementById('fecha');
+      const horaSelect = document.getElementById('hora');
+      const direccionSelect = document.getElementById('direccionId');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Limpiar y deshabilitar campos dependientes
+      disponibilidadSelect.innerHTML = '<option value="" disabled selected>-- Seleccione una disponibilidad --</option>';
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      horaSelect.innerHTML = '<option value="" disabled selected>-- Primero seleccione una fecha --</option>';
+      horaSelect.disabled = true;
+      direccionSelect.disabled = true;
+      submitBtn.disabled = true;
+      
+      const servicioId = servicioSelect.value;
+      if (!servicioId) {
+        disponibilidadSelect.disabled = true;
+        return;
+      }
+      
+      // Filtrar disponibilidades por servicio seleccionado
+      const disponibilidadesFiltradas = disponibilidades.filter(d => d.servicioId === servicioId);
+      
+      if (disponibilidadesFiltradas.length === 0) {
+        disponibilidadSelect.innerHTML = '<option value="" disabled selected>-- No hay disponibilidades para este servicio --</option>';
+        return;
+      }
+      
+      // Llenar el select de disponibilidades
+      disponibilidadesFiltradas.forEach(disp => {
+        const option = document.createElement('option');
+        option.value = disp.id;
+        option.textContent = disp.text;
+        disponibilidadSelect.appendChild(option);
+      });
+      
+      disponibilidadSelect.disabled = false;
+    }
+    
+    // Cargar fechas disponibles según la disponibilidad seleccionada
+    function cargarFechasDisponibles() {
+      const disponibilidadSelect = document.getElementById('disponibilidadId');
+      const fechaInput = document.getElementById('fecha');
+      const horaSelect = document.getElementById('hora');
+      const direccionSelect = document.getElementById('direccionId');
+      
+      // Limpiar y deshabilitar campos dependientes
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      horaSelect.innerHTML = '<option value="" disabled selected>-- Primero seleccione una fecha --</option>';
+      horaSelect.disabled = true;
+      direccionSelect.disabled = true;
+      
+      const disponibilidadId = disponibilidadSelect.value;
+      if (!disponibilidadId) return;
+      
+      // Obtener la disponibilidad seleccionada
+      const disponibilidad = disponibilidades.find(d => d.id === disponibilidadId);
+      if (!disponibilidad) return;
+      
+      // Configurar el rango de fechas (próximas 4 semanas)
+      const hoy = new Date();
+      const fechaFin = new Date();
+      fechaFin.setDate(hoy.getDate() + 28); // Próximas 4 semanas
+      
+      // Obtener el día de la semana de la disponibilidad (0=Domingo, 1=Lunes, etc.)
+      const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const diaDisponible = diasSemana.indexOf(disponibilidad.dia);
+      
+      // Configurar el input de fecha
+      fechaInput.min = hoy.toISOString().split('T')[0];
+      fechaInput.max = fechaFin.toISOString().split('T')[0];
+      
+      // Habilitar el input de fecha
+      fechaInput.disabled = false;
+      
+      // Agregar evento para validar la fecha seleccionada
+      fechaInput.oninput = function() {
+        const fechaSeleccionada = new Date(this.value);
+        if (fechaSeleccionada.getDay() !== diaDisponible) {
+          this.value = '';
+          alert('Por favor seleccione un ' + disponibilidad.dia);
+        }
+      };
+      
+      // Habilitar el select de dirección
+      document.getElementById('direccionId').disabled = false;
+      
+      // Mostrar mensaje informativo
+      const fechaContainer = fechaInput.parentElement;
+      let mensajeInfo = fechaContainer.querySelector('.info-dia');
+      if (!mensajeInfo) {
+        mensajeInfo = document.createElement('div');
+        mensajeInfo.className = 'info-dia';
+        mensajeInfo.style.marginTop = '5px';
+        mensajeInfo.style.fontSize = '0.9em';
+        mensajeInfo.style.color = 'var(--medium)';
+        fechaContainer.appendChild(mensajeInfo);
+      }
+      mensajeInfo.textContent = 'Días disponibles: ' + disponibilidad.dia + 's';
+      
+      // Configurar el atributo pattern para validación HTML5
+      fechaInput.setAttribute('title', 'Seleccione un ' + disponibilidad.dia);
+      
+      // Agregar clase al body para estilos específicos del calendario
+      document.body.classList.add('calendario-activo');
+    }
+    
+    // Cargar horas disponibles según la fecha seleccionada
+    function cargarHorasDisponibles() {
+      const fechaInput = document.getElementById('fecha');
+      const horaSelect = document.getElementById('hora');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Limpiar el select de horas
+      horaSelect.innerHTML = '';
+      horaSelect.disabled = true;
+      submitBtn.disabled = true;
+      
+      const fechaSeleccionada = new Date(fechaInput.value);
+      if (!fechaSeleccionada) return;
+      
+      // Obtener la disponibilidad seleccionada
+      const disponibilidadSelect = document.getElementById('disponibilidadId');
+      const disponibilidad = disponibilidades.find(d => d.id === disponibilidadSelect.value);
+      
+      if (!disponibilidad) return;
+      
+      // Aquí deberías hacer una llamada al servidor para verificar disponibilidad real
+      // Por ahora, simulamos generando horas dentro del rango de disponibilidad
+      const [horaInicio, minutoInicio] = disponibilidad.horaInicio.split(':').map(Number);
+      const [horaFin, minutoFin] = disponibilidad.horaFin.split(':').map(Number);
+      
+      // Generar opciones de hora cada 30 minutos
+      let horaActual = new Date(fechaSeleccionada);
+      horaActual.setHours(horaInicio, minutoInicio, 0, 0);
+      
+      const horaFinal = new Date(fechaSeleccionada);
+      horaFinal.setHours(horaFin, minutoFin, 0, 0);
+      
+      // Asegurarse de que no mostramos horas pasadas si es el día actual
+      const ahora = new Date();
+      if (esMismoDia(fechaSeleccionada, ahora)) {
+        // Redondear a la próxima media hora
+        const minutos = ahora.getMinutes();
+        const minutosRedondeados = minutos < 30 ? 30 - minutos : 60 - minutos;
+        ahora.setMinutes(ahora.getMinutes() + minutosRedondeados);
+        ahora.setSeconds(0, 0);
+        
+        if (horaActual < ahora) {
+          horaActual = new Date(ahora);
+        }
+      }
+      
+      // Llenar el select de horas
+      while (horaActual < horaFinal) {
+        const option = document.createElement('option');
+        const hora = horaActual.getHours().toString().padStart(2, '0');
+        const minutos = horaActual.getMinutes().toString().padStart(2, '0');
+        const horaValue = `${hora}:${minutos}`; // Formato HH:mm para el valor
+        const horaDisplay = horaActual.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        
+        option.value = horaValue; // Usar formato HH:mm para el valor
+        option.textContent = horaDisplay; // Mostrar formato legible
+        horaSelect.appendChild(option);
+        
+        // Siguiente intervalo de 30 minutos
+        horaActual.setMinutes(horaActual.getMinutes() + 30);
+      }
+      
+      if (horaSelect.options.length > 0) {
+        horaSelect.disabled = false;
+        submitBtn.disabled = false;
+      } else {
+        horaSelect.innerHTML = '<option value="" disabled selected>-- No hay horarios disponibles --</option>';
+      }
+    }
+    
+    // Función auxiliar para comparar fechas ignorando la hora
+    function esMismoDia(fecha1, fecha2) {
+      return fecha1.getFullYear() === fecha2.getFullYear() &&
+             fecha1.getMonth() === fecha2.getMonth() &&
+             fecha1.getDate() === fecha2.getDate();
+    }
+    
+    // Función para mostrar advertencia en un campo
+    function mostrarAdvertencia(campoId, mensaje) {
+      const campo = document.getElementById(campoId);
+      const formGroup = campo.closest('.form-group');
+      
+      // Remover advertencias previas
+      const advertenciaAnterior = formGroup.querySelector('.advertencia-mensaje');
+      if (advertenciaAnterior) {
+        advertenciaAnterior.remove();
+      }
+      
+      // Crear elemento de advertencia
+      const advertencia = document.createElement('div');
+      advertencia.className = 'advertencia-mensaje';
+      advertencia.textContent = mensaje;
+      
+      // Agregar después del campo
+      campo.insertAdjacentElement('afterend', advertencia);
+      
+      // Resaltar campo
+      formGroup.classList.add('con-advertencia');
+      
+      // Hacer scroll hasta el campo
+      campo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      return false;
+    }
+    
+    // Función para limpiar advertencias
+    function limpiarAdvertencias() {
+      document.querySelectorAll('.advertencia-mensaje').forEach(el => el.remove());
+      document.querySelectorAll('.form-group').forEach(el => el.classList.remove('con-advertencia'));
+    }
+    
+    // Validar el formulario antes de enviar
+    document.getElementById('turnoForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      let esValido = true;
+      
+      // Limpiar advertencias previas
+      limpiarAdvertencias();
+      
+      // Validar cada campo requerido
+      const camposRequeridos = [
+        { id: 'servicioId', mensaje: 'Por favor seleccione un servicio' },
+        { id: 'disponibilidadId', mensaje: 'Por favor seleccione una disponibilidad' },
+        { id: 'fecha', mensaje: 'Por favor seleccione una fecha válida' },
+        { id: 'hora', mensaje: 'Por favor seleccione una hora' },
+        { id: 'direccionId', mensaje: 'Por favor seleccione una dirección' }
+      ];
+      
+      camposRequeridos.forEach(campo => {
+        const elemento = document.getElementById(campo.id);
+        if (!elemento || !elemento.value) {
+          mostrarAdvertencia(campo.id, campo.mensaje);
+          esValido = false;
+        }
+      });
+      
+      // Validar fecha seleccionada
+      const fechaInput = document.getElementById('fecha');
+      const disponibilidadSelect = document.getElementById('disponibilidadId');
+      
+      if (fechaInput.value && disponibilidadSelect.value) {
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const disponibilidad = disponibilidades.find(d => d.id === disponibilidadSelect.value);
+        
+        if (disponibilidad) {
+          const diaSeleccionado = new Date(fechaInput.value).getDay();
+          const diaDisponible = diasSemana.indexOf(disponibilidad.dia);
+          
+          if (diaSeleccionado !== diaDisponible) {
+            mostrarAdvertencia('fecha', `La fecha seleccionada no coincide con el día de disponibilidad (${disponibilidad.dia})`);
+            esValido = false;
+          }
+        }
+      }
+      
+      // Si todo está bien, enviar el formulario
+      if (esValido) {
+        this.submit();
+      } else {
+        // Mostrar mensaje general de advertencia
+        const mensajeGeneral = document.createElement('div');
+        mensajeGlobal.className = 'advertencia-global';
+        mensajeGlobal.textContent = 'Por favor complete correctamente los campos marcados';
+        
+        // Insertar al principio del formulario
+        const primerHijo = this.firstElementChild;
+        this.insertBefore(mensajeGlobal, primerHijo);
+        
+        // Hacer scroll hasta el mensaje
+        mensajeGlobal.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+    
+    // Limpiar advertencias cuando el usuario modifica un campo
+    document.querySelectorAll('input, select').forEach(campo => {
+      campo.addEventListener('input', function() {
+        this.closest('.form-group')?.classList.remove('con-advertencia');
+        const mensaje = this.nextElementSibling;
+        if (mensaje && mensaje.classList.contains('advertencia-mensaje')) {
+          mensaje.remove();
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

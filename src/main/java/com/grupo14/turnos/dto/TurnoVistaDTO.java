@@ -7,7 +7,8 @@ import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.modelo.Fecha;
 
 public record TurnoVistaDTO(
-	Fecha fecha,
+    Long id,
+    Fecha fecha,
     LocalTime hora,
     EstadoTurno estado,
     String nombreCliente,

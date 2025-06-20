@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mis Turnos</title>
   <style>
-    
     :root {
       --dark:        #2c3e50;
       --medium:      #555555;
@@ -18,7 +17,6 @@
       --border:      #ddd;
     }
 
-    
     * {
       box-sizing: border-box;
       margin: 0;
@@ -31,7 +29,6 @@
       line-height: 1.5;
     }
 
-    
     header {
       background-color: var(--dark);
       padding: 1.25rem 1rem;
@@ -43,7 +40,6 @@
       font-size: 1.75rem;
     }
 
-    
     .container {
       max-width: 960px;
       margin: 2rem auto;
@@ -54,7 +50,6 @@
       overflow-x: auto;
     }
 
-    
     table {
       width: 100%;
       border-collapse: collapse;
@@ -77,7 +72,6 @@
       background-color: #f0f8ff;
     }
 
-    
     .btn {
       display: inline-block;
       padding: 0.5rem 1rem;
@@ -97,15 +91,21 @@
     .btn-cancel:hover {
       background-color: #c0392b;
     }
-    .btn-back {
-      background-color: var(--accent);
-      margin-top: 1rem;
+
+    /* Ajuste para el botón Volver al menú */
+    .btn-marine {
+      background-color: #000080;
+      margin-left: 2rem;   
     }
-    .btn-back:hover {
-      background-color: #16a085;
+    .btn-marine:hover {
+      background-color: #000060;
+    }
+    .back-container {
+      display: flex;
+      justify-content: flex-start;  
+      margin: 1.5rem 0;
     }
 
-    
     footer {
       text-align: center;
       padding: 1rem 0;
@@ -113,7 +113,6 @@
       color: var(--medium);
     }
 
-    
     @media (max-width: 600px) {
       header h1 {
         font-size: 1.5rem;
@@ -148,10 +147,10 @@
       </thead>
       <tbody>
         <tr th:each="turno : ${turnos}">
-          <td th:text="${turno.fecha}"></td>
+          <td th:text="${turno.fecha.fecha}"></td>
           <td th:text="${turno.hora}"></td>
           <td th:text="${turno.estado}"></td>
-          <td th:text="${turno.servicio}"></td>
+          <td th:text="${turno.nombreServicio}"></td>
           <td>
             <form th:action="@{/turnos/{id}/eliminar(id=${turno.id})}" method="post"
                   onsubmit="return confirm('¿Seguro quieres cancelar este turno?');">
@@ -161,11 +160,12 @@
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <div class="mt-4 text-center">
-  <a th:href="@{/cliente/menu}" class="btn btn-outline-primary">Volver al menú</a>
-</div>
-
+  <div class="back-container">
+    <a th:href="@{/cliente/menu}" class="btn btn-marine">
+      <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>Volver al menú
+    </a>
   </div>
 
   <footer>

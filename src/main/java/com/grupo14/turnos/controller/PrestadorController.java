@@ -2,6 +2,9 @@ package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.PrestadorDTO;
 import com.grupo14.turnos.service.PrestadorService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +67,16 @@ public class PrestadorController {
     public List<PrestadorDTO> listarTodosJson() {
         return prestadorService.listarTodos();
     }
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

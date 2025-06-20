@@ -39,7 +39,7 @@ public class PrestadorMenuController {
         }
 
         List<ServicioDTO> servicios = servicioService.listarTodos().stream()
-                .filter(s -> s.prestadorId().equals(prestadorDTO.id()))
+                .filter(s -> s.prestadorId().equals(prestadorDTO.getId()))
                 .collect(Collectors.toList());
 
         model.addAttribute("prestador", prestadorDTO);
@@ -50,6 +50,57 @@ public class PrestadorMenuController {
 
         return "prestador/menu";
     }
+    
+    @GetMapping("/mis-datos")
+    public String verMisDatos(Model model, HttpSession session) {
+        PrestadorDTO prestador = (PrestadorDTO) session.getAttribute("prestador");
+
+        if (prestador == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("prestador", prestador);
+        return "prestador/mis-datos";
+    }
+    
+    @PostMapping("/actualizar-datos")
+    public String actualizarDatos(@ModelAttribute PrestadorDTO datos, HttpSession session) {
+        PrestadorDTO prestadorEnSesion = (PrestadorDTO) session.getAttribute("prestador");
+
+        if (prestadorEnSesion == null) {
+            return "redirect:/login";
+        }
+
+        // Crear nueva versión del DTO con datos actualizados
+        PrestadorDTO actualizado = new PrestadorDTO(
+            prestadorEnSesion.getId(),
+            datos.getEmail(),
+            prestadorEnSesion.getContrasena(),
+            datos.getRazonSocial(),
+            prestadorEnSesion.getHabilitado()
+        );
+
+        // Guardar en BD y sesión
+        prestadorService.actualizar(actualizado);
+        session.setAttribute("prestador", actualizado);
+
+        return "redirect:/prestador/menu?actualizado=true";
+    }
+
+    @GetMapping("/servicios")
+    public String verMisServicios(HttpSession session, Model model) {
+        PrestadorDTO prestador = (PrestadorDTO) session.getAttribute("prestador");
+
+        if (prestador == null) {
+            return "redirect:/login";
+        }
+
+        List<ServicioDTO> servicios = servicioService.buscarPorPrestadorId(prestador.getId());
+        model.addAttribute("servicios", servicios);
+
+        return "prestador/servicios";
+    }
+
 
 
     @PostMapping("/guardar-servicio")
@@ -70,7 +121,7 @@ public class PrestadorMenuController {
         }
 
         
-        ServicioDTO nuevo = new ServicioDTO(null, nombre, duracionMin, precio, prestador.id());
+        ServicioDTO nuevo = new ServicioDTO(null, nombre, duracionMin, precio, prestador.getId());
         servicioService.crear(nuevo);
 
         return "redirect:/prestador/menu";

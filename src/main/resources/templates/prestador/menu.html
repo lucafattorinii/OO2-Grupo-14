@@ -14,7 +14,7 @@
       justify-content: center;
       align-items: center;
     }
-    
+
     .container {
       max-width: 800px;
       background-color: #ffffff;
@@ -131,7 +131,10 @@
 <body>
   <div class="container">
     <h1>Bienvenido, <span th:text="${prestador.razonSocial}">Prestador</span></h1>
-
+	<div th:if="${param.actualizado}" style="color: green; margin-bottom: 15px; text-align: center;">
+  Los datos se actualizaron correctamente.
+</div>
+	
     <nav>
       <ul>
         <li><a th:href="@{/prestador/mis-datos}">Ver/Editar Mis Datos</a></li>
@@ -175,13 +178,11 @@
         <button type="submit" class="btn-add">Agregar</button>
       </form>
     </section>
+
+    <!-- Botón volver correctamente alineado -->
+    <div class="mt-4">
+      <a class="btn btn-outline-primary" th:href="@{/prestador/menu}">← Volver al Menú</a>
+    </div>
   </div>
-
-  <div style="margin-top: 40px; display: flex; justify-content: center;">
-    <a class="menu-button" th:href="@{/}">← Volver al Menú</a>
-</div>
-
-
-
 </body>
 </html>

@@ -195,11 +195,12 @@ public class TurnoService {
     
     private TurnoVistaDTO convertirATurnoVistaDTO(Turno t) {
         return new TurnoVistaDTO(
+            t.getId(),
             t.getFecha(),
             t.getHora(),
             t.getEstado(),
-            t.getCliente().getNombre(),    
-            t.getServicio().getNombre()      
+            t.getCliente().getNombre(),
+            t.getServicio().getNombre()
         );
     }
     

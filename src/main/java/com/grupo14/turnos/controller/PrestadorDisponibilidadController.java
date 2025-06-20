@@ -49,7 +49,7 @@ public class PrestadorDisponibilidadController {
 
         // Obtener los servicios del prestador
         List<ServicioDTO> servicios = servicioService.listarTodos().stream()
-                .filter(s -> s.prestadorId().equals(prestador.id()))
+                .filter(s -> s.prestadorId().equals(prestador.getId()))
                 .collect(Collectors.toList());
 
         // Obtener las disponibilidades del prestador (por sus servicios)
