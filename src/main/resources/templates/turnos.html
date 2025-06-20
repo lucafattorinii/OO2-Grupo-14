@@ -55,7 +55,7 @@
           <tr th:each="t, stat : ${turnos}">
             <td th:text="${stat.count}"></td>
             <td th:text="${t.id()}"></td>
-            <td th:text="${t.fecha()}"></td>
+            <td th:text="${t.fechaId()}"></td>
             <td th:text="${t.hora()}"></td>
             <td>
               <span th:text="${t.estado()}" th:class="${t.estado() == 'CONFIRMADO' ? 'estado-confirmado' : (t.estado() == 'CANCELADO' ? 'estado-cancelado' : 'estado-pendiente')}"></span>
@@ -65,7 +65,7 @@
                     th:text="${c.nombre() + ' ' + c.apellido()}"></span>
             </td>
             <td>
-              <span th:each="s : ${servicios}" th:if="${s.idServicio() == t.servicioId()}" 
+              <span th:each="s : ${servicios}" th:if="${s.id() == t.servicioId()}" 
                     th:text="${s.nombre()}"></span>
             </td>
             <td>
@@ -130,7 +130,7 @@
               <label>Servicio:</label>
               <select name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -214,7 +214,7 @@
               <label>Servicio:</label>
               <select name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-actions">

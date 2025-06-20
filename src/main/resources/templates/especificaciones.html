@@ -66,7 +66,7 @@
               <label for="servicioId">Servicio:</label>
               <select id="servicioId" name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-group">
@@ -84,7 +84,7 @@
               <label for="direccionId">Dirección:</label>
               <select id="direccionId" name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
+                <option th:each="d : ${direcciones}" th:value="${d.idDireccion()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
             </div>
             <div class="form-actions">
@@ -133,7 +133,7 @@
               <label for="servicioIdMod">Servicio:</label>
               <select id="servicioIdMod" name="servicioId" required>
                 <option value="">Seleccione un servicio</option>
-                <option th:each="s : ${servicios}" th:value="${s.idServicio()}" th:text="${s.nombre()}"></option>
+                <option th:each="s : ${servicios}" th:value="${s.id()}" th:text="${s.nombre()}"></option>
               </select>
             </div>
             <div class="form-group">
@@ -151,7 +151,7 @@
               <label for="direccionIdMod">Dirección:</label>
               <select id="direccionIdMod" name="direccionId" required>
                 <option value="">Seleccione una dirección</option>
-                <option th:each="d : ${direcciones}" th:value="${d.id()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
+                <option th:each="d : ${direcciones}" th:value="${d.idDireccion()}" th:text="${d.calle() + ' ' + d.numeroCalle()}"></option>
               </select>
             </div>
             <div class="form-actions">
