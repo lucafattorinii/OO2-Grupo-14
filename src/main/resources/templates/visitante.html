@@ -1,36 +1,164 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${prestador.razonSocial}">Nombre Empresa</title>
-    <link rel="stylesheet" href="/css/estilos.css"> <!-- Opcional -->
+    <link rel="stylesheet" th:href="@{/css/estilos.css}" />
     <style>
+        /* Variables CSS para coherencia con UNLa TurnosExpress */
+        :root {
+            --primary-color: #8B0000;
+            --secondary-color: #F5F5DC;
+            --accent-color: #A0522D;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.2);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset y base */
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            background-color: #F5F0E1;
+            color: var(--text-dark);
+            line-height: 1.6;
         }
+
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
         }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* Botones */
         .botones {
             display: flex;
             gap: 10px;
         }
+
+        .botones button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .botones button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            background-color: var(--accent-color);
+        }
+
+        /* Servicios */
         .servicios {
             margin-top: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
+
+        .servicios h2 {
+            color: var(--text-dark);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .servicios-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
         .servicio {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .servicio:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .servicio h3 {
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .servicio p {
+            color: var(--text-light);
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .servicio p strong {
+            color: var(--text-dark);
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .botones {
+                justify-content: center;
+            }
+
+            .servicios h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .botones button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .servicio {
+                padding: 15px;
+            }
+
+            .servicio h3 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
-
 <div class="header">
     <h1 th:text="${prestador.razonSocial}">Nombre Empresa</h1>
     <div class="botones">
@@ -41,12 +169,13 @@
 
 <div class="servicios">
     <h2>Servicios disponibles</h2>
-    <div th:each="servicio : ${servicios}" class="servicio">
-        <h3 th:text="${servicio.nombre}">Nombre del servicio</h3>
-        <p><strong>Duración:</strong> <span th:text="${servicio.duracionMin}">0</span> minutos</p>
-        <p><strong>Precio:</strong> $<span th:text="${servicio.precio}">0.00</span></p>
+    <div class="servicios-container">
+        <div th:each="servicio : ${servicios}" class="servicio">
+            <h3 th:text="${servicio.nombre}">Nombre del servicio</h3>
+            <p><strong>Duración:</strong> <span th:text="${servicio.duracionMin}">0</span> minutos</p>
+            <p><strong>Precio:</strong> $<span th:text="${servicio.precio}">0.00</span></p>
+        </div>
     </div>
 </div>
-
 </body>
 </html>
