@@ -91,6 +91,32 @@ Habilita el procesamiento de anotaciones en el proyecto:
 
 -   Marca las casillas Enable project specific settings y Enable annotation processing.
 
+## Usuarios de Prueba
+
+El sistema viene precargado con los siguientes usuarios para realizar pruebas:
+
+### Administrador
+- **Email:** grupo14.tp@gmail.com
+- **Contraseña:** admin123
+- **Rol:** ADMIN
+
+### Prestador de Servicios
+- **Email:** prestador.grupo14@gmail.com
+- **Contraseña:** prestador123
+- **Rol:** PRESTADOR
+
+### Clientes (5 usuarios de prueba)
+Todos los clientes tienen la contraseña: `cliente123`
+
+| #  | Email                    | Rol     |
+|----|--------------------------|---------|
+| 1  | cliente1@ejemplo.com     | CLIENTE |
+| 2  | cliente2@ejemplo.com     | CLIENTE |
+| 3  | cliente3@ejemplo.com     | CLIENTE |
+| 4  | cliente4@ejemplo.com     | CLIENTE |
+| 5  | cliente5@ejemplo.com     | CLIENTE |
+
+
 ## Estructura del Proyecto
 
 ```
