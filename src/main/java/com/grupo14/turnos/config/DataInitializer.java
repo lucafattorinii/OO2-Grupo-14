@@ -15,6 +15,7 @@ import com.grupo14.turnos.service.PrestadorService;
 import com.grupo14.turnos.service.ServicioService;
 import com.grupo14.turnos.service.impl.EspecificacionServiceImpl;
 import com.grupo14.turnos.repository.UsuarioRepository;
+import com.grupo14.turnos.service.ClienteService;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class DataInitializer {
     @Autowired private DireccionService direccionService;
     @Autowired private DisponibilidadService disponibilidadService;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private ClienteService clienteService;
 
     private Long prestadorId;
     private DireccionDTO direccion;
@@ -67,61 +69,92 @@ public class DataInitializer {
     private void initClientes() {
         // Cliente 1
         if (usuarioRepository.findByEmail("cliente1@ejemplo.com").isEmpty()) {
-            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
-            var cliente1 = new com.grupo14.turnos.modelo.Usuario(
-                "cliente1@ejemplo.com",
-                contrasenaEncriptada,
-                Rol.CLIENTE
+            String contrasena = "cliente123";
+            String contrasenaEncriptada = passwordEncoder.encode(contrasena);
+            
+            // Crear directamente el cliente, que ya maneja la creación del usuario
+            var clienteDTO = new com.grupo14.turnos.dto.ClienteDTO(
+                null, 
+                "cliente1@ejemplo.com", 
+                contrasena, 
+                1001L, 
+                40123456L, 
+                "Cliente", 
+                "Uno"
             );
-            usuarioRepository.save(cliente1);
+            clienteService.crear(clienteDTO);
             System.out.println("✔ Cliente 1 creado correctamente.");
         }
 
         // Cliente 2
         if (usuarioRepository.findByEmail("cliente2@ejemplo.com").isEmpty()) {
-            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
-            var cliente2 = new com.grupo14.turnos.modelo.Usuario(
-                "cliente2@ejemplo.com",
-                contrasenaEncriptada,
-                Rol.CLIENTE
+            String contrasena = "cliente123";
+            
+            // Crear directamente el cliente, que ya maneja la creación del usuario
+            var clienteDTO = new com.grupo14.turnos.dto.ClienteDTO(
+                null, 
+                "cliente2@ejemplo.com", 
+                contrasena, 
+                1002L, 
+                40123457L, 
+                "Cliente", 
+                "Dos"
             );
-            usuarioRepository.save(cliente2);
+            clienteService.crear(clienteDTO);
             System.out.println("✔ Cliente 2 creado correctamente.");
         }
 
         // Cliente 3
         if (usuarioRepository.findByEmail("cliente3@ejemplo.com").isEmpty()) {
-            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
-            var cliente3 = new com.grupo14.turnos.modelo.Usuario(
-                "cliente3@ejemplo.com",
-                contrasenaEncriptada,
-                Rol.CLIENTE
+            String contrasena = "cliente123";
+            
+            // Crear directamente el cliente, que ya maneja la creación del usuario
+            var clienteDTO = new com.grupo14.turnos.dto.ClienteDTO(
+                null, 
+                "cliente3@ejemplo.com", 
+                contrasena, 
+                1003L, 
+                40123458L, 
+                "Cliente", 
+                "Tres"
             );
-            usuarioRepository.save(cliente3);
+            clienteService.crear(clienteDTO);
             System.out.println("✔ Cliente 3 creado correctamente.");
         }
 
         // Cliente 4
         if (usuarioRepository.findByEmail("cliente4@ejemplo.com").isEmpty()) {
-            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
-            var cliente4 = new com.grupo14.turnos.modelo.Usuario(
-                "cliente4@ejemplo.com",
-                contrasenaEncriptada,
-                Rol.CLIENTE
+            String contrasena = "cliente123";
+            
+            // Crear directamente el cliente, que ya maneja la creación del usuario
+            var clienteDTO = new com.grupo14.turnos.dto.ClienteDTO(
+                null, 
+                "cliente4@ejemplo.com", 
+                contrasena, 
+                1004L, 
+                40123459L, 
+                "Cliente", 
+                "Cuatro"
             );
-            usuarioRepository.save(cliente4);
+            clienteService.crear(clienteDTO);
             System.out.println("✔ Cliente 4 creado correctamente.");
         }
 
         // Cliente 5
         if (usuarioRepository.findByEmail("cliente5@ejemplo.com").isEmpty()) {
-            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
-            var cliente5 = new com.grupo14.turnos.modelo.Usuario(
-                "cliente5@ejemplo.com",
-                contrasenaEncriptada,
-                Rol.CLIENTE
+            String contrasena = "cliente123";
+            
+            // Crear directamente el cliente, que ya maneja la creación del usuario
+            var clienteDTO = new com.grupo14.turnos.dto.ClienteDTO(
+                null, 
+                "cliente5@ejemplo.com", 
+                contrasena, 
+                1005L, 
+                40123460L, 
+                "Cliente", 
+                "Cinco"
             );
-            usuarioRepository.save(cliente5);
+            clienteService.crear(clienteDTO);
             System.out.println("✔ Cliente 5 creado correctamente.");
         }
     }
