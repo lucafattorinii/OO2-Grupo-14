@@ -45,6 +45,7 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
         initAdmin();
+        initClientes();
         initPrestador();
         initDireccion();
         initServicios();
@@ -60,6 +61,68 @@ public class DataInitializer {
             admin.setRol(Rol.ADMIN);
             usuarioRepository.save(admin);
             System.out.println("✔ Admin creado correctamente.");
+        }
+    }
+
+    private void initClientes() {
+        // Cliente 1
+        if (usuarioRepository.findByEmail("cliente1@ejemplo.com").isEmpty()) {
+            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
+            var cliente1 = new com.grupo14.turnos.modelo.Usuario(
+                "cliente1@ejemplo.com",
+                contrasenaEncriptada,
+                Rol.CLIENTE
+            );
+            usuarioRepository.save(cliente1);
+            System.out.println("✔ Cliente 1 creado correctamente.");
+        }
+
+        // Cliente 2
+        if (usuarioRepository.findByEmail("cliente2@ejemplo.com").isEmpty()) {
+            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
+            var cliente2 = new com.grupo14.turnos.modelo.Usuario(
+                "cliente2@ejemplo.com",
+                contrasenaEncriptada,
+                Rol.CLIENTE
+            );
+            usuarioRepository.save(cliente2);
+            System.out.println("✔ Cliente 2 creado correctamente.");
+        }
+
+        // Cliente 3
+        if (usuarioRepository.findByEmail("cliente3@ejemplo.com").isEmpty()) {
+            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
+            var cliente3 = new com.grupo14.turnos.modelo.Usuario(
+                "cliente3@ejemplo.com",
+                contrasenaEncriptada,
+                Rol.CLIENTE
+            );
+            usuarioRepository.save(cliente3);
+            System.out.println("✔ Cliente 3 creado correctamente.");
+        }
+
+        // Cliente 4
+        if (usuarioRepository.findByEmail("cliente4@ejemplo.com").isEmpty()) {
+            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
+            var cliente4 = new com.grupo14.turnos.modelo.Usuario(
+                "cliente4@ejemplo.com",
+                contrasenaEncriptada,
+                Rol.CLIENTE
+            );
+            usuarioRepository.save(cliente4);
+            System.out.println("✔ Cliente 4 creado correctamente.");
+        }
+
+        // Cliente 5
+        if (usuarioRepository.findByEmail("cliente5@ejemplo.com").isEmpty()) {
+            String contrasenaEncriptada = passwordEncoder.encode("cliente123");
+            var cliente5 = new com.grupo14.turnos.modelo.Usuario(
+                "cliente5@ejemplo.com",
+                contrasenaEncriptada,
+                Rol.CLIENTE
+            );
+            usuarioRepository.save(cliente5);
+            System.out.println("✔ Cliente 5 creado correctamente.");
         }
     }
 
