@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -124,10 +125,17 @@ public class ClienteMenuController {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
         if (usuario == null) {
-            vista = "redirect:/login";
-        } else {
+            return "redirect:/login";
+        }
+
+        // Cargar datos necesarios para el formulario en caso de error
+        model.addAttribute("servicios", servicioService.listarTodos());
+        model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
+        model.addAttribute("direcciones", direccionService.listarTodos());
+
+        try {
             // Usar una dirección por defecto si no se proporciona
-            Long direccionFinal = direccionId != null ? direccionId : 1L; // Asumiendo que 1 es el ID de una dirección por defecto
+            Long direccionFinal = direccionId != null ? direccionId : 1L;
             
             TurnoConFechaDTO nuevo = new TurnoConFechaDTO(
                 fecha,
@@ -139,23 +147,25 @@ public class ClienteMenuController {
                 direccionFinal
             );
 
-            try {
-                clienteService.crearTurnoCliente(nuevo);
-                vista = "redirect:/cliente/mis-turnos";
-            } catch (IllegalArgumentException e) {
-                model.addAttribute("error", e.getMessage());
-                model.addAttribute("servicios", servicioService.listarTodos());
-                model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
-                vista = "cliente/crear-turno";
-            } catch (Exception e) {
-                model.addAttribute("error", "Error al crear el turno: " + e.getMessage());
-                model.addAttribute("servicios", servicioService.listarTodos());
-                model.addAttribute("disponibilidades", disponibilidadService.listarTodos());
-                vista = "cliente/crear-turno";
-            }
+            clienteService.crearTurnoCliente(nuevo);
+            return "redirect:/cliente/mis-turnos?exito=Turno+creado+exitosamente";
+            
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // Errores de validación o negocio
+            model.addAttribute("error", e.getMessage());
+            return "cliente/crear-turno";
+            
+        } catch (Exception e) {
+            // Errores inesperados
+            model.addAttribute("error", "Error inesperado al crear el turno. Por favor, intente nuevamente.");
+            return "cliente/crear-turno";
         }
+    }
 
-        return vista;
+    @GetMapping("/disponibilidad/{disponibilidadId}/dias")
+    @ResponseBody
+    public List<String> obtenerDiasDisponibles(@PathVariable Long disponibilidadId) {
+        return disponibilidadService.obtenerDiasDisponibles(disponibilidadId);
     }
 
     @GetMapping("/editar-datos")

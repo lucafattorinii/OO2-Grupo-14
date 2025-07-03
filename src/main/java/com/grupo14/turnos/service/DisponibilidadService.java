@@ -149,4 +149,22 @@ public class DisponibilidadService {
             .map(this::convertirADTO)
             .collect(Collectors.toList());
     }
+    
+    public List<String> obtenerDiasDisponibles(Long disponibilidadId) {
+        Disponibilidad disponibilidad = repo.findById(disponibilidadId)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + disponibilidadId));
+            
+        // Convertir el día de la semana al formato largo en español
+        String diaEnEspanol = switch (disponibilidad.getDiaSemana()) {
+            case LUNES -> "Lunes";
+            case MARTES -> "Martes";
+            case MIERCOLES -> "Miércoles";
+            case JUEVES -> "Jueves";
+            case VIERNES -> "Viernes";
+            case SABADO -> "Sábado";
+            case DOMINGO -> "Domingo";
+        };
+        
+        return List.of(diaEnEspanol);
+    }
 }

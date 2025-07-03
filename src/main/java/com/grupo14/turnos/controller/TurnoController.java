@@ -162,5 +162,15 @@ public class TurnoController {
     public TurnoConFechaDTO crearJson(@RequestBody TurnoConFechaDTO nuevo) {
         return turnoService.crear(nuevo);
     }
+
+    @GetMapping(path = "/ocupados", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> horariosOcupados(
+            @RequestParam String fecha,
+            @RequestParam Long disponibilidadId,
+            @RequestParam Long servicioId
+    ) {
+        return turnoService.horariosOcupados(fecha, disponibilidadId, servicioId);
+    }
 }
 

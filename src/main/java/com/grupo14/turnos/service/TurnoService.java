@@ -61,6 +61,16 @@ public class TurnoService {
             .collect(Collectors.toList());
     }
 
+    public List<String> horariosOcupados(String fecha, Long disponibilidadId, Long servicioId) {
+        java.time.LocalDate fechaLocal = java.time.LocalDate.parse(fecha);
+        return repo.findAll().stream()
+            .filter(t -> t.getFecha().getFecha().equals(fechaLocal))
+            .filter(t -> t.getDisponibilidad() != null && t.getDisponibilidad().getId() == disponibilidadId)
+            .filter(t -> t.getServicio().getIdServicio().equals(servicioId))
+            .map(t -> t.getHora().toString())
+            .collect(java.util.stream.Collectors.toList());
+    }
+
     public List<TurnoDTO> listarPorEstado(String estado) {
         EstadoTurno estadoEnum = EstadoTurno.valueOf(estado.toUpperCase());
 
@@ -69,7 +79,7 @@ public class TurnoService {
             .collect(Collectors.toList());
     }
 
-    public TurnoConFechaDTO  crear(TurnoConFechaDTO dto) {
+    public TurnoConFechaDTO crear(TurnoConFechaDTO dto) {
         Cliente cliente = cliRepo.findById(dto.clienteId())
             .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado: " + dto.clienteId()));
 
@@ -81,6 +91,18 @@ public class TurnoService {
 
         // Crear la fecha usando el helper del servicio
         Fecha fecha = fechaService.crear(dto.fecha(), dto.direccionId());
+        
+        // Verificar si ya existe un turno en la misma fecha, hora, disponibilidad y dirección
+        boolean turnoExistente = repo.existsByFechaAndHoraAndDisponibilidadAndFecha_Direccion(
+            fecha, 
+            dto.hora(), 
+            disponibilidad,
+            fecha.getDireccion()
+        );
+        
+        if (turnoExistente) {
+            throw new IllegalStateException("Ya existe un turno para la fecha, hora y ubicación seleccionadas");
+        }
 
         Turno turno = new Turno();
         turno.setCliente(cliente);

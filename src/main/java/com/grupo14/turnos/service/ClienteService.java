@@ -133,14 +133,15 @@ public class ClienteService {
 	        throw new IllegalArgumentException("La hora solicitada no coincide con un turno válido según la duración del servicio");
 	    }
 
-	    // Validar que no exista otro turno en ese mismo horario, fecha, disponibilidad y dirección
+	    // Crear la fecha para validar disponibilidad
 	    Fecha fecha = fechaService.crear(dto.fecha(), dto.direccionId());
 
+	    // Verificar disponibilidad del turno
 	    boolean hayConflicto = turnoRepo.existsByFechaAndHoraAndDisponibilidadAndFecha_Direccion(
 	        fecha, horaSolicitada, disponibilidad, fecha.getDireccion());
 
 	    if (hayConflicto) {
-	        throw new IllegalArgumentException("Ya existe un turno asignado en ese horario");
+	        throw new IllegalStateException("El turno seleccionado ya está ocupado. Por favor, elija otro horario o ubicación.");
 	    }
 
 	    // Crear el turno usando la lógica actual del TurnoService

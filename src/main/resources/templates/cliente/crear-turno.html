@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Crear Nuevo Turno</title>
   <style>
+    /* Estilos para mensajes de error */
+    .error-message {
+      background-color: #ffebee;
+      border-left: 4px solid #f44336;
+      color: #d32f2f;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    
+    .error-message p {
+      margin: 0;
+      font-weight: 500;
+    }
+
     :root {
       --dark:         #2c3e50;
       --medium:       #555555;
@@ -96,6 +111,11 @@
   </header>
 
   <div class="container">
+    <!-- Mensaje de error -->
+    <div th:if="${error != null}" class="error-message">
+      <p th:text="${error}"></p>
+    </div>
+    
     <form th:action="@{/cliente/crear-turno}" method="post" id="turnoForm">
       <!-- Paso 1: Servicio -->
       <div class="form-group">
@@ -203,29 +223,145 @@
     }
 
     function cargarFechasDisponibles() {
-      const dispOpt = document.getElementById('disponibilidadId').value;
+      const dispSel = document.getElementById('disponibilidadId');
       const fechaIn = document.getElementById('fecha');
       const horaSel = document.getElementById('hora');
       const submitBtn = document.getElementById('submitBtn');
 
-      // Resetear fecha y horas
+      // Resetear dependientes
       fechaIn.value = '';
-      fechaIn.disabled = true;
       horaSel.innerHTML = '<option value="" disabled selected>-- Primero seleccione una fecha --</option>';
       horaSel.disabled = true;
       submitBtn.disabled = true;
 
-      const sel = disponibilidades.find(d => d.id === dispOpt);
-      if (!sel) return;
+      if (!dispSel.value) {
+        fechaIn.disabled = true;
+        return;
+      }
 
-      // Rango de 4 semanas
-      const hoy = new Date();
-      const fin = new Date();
-      fin.setDate(hoy.getDate() + 28);
-
-      fechaIn.min = hoy.toISOString().split('T')[0];
-      fechaIn.max = fin.toISOString().split('T')[0];
-      fechaIn.disabled = false;
+      try {
+        // Obtener la disponibilidad seleccionada
+        const disponibilidad = disponibilidades.find(d => d.id === dispSel.value);
+        if (!disponibilidad) {
+          console.error('No se encontró la disponibilidad seleccionada');
+          fechaIn.disabled = true;
+          return;
+        }
+        
+        // Obtener el día de la semana de la disponibilidad (ej: 'LUNES')
+        const diaDisponibilidad = disponibilidad.dia; // Esto debería ser 'LUNES', 'MARTES', etc.
+        
+        // Mapa de días de la semana en español a su número en JavaScript
+        // JavaScript getDay() devuelve: 0=domingo, 1=lunes, 2=martes, 3=miércoles, 4=jueves, 5=viernes, 6=sábado
+        const diasSemanaMap = {
+          'DOMINGO': 0,
+          'LUNES': 1,
+          'MARTES': 2,
+          'MIERCOLES': 3,
+          'JUEVES': 4,
+          'VIERNES': 5,
+          'SABADO': 6
+        };
+        
+        // Nombres de los días en español para mostrar en mensajes
+        const nombresDias = [
+          'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'
+        ];
+        
+        // Función para normalizar el texto (quitar acentos y convertir a mayúsculas)
+        const normalizarDia = (dia) => {
+          return dia.toUpperCase()
+                   .normalize('NFD')
+                   .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+                   .replace('Á', 'A')
+                   .replace('É', 'E')
+                   .replace('Í', 'I')
+                   .replace('Ó', 'O')
+                   .replace('Ú', 'U');
+        };
+        
+        // Normalizar el día de disponibilidad (eliminar acentos y convertir a mayúsculas)
+        const diaNormalizado = normalizarDia(diaDisponibilidad);
+        
+        console.log('--- Información de disponibilidad ---');
+        console.log('Día de disponibilidad original:', diaDisponibilidad);
+        console.log('Día normalizado para comparación:', diaNormalizado);
+        
+        // Buscar el día correspondiente en el mapa
+        const diaEncontrado = Object.keys(diasSemanaMap).find(key => 
+          normalizarDia(key) === diaNormalizado
+        );
+        
+        if (!diaEncontrado) {
+          console.error('Día de disponibilidad no válido o no encontrado:', diaDisponibilidad);
+          console.log('Días disponibles en el mapa:', Object.keys(diasSemanaMap));
+          fechaIn.disabled = true;
+          return;
+        }
+        
+        const diaNumero = diasSemanaMap[diaEncontrado];
+        console.log('Número de día encontrado:', diaNumero);
+        
+        // Configurar la fecha mínima como hoy
+        const hoy = new Date();
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const yyyy = hoy.getFullYear();
+        fechaIn.min = `${yyyy}-${mm}-${dd}`;
+        
+        // Configurar la fecha máxima como 60 días en el futuro
+        const maxDate = new Date();
+        maxDate.setDate(hoy.getDate() + 60);
+        const maxDD = String(maxDate.getDate()).padStart(2, '0');
+        const maxMM = String(maxDate.getMonth() + 1).padStart(2, '0');
+        const maxYYYY = maxDate.getFullYear();
+        fechaIn.max = `${maxYYYY}-${maxMM}-${maxDD}`;
+        
+        // Habilitar el campo de fecha
+        fechaIn.disabled = false;
+        
+        // Configurar el evento onchange para validar el día seleccionado
+        fechaIn.onchange = function() {
+          if (!this.value) return;
+          
+          // Parsear la fecha manualmente para evitar problemas de timezone
+          const [yyyy, mm, dd] = this.value.split('-').map(Number);
+          const selectedDate = new Date(yyyy, mm - 1, dd); // local time
+          const selectedDay = selectedDate.getDay(); // 0=domingo, 1=lunes, ..., 6=sábado
+          
+          console.log('--- Validación de fecha ---');
+          console.log('Fecha seleccionada:', this.value);
+          console.log('Día seleccionado (número JS):', selectedDay, `(${nombresDias[selectedDay]})`);
+          console.log('Día de disponibilidad (número JS esperado):', diaNumero, `(${nombresDias[diaNumero]})`);
+          
+          // Comparar directamente los números de día
+          if (selectedDay !== diaNumero) {
+            // Mostrar mensaje de error visual en vez de alert
+            let errorDiv = document.getElementById('fecha-error');
+            if (!errorDiv) {
+              errorDiv = document.createElement('div');
+              errorDiv.id = 'fecha-error';
+              errorDiv.className = 'error-message';
+              fechaIn.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.innerHTML = `El día seleccionado no está disponible. Por favor, seleccioná un <b>${nombresDias[diaNumero]}</b>.`;
+            errorDiv.style.display = 'block';
+            this.value = '';
+            horaSel.innerHTML = '<option value="" disabled selected>-- Primero seleccione una fecha --</option>';
+            horaSel.disabled = true;
+            submitBtn.disabled = true;
+          } else {
+            // Ocultar el mensaje de error si existe
+            const errorDiv = document.getElementById('fecha-error');
+            if (errorDiv) errorDiv.style.display = 'none';
+            cargarHorasDisponibles();
+          }
+        };
+        
+      } catch (error) {
+        console.error('Error al cargar fechas disponibles:', error);
+        fechaIn.disabled = true;
+      }
     }
 
     function cargarHorasDisponibles() {
@@ -241,43 +377,52 @@
 
       const fecha = new Date(fechaIn);
       const dispId = document.getElementById('disponibilidadId').value;
+      const servicioId = document.getElementById('servicioId').value;
       const sel = disponibilidades.find(d => d.id === dispId);
 
       const [h0, m0] = sel.horaInicio.split(':').map(Number);
       const [h1, m1] = sel.horaFin.split(':').map(Number);
 
-      // Inicio y fin
-      let curr = new Date(fecha);
-      curr.setHours(h0, m0, 0, 0);
-      const end = new Date(fecha);
-      end.setHours(h1, m1, 0, 0);
+      // AJAX: obtener horarios ocupados para esa fecha, disponibilidad y servicio
+      fetch(`/turnos/ocupados?fecha=${fechaIn}&disponibilidadId=${dispId}&servicioId=${servicioId}`)
+        .then(res => res.json())
+        .then(ocupados => {
+          // Inicio y fin
+          let curr = new Date(fecha);
+          curr.setHours(h0, m0, 0, 0);
+          const end = new Date(fecha);
+          end.setHours(h1, m1, 0, 0);
 
-      // Si es hoy, no incluir horas atrás
-      const now = new Date();
-      if (fecha.toDateString() === now.toDateString()) {
-        const mins = now.getMinutes();
-        const nextSlot = mins < 30 ? 30 : 60;
-        now.setMinutes(nextSlot, 0, 0);
-        if (curr < now) curr = new Date(now);
-      }
+          // Si es hoy, no incluir horas atrás
+          const now = new Date();
+          if (fecha.toDateString() === now.toDateString()) {
+            const mins = now.getMinutes();
+            const nextSlot = mins < 30 ? 30 : 60;
+            now.setMinutes(nextSlot, 0, 0);
+            if (curr < now) curr = new Date(now);
+          }
 
-      // Generar slots cada 30'
-      while (curr < end) {
-        const hh = String(curr.getHours()).padStart(2,'0');
-        const mm = String(curr.getMinutes()).padStart(2,'0');
-        const opt = document.createElement('option');
-        opt.value = `${hh}:${mm}`;
-        opt.textContent = curr.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'});
-        horaSel.appendChild(opt);
-        curr.setMinutes(curr.getMinutes() + 30);
-      }
+          // Generar slots cada 30', excluyendo los ocupados
+          while (curr < end) {
+            const hh = String(curr.getHours()).padStart(2,'0');
+            const mm = String(curr.getMinutes()).padStart(2,'0');
+            const valor = `${hh}:${mm}`;
+            if (!ocupados.includes(valor)) {
+              const opt = document.createElement('option');
+              opt.value = valor;
+              opt.textContent = curr.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'});
+              horaSel.appendChild(opt);
+            }
+            curr.setMinutes(curr.getMinutes() + 30);
+          }
 
-      if (horaSel.options.length) {
-        horaSel.disabled = false;
-        submitBtn.disabled = false;
-      } else {
-        horaSel.innerHTML = '<option value="" disabled selected>-- No hay horarios --</option>';
-      }
+          if (horaSel.options.length) {
+            horaSel.disabled = false;
+            submitBtn.disabled = false;
+          } else {
+            horaSel.innerHTML = '<option value="" disabled selected>-- No hay horarios --</option>';
+          }
+        });
     }
 
     // Solo comprueba que cada campo tenga valor
