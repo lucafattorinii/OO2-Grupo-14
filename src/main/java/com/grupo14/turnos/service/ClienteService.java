@@ -31,9 +31,10 @@ public class ClienteService {
 	private final FechaService fechaService;
 	private final TurnoService turnoService;
 	private final TurnoRepository turnoRepo;
+	private final EmailService emailService;
 
 	public ClienteService(ClienteRepository repo, PasswordEncoder passwordEncoder, ServicioRepository serRepo, DisponibilidadRepository disRepo, 
-			FechaService fechaService, TurnoService turnoService, TurnoRepository turnoRepo) {
+			FechaService fechaService, TurnoService turnoService, TurnoRepository turnoRepo, EmailService emailService) {
 		this.repo = repo;
 		this.passwordEncoder = passwordEncoder;
 		this.serRepo= serRepo;
@@ -41,6 +42,7 @@ public class ClienteService {
 		this.fechaService= fechaService;
 		this.turnoService= turnoService;
 		this.turnoRepo= turnoRepo;
+		this.emailService = emailService;
 	}
 
 	public ClienteDTO obtenerPorId(long id) {
@@ -103,6 +105,10 @@ public class ClienteService {
 	    Cliente guardado = repo.save(c);
 	    System.out.println("Guardando cliente en BD: " + c.getEmail() + " | Número asignado: " + proximoNumero);
 
+	    String asunto = "¡Bienvenido a Turnos!";
+        String mensaje = "Hola " + c.getNombre() + ",\n\nTu registro fue exitoso. ¡Gracias por elegirnos!";
+        emailService.enviarEmailSimple(c.getEmail(), asunto, mensaje);
+	    
 	    return mapToDTO(guardado);
 	}
 
@@ -154,7 +160,17 @@ public class ClienteService {
 	        dto.servicioId(),
 	        dto.direccionId()
 	    );
+	    //Se envia el mail de confirmacion del turno
+	    Cliente cliente = repo.findById(dto.clienteId())
+	            .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con ID: " + dto.clienteId()));
 
+	        String asunto = "Confirmación de turno";
+	        String mensaje = "Hola " + cliente.getNombre() + ",\n\n" +
+	                         "Tu turno para el servicio '" + servicio.getNombre() + "' fue reservado para el día " +
+	                         dto.fecha() + " a las " + horaSolicitada + ".\n\n¡Gracias por confiar en nosotros!";
+
+	        emailService.enviarEmailSimple(cliente.getEmail(), asunto, mensaje);
+	    
 	    return turnoService.crear(nuevo);
 	}
 
