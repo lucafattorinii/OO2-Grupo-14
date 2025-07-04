@@ -18,7 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -164,12 +166,17 @@ public class ClienteService {
 	    Cliente cliente = repo.findById(dto.clienteId())
 	            .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con ID: " + dto.clienteId()));
 
-	        String asunto = "Confirmación de turno";
-	        String mensaje = "Hola " + cliente.getNombre() + ",\n\n" +
-	                         "Tu turno para el servicio '" + servicio.getNombre() + "' fue reservado para el día " +
-	                         dto.fecha() + " a las " + horaSolicitada + ".\n\n¡Gracias por confiar en nosotros!";
+	 // Preparar variables para la plantilla Thymeleaf
+	    Map<String, Object> variables = new HashMap<>();
+	    variables.put("nombreCliente", cliente.getNombre());
+	    variables.put("servicio", servicio.getNombre());
+	    variables.put("fecha", dto.fecha().toString());  // Puedes formatear la fecha si quieres
+	    variables.put("hora", horaSolicitada.toString());
 
-	        emailService.enviarEmailSimple(cliente.getEmail(), asunto, mensaje);
+	    String asunto = "Confirmación de turno";
+
+	    // Enviar email HTML
+	    emailService.enviarEmailHtml(cliente.getEmail(), asunto, "confirmacion-turno", variables);
 	    
 	    return turnoService.crear(nuevo);
 	}
