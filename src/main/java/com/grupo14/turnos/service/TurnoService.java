@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +33,7 @@ public class TurnoService {
     private final DisponibilidadRepository disRepo;
     private final FechaRepository fechaRepo;
     private final FechaService fechaService;
+    private final EmailService emailService;
 
     public TurnoService(
         TurnoRepository repo,
@@ -38,7 +41,8 @@ public class TurnoService {
         ServicioRepository serRepo,
         DisponibilidadRepository disRepo,
         FechaRepository fechaRepo,
-        FechaService fechaService
+        FechaService fechaService,
+        EmailService emailService
     ) {
         this.repo = repo;
         this.cliRepo = cliRepo;
@@ -46,6 +50,7 @@ public class TurnoService {
         this.disRepo = disRepo;
         this.fechaRepo= fechaRepo;
         this.fechaService = fechaService;
+        this.emailService = emailService;
     }
     
     public TurnoDTO obtenerPorId(long id) {
@@ -147,6 +152,27 @@ public class TurnoService {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Turno no encontrado: " + id);
         }
+        Turno turno = repo.findById(id)
+				.orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado: " + id));
+     // 2. Obtener los datos necesarios para el email
+        Cliente cliente = turno.getCliente(); // Ajusta esto si tu modelo es diferente
+        Servicio servicio = turno.getServicio();
+        
+
+        // 3. Preparar las variables para la plantilla
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("nombreCliente", cliente.getNombre());
+        variables.put("servicio", servicio.getNombre());
+        variables.put("fecha", turno.getFecha().getFecha().toString()); // Formatea si quieres
+        variables.put("hora", turno.getHora().toString());
+        
+
+        String asunto = "Cancelación de turno";
+
+        // 4. Enviar el email HTML
+        emailService.enviarEmailHtml(cliente.getEmail(), asunto, "cancelacion", variables);
+
+        
         repo.deleteById(id);
     }
     
