@@ -130,11 +130,15 @@ public class PrestadorMenuController {
     }
 
     @PostMapping("/eliminar-servicio")
-    public String eliminarServicio(@RequestParam Long id, HttpSession session) {
+    public String eliminarServicio(@RequestParam Long id, HttpSession session, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         PrestadorDTO prestador = (PrestadorDTO) session.getAttribute("prestador");
         if (prestador == null) return "redirect:/login";
-
-        servicioService.eliminar(id);
+        try {
+            servicioService.eliminar(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Servicio eliminado correctamente.");
+        } catch (com.grupo14.turnos.exception.ServicioEnUsoException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/prestador/menu";
     }
 
