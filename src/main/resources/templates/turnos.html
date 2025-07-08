@@ -151,9 +151,9 @@
               <label>Turno a eliminar:</label>
               <select name="id" required>
                 <option value="">Seleccione un turno</option>
-                <option th:each="t : ${turnos}" th:value="${t.id()}">
-                  <span th:text="${t.fecha() + ' ' + t.hora() + ' - ' + t.estado()}"></span>
-                </option>
+                <option th:each="t : ${turnos}" th:value="${t.id}" 
+                th:text="${t.fechaId} + ' ' + ${t.hora} + ' - ' + ${t.estado}">
+        </option>
               </select>
             </div>
             <div class="form-actions">
@@ -174,9 +174,9 @@
               <label>Turno a modificar:</label>
               <select name="id" required>
                 <option value="">Seleccione un turno</option>
-                <option th:each="t : ${turnos}" th:value="${t.id()}">
-                  <span th:text="${t.fecha() + ' ' + t.hora() + ' - ' + t.estado()}"></span>
-                </option>
+                <option th:each="t : ${turnos}" th:value="${t.id}" 
+                th:text="${t.fechaId} + ' ' + ${t.hora} + ' - ' + ${t.estado}">
+              </option>
               </select>
             </div>
             <div class="form-group">
@@ -235,4 +235,3 @@
   <script th:src="@{/scripts.js}"></script>
 </body>
 </html>
-

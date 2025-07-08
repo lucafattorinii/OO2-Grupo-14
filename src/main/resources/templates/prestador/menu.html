@@ -131,6 +131,10 @@
 <body>
   <div class="container">
     <h1>Bienvenido, <span th:text="${prestador.razonSocial}">Prestador</span></h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}" style="margin-bottom: 15px; text-align: center;"></div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}" style="margin-bottom: 15px; text-align: center;"></div>
+
 	<div th:if="${param.actualizado}" style="color: green; margin-bottom: 15px; text-align: center;">
   Los datos se actualizaron correctamente.
 </div>
