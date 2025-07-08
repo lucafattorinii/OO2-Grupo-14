@@ -2,26 +2,32 @@ package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.ServicioDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
+import com.grupo14.turnos.exception.ServicioEnUsoException;
 import com.grupo14.turnos.modelo.Prestador;
 import com.grupo14.turnos.modelo.Servicio;
 import com.grupo14.turnos.repository.PrestadorRepository;
+import com.grupo14.turnos.repository.TurnoRepository;
 import com.grupo14.turnos.repository.ServicioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ServicioService {
+    private final TurnoRepository turnoRepository;
 
     private final ServicioRepository repo;
     private final PrestadorRepository prestadorRepo;
     
     
 
-    public ServicioService(ServicioRepository repo, PrestadorRepository prestadorRepo) {
+    public ServicioService(ServicioRepository repo, PrestadorRepository prestadorRepo, TurnoRepository turnoRepository) {
         this.repo = repo;
         this.prestadorRepo = prestadorRepo;
+        this.turnoRepository = turnoRepository;
     }
     
     
@@ -68,10 +74,23 @@ public class ServicioService {
         return convertirADTO(guardado);
     }
     
+    @Transactional
     public void eliminar(Long id) {
         if (!repo.existsById(id)) {
             throw new RecursoNoEncontradoException("Servicio no encontrado: " + id);
         }
+        
+        // Verificar si hay turnos no cancelados
+        boolean tieneTurnosNoCancelados = turnoRepository.existsTurnoNoCanceladoByServicioId(id);
+        
+        if (tieneTurnosNoCancelados) {
+            throw new ServicioEnUsoException("No se puede eliminar el servicio porque tiene turnos activos (PENDIENTES o CONFIRMADOS).");
+        }
+        
+        // Eliminar turnos cancelados asociados al servicio
+        turnoRepository.deleteTurnosCanceladosByServicioId(id);
+        
+        // Finalmente, eliminar el servicio
         repo.deleteById(id);
     }
     
@@ -117,7 +136,7 @@ public class ServicioService {
     
     public List<ServicioDTO> listarServiciosDelUnicoPrestador() {
         Prestador prestador = prestadorRepo.findTopByOrderByIdAsc()
-                .orElseThrow(() -> new RecursoNoEncontradoException("No hay ningún prestador cargado."));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No hay ningÃºn prestador cargado."));
         
         return repo.findByPrestador_Id(prestador.getId()).stream()
                 .map(this::convertirADTO)
@@ -140,4 +159,3 @@ public class ServicioService {
     
    
 }
-
