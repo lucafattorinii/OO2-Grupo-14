@@ -154,8 +154,8 @@ El sistema sigue el siguiente diagrama de clases:
 - **Fecha**: Representación de fechas en el sistema.
 
 - ## Variables de entorno necesarias
-- `MAIL_USER` = sistematurnosgrupo14oo2@gmail.com
-- `MAIL_PASS` = uqxv qkpo pmhh myhl
+- `GMAIL_USER` = sistematurnosgrupo14oo2@gmail.com
+- `GMAIL_PASS` = uqxv qkpo pmhh myhl
 - `DB_URL`, `DB_USER`, `DB_PASS` = depende de la bd
 
 ## Contribuidores
