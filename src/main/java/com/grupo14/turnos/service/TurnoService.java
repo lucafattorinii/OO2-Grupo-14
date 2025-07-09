@@ -2,6 +2,7 @@ package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
+import com.grupo14.turnos.dto.TurnoFiltroDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Cliente;
@@ -62,6 +63,30 @@ public class TurnoService {
 
     public List<TurnoDTO> listarTodos() {
         return repo.findAll().stream()
+            .map(this::convertirADTO)
+            .collect(Collectors.toList());
+    }
+    
+    public List<TurnoDTO> filtrarTurnos(TurnoFiltroDTO filtro) {
+        EstadoTurno estado = null;
+        if (filtro.estado() != null && !filtro.estado().isEmpty()) {
+            try {
+                estado = EstadoTurno.valueOf(filtro.estado().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Si el estado no es válido, se ignora el filtro de estado
+            }
+        }
+        
+        List<Turno> turnos = repo.filtrarTurnos(
+            filtro.fechaDesde(),
+            filtro.fechaHasta(),
+            filtro.clienteId(),
+            filtro.servicioId(),
+            estado,
+            filtro.nombreCliente()
+        );
+        
+        return turnos.stream()
             .map(this::convertirADTO)
             .collect(Collectors.toList());
     }

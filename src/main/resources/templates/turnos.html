@@ -31,7 +31,77 @@
   <main>
     <section class="client-section">
       <h2>Lista de Turnos</h2>
-      <p>Total turnos recibidos: <span th:text="${turnos.size()}">0</span></p>
+      
+      <!-- Formulario de Filtrado -->
+      <div class="filtro-container">
+        <h3>Filtrar Turnos</h3>
+        <form th:action="@{/turnos/view}" method="get" class="filtro-form">
+          <div class="filtro-row">
+            <div class="filtro-group">
+              <label for="fechaDesde">Desde:</label>
+              <input type="date" id="fechaDesde" name="fechaDesde" th:value="${filtro?.fechaDesde}">
+            </div>
+            <div class="filtro-group">
+              <label for="fechaHasta">Hasta:</label>
+              <input type="date" id="fechaHasta" name="fechaHasta" th:value="${filtro?.fechaHasta}">
+            </div>
+          </div>
+          
+          <div class="filtro-row">
+            <div class="filtro-group">
+              <label for="clienteId">Cliente:</label>
+              <select id="clienteId" name="clienteId">
+                <option value="">Todos los clientes</option>
+                <option th:each="c : ${clientes}" 
+                        th:value="${c.id()}" 
+                        th:text="${c.nombre() + ' ' + c.apellido()}"
+                        th:selected="${filtro?.clienteId} == ${c.id()}">
+                </option>
+              </select>
+            </div>
+            
+            <div class="filtro-group">
+              <label for="nombreCliente">Buscar por nombre:</label>
+              <input type="text" id="nombreCliente" name="nombreCliente" 
+                     th:value="${filtro?.nombreCliente}" 
+                     placeholder="Nombre o apellido del cliente">
+            </div>
+          </div>
+          
+          <div class="filtro-row">
+            <div class="filtro-group">
+              <label for="servicioId">Servicio:</label>
+              <select id="servicioId" name="servicioId">
+                <option value="">Todos los servicios</option>
+                <option th:each="s : ${servicios}" 
+                        th:value="${s.id()}" 
+                        th:text="${s.nombre()}"
+                        th:selected="${filtro?.servicioId} == ${s.id()}">
+                </option>
+              </select>
+            </div>
+            
+            <div class="filtro-group">
+              <label for="estado">Estado:</label>
+              <select id="estado" name="estado">
+                <option value="">Todos los estados</option>
+                <option th:each="e : ${estados}" 
+                        th:value="${e.name()}" 
+                        th:text="${e.name()}"
+                        th:selected="${filtro?.estado} == ${e.name()}">
+                </option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="filtro-actions">
+            <button type="submit" class="btn-filtrar">Filtrar</button>
+            <a th:href="@{/turnos/view}" class="btn-limpiar">Limpiar Filtros</a>
+          </div>
+        </form>
+      </div>
+      
+      <p>Total turnos encontrados: <span th:text="${turnos.size()}">0</span></p>
       <div th:if="${#lists.isEmpty(turnos)}" class="empty-msg">
         No hay turnos cargados.
       </div>

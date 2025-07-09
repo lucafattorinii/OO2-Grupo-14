@@ -5,6 +5,7 @@ import com.grupo14.turnos.dto.DisponibilidadDTO;
 import com.grupo14.turnos.dto.ServicioDTO;
 import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
+import com.grupo14.turnos.dto.TurnoFiltroDTO;
 import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.service.ClienteService;
 import com.grupo14.turnos.service.DisponibilidadService;
@@ -42,18 +43,44 @@ public class TurnoController {
 
     // 1) VISTA HTML: Listado + Formulario
     @GetMapping("/view")
-    public String verTurnos(Model model) {
-        List<TurnoDTO> turnos = turnoService.listarTodos();
+    public String verTurnos(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+            @RequestParam(required = false) Long clienteId,
+            @RequestParam(required = false) Long servicioId,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String nombreCliente,
+            Model model) {
+        
+        // Crear DTO de filtro
+        TurnoFiltroDTO filtro = new TurnoFiltroDTO(
+            fechaDesde,
+            fechaHasta,
+            clienteId,
+            servicioId,
+            estado,
+            nombreCliente
+        );
+        
+        // Obtener turnos filtrados o todos si no hay filtros
+        List<TurnoDTO> turnos = filtro.tieneFiltros() 
+            ? turnoService.filtrarTurnos(filtro)
+            : turnoService.listarTodos();
+            
         List<ClienteDTO> clientes = clienteService.listarTodos();
         List<ServicioDTO> servicios = servicioService.listarTodos();
         List<DisponibilidadDTO> disponibilidades = disponibilidadService.listarTodos();
         List<EstadoTurno> estados = turnoService.listarEstados();
         
+        // Agregar atributos al modelo
         model.addAttribute("turnos", turnos);
         model.addAttribute("clientes", clientes);
         model.addAttribute("servicios", servicios);
         model.addAttribute("disponibilidades", disponibilidades);
         model.addAttribute("estados", estados);
+        
+        // Mantener los valores de los filtros en el formulario
+        model.addAttribute("filtro", filtro);
         
         return "turnos";        // templates/turnos.html
     }
