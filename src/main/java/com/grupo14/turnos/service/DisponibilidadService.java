@@ -1,6 +1,7 @@
 package com.grupo14.turnos.service;
 
 import com.grupo14.turnos.dto.DisponibilidadDTO;
+import com.grupo14.turnos.exception.DisponibilidadDuplicadaException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.Disponibilidad;
 import com.grupo14.turnos.modelo.Servicio;
@@ -44,24 +45,45 @@ public class DisponibilidadService {
     }
 
     public DisponibilidadDTO crear(DisponibilidadDTO dto) {
+
+        // 1) Armar la entidad base
         Disponibilidad d = new Disponibilidad();
         d.setDiaSemana(dto.diaSemana());
         d.setHoraInicio(dto.horaInicio());
         d.setHoraFin(dto.horaFin());
 
-        // Asociar múltiples servicios
+        // 2) Cargar y validar los servicios
         if (dto.servicioIds() != null && !dto.servicioIds().isEmpty()) {
+
             Set<Servicio> servicios = dto.servicioIds().stream()
                 .map(id -> servRepo.findById(id)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado: " + id)))
                 .collect(Collectors.toSet());
 
+            //CHEQUEO DE DUPLICADOS 
+            for (Servicio s : servicios) {
+                boolean duplicada = repo
+                    .existsByServicios_IdServicioAndDiaSemanaAndHoraInicioAndHoraFin(      
+                        s.getIdServicio(),                                                
+                        dto.diaSemana(),                                                  
+                        dto.horaInicio(),                                                 
+                        dto.horaFin());                                                   
+
+                if (duplicada) {
+                    throw new DisponibilidadDuplicadaException(                           
+                        "Ya existe una disponibilidad idéntica para el servicio ID "      
+                        + s.getIdServicio());                                             
+                }
+            }
+
             d.setServicios(servicios);
         }
 
+        // 3) Guardar y devolver
         Disponibilidad guardada = repo.save(d);
         return convertirADTO(guardada);
     }
+    
     
     public DisponibilidadDTO actualizar(Long id, DisponibilidadDTO dto) {
         Disponibilidad d = repo.findById(id)

@@ -12,29 +12,34 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Disponibilidad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana", nullable = false)
     private DiaSemana diaSemana;
 
-    @Column(name = "hora_inicio")
+    @Column(name = "hora_inicio", nullable = false)
     private LocalTime horaInicio;
 
-    @Column(name = "hora_fin")
+    @Column(name = "hora_fin", nullable = false)
     private LocalTime horaFin;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "servicio_disponibilidad",
-        joinColumns = @JoinColumn(name = "disponibilidad_id"),
-        inverseJoinColumns = @JoinColumn(name = "servicio_id")
-    )
+            name = "servicio_disponibilidad",
+            joinColumns = @JoinColumn(name = "disponibilidad_id"),
+            inverseJoinColumns = @JoinColumn(name = "servicio_id"),
+            uniqueConstraints = @UniqueConstraint(          //  evita pares duplicados
+                name = "uk_servicio_disponibilidad",
+                columnNames = {"disponibilidad_id", "servicio_id"}
+            )
+        )
     private Set<Servicio> servicios = new HashSet<>();
 
     // Constructor sin id (por si querés crear sin pk)

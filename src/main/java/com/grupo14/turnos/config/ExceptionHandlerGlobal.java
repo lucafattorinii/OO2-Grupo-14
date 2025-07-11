@@ -1,6 +1,7 @@
 package com.grupo14.turnos.config;
 
 import com.grupo14.turnos.exception.EmailInvalidoException;
+import com.grupo14.turnos.exception.DisponibilidadDuplicadaException;
 import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,15 @@ public class ExceptionHandlerGlobal {
         model.addAttribute("mensaje", "Ha ocurrido un error inesperado: " + ex.getMessage());
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         return "error";
+    }
+    
+ // 400 Bad Request si la disponibilidad ya existe
+    @ExceptionHandler(DisponibilidadDuplicadaException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String manejarDisponibilidadDuplicada(DisponibilidadDuplicadaException ex, Model model) {
+        model.addAttribute("mensaje", ex.getMessage());
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        return "error-disponibilidad"; // redirige a templates/error-disponbilidad.html
     }
 }
 
