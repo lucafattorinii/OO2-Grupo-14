@@ -16,5 +16,7 @@ public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, 
 	
     boolean existsByServicios_IdServicioAndDiaSemanaAndHoraInicioAndHoraFin(
             Long servicioId, DiaSemana diaSemana, LocalTime horaInicio, LocalTime horaFin);
+            
+    List<Disponibilidad> findByDiaSemana(DiaSemana diaSemana);
 
 }
