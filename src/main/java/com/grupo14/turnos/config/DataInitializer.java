@@ -162,10 +162,10 @@ public class DataInitializer {
     private void initPrestador() {
         if (usuarioRepository.findByEmail("prestador.grupo14@gmail.com").isEmpty()) {
             PrestadorDTO prestadorDTO = new PrestadorDTO(null, "prestador.grupo14@gmail.com", "prestador123", "Prestador de ejemplo", true);
-            prestadorId = prestadorService.crear(prestadorDTO).getId();
+            prestadorId = prestadorService.crear(prestadorDTO).id();
             System.out.println("✔ Prestador creado correctamente.");
         } else {
-            prestadorId = prestadorService.buscarPorEmail("prestador.grupo14@gmail.com").getId();
+            prestadorId = prestadorService.buscarPorEmail("prestador.grupo14@gmail.com").id();
             System.out.println("✔ Prestador ya existe.");
         }
     }

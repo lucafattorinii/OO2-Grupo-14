@@ -81,7 +81,7 @@
           <label>Prestador:</label>
           <select name="prestadorId" required>
             <option value="">Seleccione un prestador</option>
-            <option th:each="p : ${prestadores}" th:value="${p.getId()}" th:text="${p.getRazonSocial()}"></option>
+            <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
           </select>
         </div>
         <div class="form-actions">
@@ -142,7 +142,7 @@
           <label>Prestador:</label>
           <select name="prestadorId" required>
             <option value="">Seleccione un prestador</option>
-            <option th:each="p : ${prestadores}" th:value="${p.getId()}" th:text="${p.getRazonSocial()}"></option>
+            <option th:each="p : ${prestadores}" th:value="${p.id()}" th:text="${p.razonSocial()}"></option>
           </select>
         </div>
         <div class="form-actions">

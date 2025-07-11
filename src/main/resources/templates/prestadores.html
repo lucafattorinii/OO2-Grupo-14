@@ -50,10 +50,10 @@
           <!-- stat.count renderiza 1,2,3... sin huecos -->
           <tr th:each="p, stat : ${prestadores}">
             <td th:text="${stat.count}"></td>
-            <td th:text="${p.getEmail()}"></td>
-            <td th:text="${p.getContrasena()}"></td>
-            <td th:text="${p.getRazonSocial()}"></td>
-            <td th:text="${p.isHabilitado() ? 'Sí' : 'No'}"></td>
+            <td th:text="${p.email()}"></td>
+            <td th:text="${p.contrasena()}"></td>
+            <td th:text="${p.razonSocial()}"></td>
+            <td th:text="${p.habilitado() ? 'Sí' : 'No'}"></td>
           </tr>
         </tbody>
       </table>
@@ -107,8 +107,8 @@
         <label>ID a eliminar:</label>
         <select name="id" required>
           <option th:each="p : ${prestadores}"
-                  th:value="${p.getId()}"
-                  th:text="'ID ' + ${p.getId()} + ' - ' + ${p.getEmail()} + ' - ' + ${p.getRazonSocial()}">
+                  th:value="${p.id()}"
+                  th:text="'ID ' + ${p.id()} + ' - ' + ${p.email()} + ' - ' + ${p.razonSocial()}">
           </option>
         </select>
       </div>
@@ -130,8 +130,8 @@
         <label>ID a modificar:</label>
         <select name="id" required>
           <option th:each="p : ${prestadores}"
-                  th:value="${p.getId()}"
-                  th:text="'ID ' + ${p.getId()} + ' - ' + ${p.getEmail()} + ' - ' + ${p.getRazonSocial()}">
+                  th:value="${p.id()}"
+                  th:text="'ID ' + ${p.id()} + ' - ' + ${p.email()} + ' - ' + ${p.razonSocial()}">
           </option>
         </select>
       </div>
