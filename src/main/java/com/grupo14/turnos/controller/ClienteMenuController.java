@@ -243,21 +243,29 @@ public class ClienteMenuController {
         String vista = "cliente/editar-contacto";
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+
         if (usuario == null) {
             vista = "redirect:/login";
         } else {
             try {
                 Long idDireccionFinal = direccionId;
 
-                // Si no se seleccionó dirección, crear nueva si los campos están completos
                 if (direccionId == null && pais != null && !pais.isBlank()) {
+                    // Crear nueva dirección
                     DireccionDTO nuevaDir = new DireccionDTO(null, pais, provincia, ciudad, calle, numeroCalle, codigoPostal);
                     idDireccionFinal = direccionService.crear(nuevaDir).idDireccion();
+                } else if (direccionId != null && pais != null && !pais.isBlank()) {
+                    // Actualizar dirección existente
+                    DireccionDTO dto = new DireccionDTO(direccionId, pais, provincia, ciudad, calle, numeroCalle, codigoPostal);
+                    direccionService.actualizar(direccionId, dto);
                 }
 
+                // Crear o actualizar contacto
                 ContactoDTO dto = new ContactoDTO(null, telefono, idDireccionFinal);
                 contactoService.crearContactoParaUsuario(usuario.id(), dto);
-                vista = "redirect:/cliente/editar-contacto?mensaje=Contacto+guardado+correctamente";
+
+                vista = "redirect:/cliente/menu";
+
             } catch (Exception e) {
                 model.addAttribute("direcciones", direccionService.listarTodos());
                 model.addAttribute("error", "No se pudo guardar el contacto: " + e.getMessage());
