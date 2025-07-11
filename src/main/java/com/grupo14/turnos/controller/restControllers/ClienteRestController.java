@@ -1,7 +1,8 @@
-package com.grupo14.turnos.controller;
+package com.grupo14.turnos.controller.restControllers;
 
 import com.grupo14.turnos.dto.ClienteDTO;
 import com.grupo14.turnos.service.ClienteService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
-@Tag(name = "cliente-rest-controller", description = "Gestión de clientes")
+@Tag(name = "Clientes", description = "API REST para la gestión de clientes")
 public class ClienteRestController {
 
     @Autowired
@@ -23,6 +24,7 @@ public class ClienteRestController {
         return ResponseEntity.ok(clienteService.listarTodos());
     }
 
+    @Operation(summary = "Busca un cliente por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable Long id) {
         ClienteDTO cliente = clienteService.obtenerPorId(id);
@@ -33,6 +35,7 @@ public class ClienteRestController {
         }
     }
 
+    @Operation(summary = "Crea un nuevo cliente")
     @PostMapping
     public ResponseEntity<ClienteDTO> crearCliente(@RequestBody ClienteDTO clienteDTO) {
         ClienteDTO nuevo = clienteService.crear(clienteDTO);
@@ -40,6 +43,7 @@ public class ClienteRestController {
     }
 
 
+    @Operation(summary = "Actualiza un cliente existente")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDTO> actualizarCliente(
             @PathVariable long id,
