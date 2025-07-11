@@ -172,6 +172,23 @@ public class DisponibilidadService {
             .collect(Collectors.toList());
     }
     
+    /**
+     * Obtiene todas las disponibilidades para un día de la semana específico.
+     * @param diaSemana Nombre del día de la semana (en mayúsculas)
+     * @return Lista de DTOs de disponibilidad para el día especificado
+     * @throws IllegalArgumentException si el nombre del día no es válido
+     */
+    public List<DisponibilidadDTO> obtenerPorDiaSemana(String diaSemana) {
+        try {
+            DiaSemana dia = DiaSemana.valueOf(diaSemana.toUpperCase());
+            return repo.findByDiaSemana(dia).stream()
+                    .map(this::convertirADTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Día de la semana no válido: " + diaSemana, e);
+        }
+    }
+    
     public List<String> obtenerDiasDisponibles(Long disponibilidadId) {
         Disponibilidad disponibilidad = repo.findById(disponibilidadId)
             .orElseThrow(() -> new RecursoNoEncontradoException("Disponibilidad no encontrada: " + disponibilidadId));
