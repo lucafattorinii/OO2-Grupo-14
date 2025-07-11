@@ -68,26 +68,4 @@ public class ServicioController {
         return "redirect:/servicios/view";
     }
 
-    // 5) API REST: Listar todos
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<ServicioDTO> listarTodosJson() {
-        return servicioService.listarTodos();
-    }
-
-    // 6) API REST: Obtener uno por ID
-    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ServicioDTO obtenerJson(@PathVariable Long id) {
-        return servicioService.obtenerPorId(id);
-    }
-
-    // 7) API REST: Crear con JSON
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE,
-                          produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.CREATED)
-    public ServicioDTO crearJson(@RequestBody ServicioDTO nuevo) {
-        return servicioService.crear(nuevo);
-    }
 }
