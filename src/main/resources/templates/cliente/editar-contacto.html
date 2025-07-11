@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Contacto</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <style>
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .login-container {
+      background-color: #fff;
+      padding: 32px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .login-header h1 {
+      color: #2c3e50;
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+    .login-header p {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin: 0;
+    }
+    .success-message,
+    .error-message {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .login-form {
+      display: grid;
+      gap: 20px;
+    }
+    .login-form label {
+      font-size: 14px;
+      color: #2c3e50;
+    }
+    .login-form input,
+    .login-form select {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .login-form button {
+      margin-top: 16px;
+      padding: 14px;
+      font-size: 15px;
+      background-color: #2980b9;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color .3s;
+    }
+    .login-form button:hover {
+      background-color: #1abc9c;
+    }
+    .extra-options {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+    }
+    .extra-options a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+    .extra-options a:hover {
+      text-decoration: underline;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+		<div th:if="${mensaje}" class="success-message">
+		  <p th:text="${mensaje}"></p>
+		</div>
+      <h1>Editar Contacto</h1>
+      <p>Actualice sus datos de contacto</p>
+    </div>
+
+    <div th:if="${error}" class="error-message">
+      <p th:text="${error}"></p>
+    </div>
+
+    <form class="login-form" th:action="@{/cliente/editar-contacto}" method="post">
+      <div>
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" maxlength="20" required
+               th:value="${contacto != null} ? ${contacto.telefono} : ''" />
+      </div>
+
+	  <div>
+	    <label>¿Desea seleccionar una dirección existente?</label>
+	    <input type="checkbox" id="usarDireccionExistente" checked onchange="toggleDireccion()" />
+	  </div>
+
+	  <div id="direccionExistente">
+	    <label for="direccionId">Dirección existente:</label>
+	    <select id="direccionId" name="direccionId">
+	      <option value="">-- Seleccione una dirección --</option>
+	      <option th:each="dir : ${direcciones}" 
+	              th:value="${dir.idDireccion}" 
+	              th:text="${dir.calle + ' ' + dir.numeroCalle + ', ' + dir.ciudad}"
+	              th:selected="${contacto != null and contacto.direccionId == dir.idDireccion}">
+	      </option>
+	    </select>
+	  </div>
+
+	  <div id="nuevaDireccion" style="display: none; display: grid; gap: 20px;">
+	    <label for="pais">País:</label>
+	    <input type="text" name="pais" id="pais" th:value="${direccion != null} ? ${direccion.pais} : ''" />
+
+	    <label for="provincia">Provincia:</label>
+	    <input type="text" name="provincia" id="provincia" th:value="${direccion != null} ? ${direccion.provincia} : ''" />
+
+	    <label for="ciudad">Ciudad:</label>
+	    <input type="text" name="ciudad" id="ciudad" th:value="${direccion != null} ? ${direccion.ciudad} : ''" />
+
+	    <label for="calle">Calle:</label>
+	    <input type="text" name="calle" id="calle" th:value="${direccion != null} ? ${direccion.calle} : ''" />
+
+	    <label for="numeroCalle">Número:</label>
+	    <input type="text" name="numeroCalle" id="numeroCalle" th:value="${direccion != null} ? ${direccion.numeroCalle} : ''" />
+
+	    <label for="codigoPostal">Código Postal:</label>
+	    <input type="text" name="codigoPostal" id="codigoPostal" th:value="${direccion != null} ? ${direccion.codigoPostal} : ''" />
+	  </div>
+
+	  <script>
+	    function toggleDireccion() {
+	      const check = document.getElementById('usarDireccionExistente').checked;
+	      document.getElementById('direccionExistente').style.display = check ? 'block' : 'none';
+	      document.getElementById('nuevaDireccion').style.display = check ? 'none' : 'grid';
+	    }
+
+	    // Mostrar automáticamente el bloque correcto si NO hay direccionId
+	    window.onload = function () {
+	      const dirId = document.getElementById('direccionId').value;
+	      const usarExistente = dirId !== "";
+	      document.getElementById('usarDireccionExistente').checked = usarExistente;
+	      toggleDireccion();
+	    };
+	  </script>
+
+
+      <button type="submit">Guardar Contacto</button>
+    </form>
+	
+	<!-- Botón eliminar solo si hay contacto existente -->
+	<div th:if="${contacto != null}" style="margin-top: 12px; text-align: center;">
+	  <form th:action="@{/cliente/eliminar-contacto}" method="post" onsubmit="return confirm('¿Seguro que querés eliminar tu contacto?');">
+	    
+	    <button type="submit" 
+	            style="background-color: #e74c3c; border: none; color: white; padding: 14px; border-radius: 4px; cursor: pointer; width: 100%;">
+	      Eliminar Contacto
+	    </button>
+
+	    <label style="display: block; margin-top: 8px; font-size: 14px; color: #2c3e50; cursor: pointer;">
+	      <input type="checkbox" name="eliminarDireccion" value="true" style="margin-right: 6px;" />
+	      También eliminar dirección asociada
+	    </label>
+	  </form>
+	</div>
+
+    <div class="extra-options">
+      <a th:href="@{/cliente/menu}">Volver al menú</a>
+    </div>
+
+    <div class="login-footer">
+      &copy; 2025 OO2 ‑ Grupo 14. Todos los derechos reservados.
+    </div>
+  </div>
+</body>
+</html>

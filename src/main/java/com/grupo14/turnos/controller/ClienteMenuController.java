@@ -1,15 +1,19 @@
 package com.grupo14.turnos.controller;
 
 import com.grupo14.turnos.dto.ClienteDTO;
+import com.grupo14.turnos.dto.ContactoDTO;
+import com.grupo14.turnos.dto.DireccionDTO;
 import com.grupo14.turnos.dto.TurnoConFechaDTO;
 import com.grupo14.turnos.dto.TurnoDTO;
 import com.grupo14.turnos.dto.TurnoVistaDTO;
 import com.grupo14.turnos.dto.UsuarioDTO;
+import com.grupo14.turnos.exception.RecursoNoEncontradoException;
 import com.grupo14.turnos.modelo.EstadoTurno;
 import com.grupo14.turnos.modelo.Fecha;
 import com.grupo14.turnos.modelo.Usuario;
 import com.grupo14.turnos.repository.FechaRepository;
 import com.grupo14.turnos.service.ClienteService;
+import com.grupo14.turnos.service.ContactoService;
 import com.grupo14.turnos.service.DireccionService;
 import com.grupo14.turnos.service.DisponibilidadService;
 import com.grupo14.turnos.service.ServicioService;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/cliente")
@@ -40,16 +45,18 @@ public class ClienteMenuController {
 	private final ClienteService clienteService;
 	private final FechaRepository fechaRepository;
 	private final DireccionService direccionService;
+	private final ContactoService contactoService;
 
     // Inyección por constructor
 	public ClienteMenuController(TurnoService turnoService, ServicioService servicioService, DisponibilidadService disponibilidadService, ClienteService clienteService,
-			FechaRepository fechaRepository, DireccionService direccionService) {
+			FechaRepository fechaRepository, DireccionService direccionService, ContactoService contactoService) {
 	    this.turnoService = turnoService;
 	    this.servicioService = servicioService;
 	    this.disponibilidadService = disponibilidadService;
 	    this.clienteService = clienteService;
 	    this.fechaRepository = fechaRepository;
 	    this.direccionService= direccionService;
+	    this.contactoService = contactoService;
 	}
 
     @GetMapping("/menu")
@@ -198,5 +205,88 @@ public class ClienteMenuController {
             clienteService.actualizarCliente(usuario.id(), email, contrasena, dni, nombre, apellido);
         }
         return vista;
+    }
+    
+    
+    @GetMapping("/editar-contacto")
+    public String mostrarEditarContacto(HttpSession session, Model model) {
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuario == null) return "redirect:/login";
+
+        // Cargar contacto (si existe) y pasarlo al modelo
+        Optional<ContactoDTO> contactoOpt = contactoService.obtenerPorUsuarioIdOptional(usuario.id());
+        contactoOpt.ifPresent(c -> model.addAttribute("contacto", c));
+
+        // También cargar la dirección si tiene una
+        if (contactoOpt.isPresent() && contactoOpt.get().direccionId() != null) {
+            DireccionDTO dir = direccionService.obtenerPorId(contactoOpt.get().direccionId());
+            model.addAttribute("direccion", dir);
+        }
+
+        model.addAttribute("direcciones", direccionService.listarTodos());
+        return "cliente/editar-contacto";
+    }
+    
+    @PostMapping("/editar-contacto")
+    public String guardarContacto(
+            HttpSession session,
+            @RequestParam String telefono,
+            @RequestParam(required = false) Long direccionId,
+            @RequestParam(required = false) String pais,
+            @RequestParam(required = false) String provincia,
+            @RequestParam(required = false) String ciudad,
+            @RequestParam(required = false) String calle,
+            @RequestParam(required = false) String numeroCalle,
+            @RequestParam(required = false) String codigoPostal,
+            Model model
+    ) {
+        String vista = "cliente/editar-contacto";
+
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuario == null) {
+            vista = "redirect:/login";
+        } else {
+            try {
+                Long idDireccionFinal = direccionId;
+
+                // Si no se seleccionó dirección, crear nueva si los campos están completos
+                if (direccionId == null && pais != null && !pais.isBlank()) {
+                    DireccionDTO nuevaDir = new DireccionDTO(null, pais, provincia, ciudad, calle, numeroCalle, codigoPostal);
+                    idDireccionFinal = direccionService.crear(nuevaDir).idDireccion();
+                }
+
+                ContactoDTO dto = new ContactoDTO(null, telefono, idDireccionFinal);
+                contactoService.crearContactoParaUsuario(usuario.id(), dto);
+                vista = "redirect:/cliente/editar-contacto?mensaje=Contacto+guardado+correctamente";
+            } catch (Exception e) {
+                model.addAttribute("direcciones", direccionService.listarTodos());
+                model.addAttribute("error", "No se pudo guardar el contacto: " + e.getMessage());
+            }
+        }
+
+        return vista;
+    }
+    
+    @PostMapping("/eliminar-contacto")
+    public String eliminarContacto(HttpSession session,
+                                   @RequestParam(required = false) boolean eliminarDireccion) {
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuario");
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+
+        Optional<ContactoDTO> contactoOpt = contactoService.obtenerPorUsuarioIdOptional(usuario.id());
+
+        if (contactoOpt.isPresent()) {
+            ContactoDTO contacto = contactoOpt.get();
+
+            contactoService.eliminarPorUsuarioId(usuario.id());
+
+            if (eliminarDireccion && contacto.direccionId() != null) {
+                direccionService.eliminar(contacto.direccionId());
+            }
+        }
+
+        return "redirect:/cliente/editar-contacto?mensaje=Contacto+eliminado+correctamente";
     }
 }
